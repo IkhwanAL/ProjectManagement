@@ -1,0 +1,19 @@
+[
+    {
+        "id": "1",
+		"email": "Redux12@gmail.com",
+		"firstName": "RE",
+		"lastname": "UX",
+		"username": "Subject",
+		"phoneNumber": "11111"
+    },
+
+    {
+        "id": "2",
+		"email": "OBV12@gmail.com",
+		"firstName": "OB",
+		"lastname": "VB",
+		"username": "Observable",
+		"phoneNumber": "222222"
+    }
+]
