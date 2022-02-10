@@ -1,0 +1,16 @@
+[
+    {	
+        "id": "1",
+        "username": "RX",
+        "password": "PassRX899",
+        "email": "adminRX@gmail.com",
+        "phoneNumber": "+1 9287 424"
+    },
+    {
+        "id": "2",
+        "username": "JS",
+        "password": "PassJS899",
+        "email": "adminJS@gmail.com",
+        "phoneNumber": "+1 9287 222"
+    }
+]
