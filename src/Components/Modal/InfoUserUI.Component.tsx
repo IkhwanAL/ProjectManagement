@@ -49,7 +49,7 @@ export default function InfoUserUI({
 						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
 						<div className="inline-block align-bottom min-w-screen bg-white lg:max-w-6xl rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-							<FormUserUI />
+							<FormUserUI setModal={setModal} />
 						</div>
 					</Transition.Child>
 				</div>

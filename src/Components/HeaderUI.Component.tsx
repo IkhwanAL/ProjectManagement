@@ -1,9 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import React, { Fragment, useLayoutEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { modalStore } from "../store/modal.store";
+import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { resetUser, statusUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 
 const navigation = [
@@ -21,16 +22,20 @@ function classNames(...classes: any[]) {
 }
 
 export default function HeaderUI() {
-	const [modal, setModal] = useState<boolean>(modalStore.initValue);
+	const dispatch = useDispatch();
+	const status = useSelector(statusUser);
+	const navigate = useNavigate();
+	const [modal, setModal] = useState<boolean>(false);
+
 	const [activated, setActive] = useState<string>("Home");
 
-	useLayoutEffect(() => {
-		const subs = modalStore.subscribe(setModal);
+	useEffect(() => {
+		if (status === "idle") {
+			navigate("/", { replace: true });
+		}
 
-		return () => {
-			subs.unsubscribe();
-		};
-	}, [modal]);
+		return () => {};
+	}, [status, navigate]);
 
 	const onClickUserModal = (
 		ev:
@@ -38,20 +43,25 @@ export default function HeaderUI() {
 			| React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {
 		ev.preventDefault();
-		modalStore.changeValue(!modal);
+		setModal(!modal);
 	};
 
 	const onClickLink = (
 		ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		name: string
 	) => {
+		ev.preventDefault();
 		setActive(name);
+	};
+
+	const Reset = () => {
+		dispatch(resetUser());
 	};
 
 	return (
 		<>
 			<Disclosure as="nav" className="bg-gray-800" key={"1"}>
-				{({ open }) => (
+				{({ open }: any) => (
 					<>
 						<div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
 							<div className="relative flex items-center justify-between h-16">
@@ -175,7 +185,7 @@ export default function HeaderUI() {
 										>
 											<Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
 												<Menu.Item>
-													{({ active }) => (
+													{({ active }: any) => (
 														<div
 															className={classNames(
 																active
@@ -187,23 +197,26 @@ export default function HeaderUI() {
 																onClickUserModal
 															}
 														>
-															Your Profile
+															<p className="pointer-events-none">
+																Your Profile
+															</p>
 														</div>
 													)}
 												</Menu.Item>
 												<Menu.Item>
-													{({ active }) => (
-														<Link
-															to={"/"}
+													{({ active }: any) => (
+														<div
 															className={classNames(
 																active
-																	? "bg-gray-100"
+																	? "bg-gray-100 cursor-pointer"
 																	: "",
 																"block px-4 py-2 text-sm text-gray-700"
 															)}
 														>
-															Sign Out
-														</Link>
+															<p className="pointer-events-none">
+																Sign Out
+															</p>
+														</div>
 													)}
 												</Menu.Item>
 											</Menu.Items>

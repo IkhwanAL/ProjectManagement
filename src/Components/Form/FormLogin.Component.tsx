@@ -5,9 +5,10 @@ import { UserLogin } from "../../Props/User.property";
 import { getUserAsync, statusUser } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 
-export const FormLogin = () => {
+export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
 	const status = useSelector(statusUser);
+
 	const [user, setUser] = useState<UserLogin | { [key: string]: string }>();
 	const [errorState, setErrorState] = useState<{
 		error: boolean;
@@ -15,6 +16,13 @@ export const FormLogin = () => {
 	} | null>(null);
 	const navigate = useNavigate();
 
+	if (status === "success") {
+		navigate("/main/dashboard", { replace: true });
+	}
+
+	if (status === "failed") {
+	}
+	// Modal
 	useEffect(() => {
 		let timeoutAlert: any = null;
 		if (errorState != null && errorState.error === true) {
@@ -48,8 +56,6 @@ export const FormLogin = () => {
 			return;
 		}
 		dispatch(getUserAsync(user.username));
-
-		navigate("/main/dashboard", { replace: true });
 	};
 
 	const onChangeInput = (ev: React.ChangeEvent<HTMLInputElement>): void => {
@@ -145,4 +151,4 @@ export const FormLogin = () => {
 			<div className={classes.arrowRight}></div>
 		</div>
 	);
-};
+});

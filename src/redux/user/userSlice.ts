@@ -7,6 +7,7 @@ export enum StatusFetchUser {
 	IDLE = "idle",
 	LOADING = "loading",
 	FAILED = "failed",
+	SUCCESS = "success",
 }
 
 export interface UserState {
@@ -14,7 +15,8 @@ export interface UserState {
 	status:
 		| StatusFetchUser.IDLE
 		| StatusFetchUser.LOADING
-		| StatusFetchUser.FAILED;
+		| StatusFetchUser.FAILED
+		| StatusFetchUser.SUCCESS;
 }
 
 const initialState: UserState = {
@@ -53,6 +55,7 @@ export const userSlice = createSlice({
 				username: "",
 				phoneNumber: "",
 			};
+			state.status = StatusFetchUser.IDLE;
 		},
 	},
 	extraReducers: (builder) => {
@@ -64,7 +67,7 @@ export const userSlice = createSlice({
 				if (!action.payload) {
 					state.status = StatusFetchUser.FAILED;
 				} else {
-					state.status = StatusFetchUser.IDLE;
+					state.status = StatusFetchUser.SUCCESS;
 					state.value = action.payload;
 				}
 			})

@@ -9,7 +9,7 @@ export function getUserApi(username: string) {
 				resolve({
 					data: filterUser[0],
 				}),
-			500
+			3000
 		);
 	});
 }
