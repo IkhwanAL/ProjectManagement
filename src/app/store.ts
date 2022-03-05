@@ -1,5 +1,4 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
-import logger from "redux-logger";
 import userReducer from "../redux/user/userSlice";
 
 export const store = configureStore({
@@ -7,7 +6,6 @@ export const store = configureStore({
 		user: userReducer,
 	},
 	devTools: true,
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 
 export type AppDispatch = typeof store.dispatch;

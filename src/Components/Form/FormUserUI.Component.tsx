@@ -3,7 +3,6 @@ import { ModalPropsUI } from "../../Props/Modal.property";
 import { userSelector } from "../../redux/user/userSlice";
 
 export default function FormUserUI({ setModal }: ModalPropsUI) {
-	const dispatch = useDispatch();
 	const user = useSelector(userSelector);
 
 	return (
@@ -84,8 +83,8 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 						</label>
 						<input
 							type="email"
-							name="username"
-							id="usernameId"
+							name="email"
+							id="email"
 							value={user.email}
 							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
 						/>

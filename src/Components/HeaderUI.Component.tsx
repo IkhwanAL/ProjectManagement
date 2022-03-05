@@ -51,11 +51,18 @@ export default function HeaderUI() {
 		name: string
 	) => {
 		ev.preventDefault();
+
 		setActive(name);
+		const value = navigationButton.find((x) => x.name === name);
+		if (value) {
+			navigate(value.href);
+		}
+		return;
 	};
 
-	const Reset = () => {
+	const Reset = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		dispatch(resetUser());
+		navigate("/", { replace: true });
 	};
 
 	return (
@@ -212,6 +219,7 @@ export default function HeaderUI() {
 																	: "",
 																"block px-4 py-2 text-sm text-gray-700"
 															)}
+															onClick={Reset}
 														>
 															<p className="pointer-events-none">
 																Sign Out

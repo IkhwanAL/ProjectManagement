@@ -1,31 +1,20 @@
-import { useLayoutEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import HeaderUI from "../Components/HeaderUI.Component";
-import {
-	StatusFetchUser,
-	statusUser,
-	userSelector,
-} from "../redux/user/userSlice";
-import { modalStore } from "../store/modal.store";
+import { userSelector } from "../redux/user/userSlice";
 
 const Dashboard = () => {
-	const status = useSelector(statusUser);
+	// const dispatch = useDispatch();
 	const navigate = useNavigate();
-	if (status === StatusFetchUser.FAILED) {
-		navigate("/", { replace: true });
-	}
-
-	const [modal, setModal] = useState<boolean>(modalStore.initValue);
-	const userData = useSelector(userSelector);
-
-	useLayoutEffect(() => {
-		const subscription = modalStore.subscribe(setModal);
-
-		return () => {
-			subscription.unsubscribe();
-		};
-	}, [modal]);
+	const user = useSelector(userSelector);
+	useEffect(() => {
+		if (!user.isLogin) {
+			navigate("/", { replace: true });
+			return () => {};
+		}
+		return () => {};
+	}, []);
 	return (
 		<>
 			<HeaderUI />

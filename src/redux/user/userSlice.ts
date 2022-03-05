@@ -10,8 +10,12 @@ export enum StatusFetchUser {
 	SUCCESS = "success",
 }
 
+interface IUser extends DataUser {
+	isLogin: boolean;
+}
+
 export interface UserState {
-	value: DataUser;
+	value: IUser;
 	status:
 		| StatusFetchUser.IDLE
 		| StatusFetchUser.LOADING
@@ -27,6 +31,7 @@ const initialState: UserState = {
 		lastname: "",
 		username: "",
 		phoneNumber: "",
+		isLogin: false,
 	},
 	status: StatusFetchUser.IDLE,
 };
@@ -44,7 +49,7 @@ export const userSlice = createSlice({
 	initialState,
 	reducers: {
 		setUser: (state, action: PayloadAction<DataUser>) => {
-			state.value = action.payload;
+			state.value = { ...action.payload, isLogin: true };
 		},
 		resetUser: (state) => {
 			state.value = {
@@ -54,6 +59,7 @@ export const userSlice = createSlice({
 				lastname: "",
 				username: "",
 				phoneNumber: "",
+				isLogin: false,
 			};
 			state.status = StatusFetchUser.IDLE;
 		},
@@ -68,7 +74,7 @@ export const userSlice = createSlice({
 					state.status = StatusFetchUser.FAILED;
 				} else {
 					state.status = StatusFetchUser.SUCCESS;
-					state.value = action.payload;
+					state.value = { ...action.payload, isLogin: true };
 				}
 			})
 			.addCase(getUserAsync.rejected, (state) => {

@@ -9,7 +9,11 @@ export function getUserApi(username: string) {
 				resolve({
 					data: filterUser[0],
 				}),
-			3000
+			1000 * 1
 		);
 	});
+}
+
+export function getUserById(id: number | string) {
+	return;
 }
