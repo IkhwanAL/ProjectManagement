@@ -1,13 +1,19 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, {
+	ReactElement,
+	useEffect,
+	useLayoutEffect,
+	useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { UserLogin } from "../../Props/User.property";
+import { useLoginMutation } from "../../redux/user/UserApi";
 import { getUserAsync, statusUser } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 
 export const FormLogin = React.memo(() => {
-	const dispatch = useDispatch();
-	const status = useSelector(statusUser);
+	const [searchParam, setSearchParam] = useSearchParams();
+	const [Login, LoginHooks] = useLoginMutation();
 
 	const [user, setUser] = useState<UserLogin | { [key: string]: string }>();
 	const [errorState, setErrorState] = useState<{
@@ -16,12 +22,6 @@ export const FormLogin = React.memo(() => {
 	} | null>(null);
 	const navigate = useNavigate();
 
-	if (status === "success") {
-		navigate("/main/dashboard", { replace: true });
-	}
-
-	if (status === "failed") {
-	}
 	// Modal
 	useEffect(() => {
 		let timeoutAlert: any = null;
@@ -37,7 +37,7 @@ export const FormLogin = React.memo(() => {
 
 	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-
+		// console.log(searchParam.get("q"));
 		if (!user) {
 			setErrorState({
 				error: true,
@@ -47,7 +47,7 @@ export const FormLogin = React.memo(() => {
 		}
 
 		if (!user.username || user.username.length === 0) {
-			setErrorState({ error: true, msg: "Username Kosong" });
+			setErrorState({ error: true, msg: "Username / Email Kosong" });
 			return;
 		}
 
@@ -55,7 +55,9 @@ export const FormLogin = React.memo(() => {
 			setErrorState({ error: true, msg: "Password Kosong" });
 			return;
 		}
-		dispatch(getUserAsync(user.username));
+
+		Login(user).unwrap().then().catch(console.log);
+		// dispatch(getUserAsync(user.username));
 	};
 
 	const onChangeInput = (ev: React.ChangeEvent<HTMLInputElement>): void => {
@@ -99,6 +101,18 @@ export const FormLogin = React.memo(() => {
 			</div>
 		);
 	};
+
+	useEffect(() => {
+		const q = searchParam.get("q");
+
+		if (q) {
+			navigate("verify", { replace: true, state: { q: q } });
+		} else {
+			navigate("main/dasboard", { replace: true });
+		}
+
+		return () => {};
+	}, [LoginHooks.isSuccess, navigate, searchParam]);
 
 	return (
 		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">

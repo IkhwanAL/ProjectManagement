@@ -1,9 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ModalPropsUI } from "../../Props/Modal.property";
 import { userSelector } from "../../redux/user/userSlice";
 
 export default function FormUserUI({ setModal }: ModalPropsUI) {
-	const dispatch = useDispatch();
 	const user = useSelector(userSelector);
 
 	return (

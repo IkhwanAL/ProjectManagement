@@ -1,15 +1,44 @@
-import { DataUser } from "../../Props/User.property";
-import user from "../../_mock/_user.json";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { URL } from "..";
+// import { } from "./userSlice";
 
-export function getUserApi(username: string) {
-	return new Promise<{ data: DataUser }>((resolve) => {
-		const filterUser = user.filter((x, y) => x.username === username);
-		setTimeout(
-			() =>
-				resolve({
-					data: filterUser[0],
-				}),
-			3000
-		);
-	});
-}
+export const REDUCER_API_PATH = "UserApi";
+export const UserApi = createApi({
+	baseQuery: fetchBaseQuery({
+		baseUrl: URL,
+		// prepareHeaders: (headers, api) => {
+		// 	const user = api.getState() as UserState;
+
+		// 	if (user.value.token) {
+		// 		headers.set("Authorization", `Bearer ${user.value.token}`);
+		// 	}
+
+		// 	return headers;
+		// },
+	}),
+	reducerPath: REDUCER_API_PATH,
+	endpoints: (builder) => ({
+		Login: builder.mutation({
+			query: (data) => {
+				return {
+					url: "/login",
+					method: "POST",
+					body: data,
+				};
+			},
+		}),
+		Register: builder.mutation({
+			query: (data) => {
+				return {
+					url: "/register",
+					method: "POST",
+					body: data,
+				};
+			},
+		}),
+	}),
+});
+
+// export const UserApiSplit = emptySplitApi.injectEndpoints({});
+
+export const { useLoginMutation } = UserApi;

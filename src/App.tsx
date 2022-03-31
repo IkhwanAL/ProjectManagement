@@ -6,10 +6,11 @@ import LoginPages from "./Layout/Login.Layout";
 import OneProject from "./Layout/OneProject.Layout";
 import RecentPage from "./Layout/Recent.Layout";
 import RegisterPage from "./Layout/Register.Layout";
+import { VerifyPage } from "./Layout/Verify.Layout";
 
 function App() {
 	return (
-		<div className="bg-blue-300">
+		<div>
 			<Routes>
 				<Route path="/" element={<LoginPages />} />
 				<Route path="/signup" element={<RegisterPage />} />
@@ -25,6 +26,8 @@ function App() {
 						element={<OneProject />}
 					/>
 				</Route>
+				<Route path="*" element={<></>} />
+				<Route path="verify" element={<VerifyPage />} />
 			</Routes>
 		</div>
 	);

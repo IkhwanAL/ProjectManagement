@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { DataUser } from "../../Props/User.property";
-import { getUserApi } from "./userApi";
+import { getUserApi } from "./UserApi";
 
 export enum StatusFetchUser {
 	IDLE = "idle",
@@ -27,6 +27,7 @@ const initialState: UserState = {
 		lastname: "",
 		username: "",
 		phoneNumber: "",
+		token: "",
 	},
 	status: StatusFetchUser.IDLE,
 };

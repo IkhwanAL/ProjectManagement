@@ -22,4 +22,5 @@ export interface DataUser {
 	lastname: string;
 	email: string;
 	phoneNumber?: string;
+	token?: string;
 }
