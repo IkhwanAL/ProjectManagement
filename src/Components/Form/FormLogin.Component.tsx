@@ -1,25 +1,32 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { UserLogin } from "../../Props/User.property";
-import { getUserAsync, statusUser } from "../../redux/user/userSlice";
+import { QueryArgLogin } from "../../@types/arg.types";
+import { useLoginMutation } from "../../redux/user/userApi";
+import { SetEmailParams, SetTokenParams } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
-	const status = useSelector(statusUser);
+	const [Login, { data, isSuccess, isError, error, isLoading }] =
+		useLoginMutation();
 
-	const [showLoading, setLoading] = useState<boolean>(false);
-	const [user, setUser] = useState<UserLogin | { [key: string]: string }>();
+	const [user, setUser] = useState<QueryArgLogin>({
+		email: "",
+		password: "",
+	});
 	const [errorState, setErrorState] = useState<{
 		error: boolean;
 		msg?: string | null;
-	} | null>(null);
+	}>({ error: false, msg: null });
 	const navigate = useNavigate();
 
-	if (status === "success") {
-		navigate("/main/dashboard", { replace: true });
-	}
+	React.useEffect(() => {
+		if (isSuccess) {
+			dispatch(SetTokenParams(data?.data.token));
+			navigate("/main/dashboard", { replace: true });
+		}
+	}, [isSuccess, navigate, dispatch, data?.data.token]);
 
 	// Modal
 	useEffect(() => {
@@ -34,10 +41,16 @@ export const FormLogin = React.memo(() => {
 		};
 	}, [errorState]);
 
+	React.useEffect(() => {
+		if (isError) {
+			setErrorState({ error: false, msg: "Terjadi Kesalahan" });
+		}
+	}, [isError]);
+
 	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		if (!user) {
+		if (Object.keys(user).length === 0) {
 			setErrorState({
 				error: true,
 				msg: "Kolom Tidak Di isi",
@@ -45,8 +58,8 @@ export const FormLogin = React.memo(() => {
 			return;
 		}
 
-		if (!user.username || user.username.length === 0) {
-			setErrorState({ error: true, msg: "Username Kosong" });
+		if (!user.email || user.email.length === 0) {
+			setErrorState({ error: true, msg: "Email Kosong" });
 			return;
 		}
 
@@ -54,8 +67,10 @@ export const FormLogin = React.memo(() => {
 			setErrorState({ error: true, msg: "Password Kosong" });
 			return;
 		}
-		dispatch(getUserAsync(user.username));
-		setLoading(true);
+
+		dispatch(SetEmailParams(user.email));
+
+		Login(user).catch(console.log);
 	};
 
 	const onChangeInput = (ev: React.ChangeEvent<HTMLInputElement>): void => {
@@ -116,7 +131,7 @@ export const FormLogin = React.memo(() => {
 							<input
 								onChange={onChangeInput}
 								type="text"
-								name="username"
+								name="email"
 								className="bg-indigo-50 px-4 py-2 outline-none rounded-md w-full"
 							/>
 						</div>
@@ -133,7 +148,7 @@ export const FormLogin = React.memo(() => {
 						</div>
 					</div>
 					<button className="mt-4 w-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide">
-						{!showLoading ? (
+						{!isLoading ? (
 							`Sign In`
 						) : (
 							<>
@@ -157,13 +172,7 @@ export const FormLogin = React.memo(() => {
 							</>
 						)}
 					</button>
-					{/* <button
-						disabled
-						type="button"
-						className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 inline-flex items-center"
-					>
-						
-					</button> */}
+
 					<p className="items-center mt-4 mb-4 text-center">
 						Don't Have An Account
 					</p>

@@ -1,92 +1,33 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { UserType } from "../../@types/user.types";
 import { RootState } from "../../app/store";
-import { DataUser } from "../../Props/User.property";
-import { getUserApi } from "./userApi";
 
-export enum StatusFetchUser {
-	IDLE = "idle",
-	LOADING = "loading",
-	FAILED = "failed",
-	SUCCESS = "success",
-}
-
-interface IUser extends DataUser {
-	isLogin: boolean;
-}
-
-export interface UserState {
-	value: IUser;
-	status:
-		| StatusFetchUser.IDLE
-		| StatusFetchUser.LOADING
-		| StatusFetchUser.FAILED
-		| StatusFetchUser.SUCCESS;
-}
-
-const initialState: UserState = {
-	value: {
-		id: "",
+const InitialState: UserType = {
+	values: {
 		email: "",
-		firstName: "",
-		lastname: "",
-		username: "",
-		phoneNumber: "",
-		isLogin: false,
+		token: "",
 	},
-	status: StatusFetchUser.IDLE,
 };
 
-export const getUserAsync = createAsyncThunk(
-	"user/fetchUser",
-	async (user: string) => {
-		const data = await getUserApi(user);
-		return data.data;
-	}
-);
-
-export const userSlice = createSlice({
-	name: "user",
-	initialState,
+export const UserSlice = createSlice({
+	name: "users",
+	initialState: InitialState,
 	reducers: {
-		setUser: (state, action: PayloadAction<DataUser>) => {
-			state.value = { ...action.payload, isLogin: true };
+		SetEmailParams: (state, action) => {
+			state.values = { ...state.values, email: action.payload };
 		},
-		resetUser: (state) => {
-			state.value = {
-				id: "",
-				email: "",
-				firstName: "",
-				lastname: "",
-				username: "",
-				phoneNumber: "",
-				isLogin: false,
-			};
-			state.status = StatusFetchUser.IDLE;
+		ResetusersParam: (state) => {
+			state.values = InitialState.values;
 		},
-	},
-	extraReducers: (builder) => {
-		builder
-			.addCase(getUserAsync.pending, (state) => {
-				state.status = StatusFetchUser.LOADING;
-			})
-			.addCase(getUserAsync.fulfilled, (state, action) => {
-				if (!action.payload) {
-					state.status = StatusFetchUser.FAILED;
-				} else {
-					state.status = StatusFetchUser.SUCCESS;
-					state.value = { ...action.payload, isLogin: true };
-				}
-			})
-			.addCase(getUserAsync.rejected, (state) => {
-				state.status = StatusFetchUser.FAILED;
-			});
+		SetTokenParams: (state, action) => {
+			state.values = { ...state.values, token: action.payload };
+		},
 	},
 });
 
-export const { resetUser, setUser } = userSlice.actions;
+export const { SetEmailParams, ResetusersParam, SetTokenParams } =
+	UserSlice.actions;
 
-export const userSelector = (state: RootState) => state.user.value;
+export default UserSlice.reducer;
 
-export const statusUser = (state: RootState) => state.user.status;
-
-export default userSlice.reducer;
+export const userSelector = (state: RootState) => state.User.values;
