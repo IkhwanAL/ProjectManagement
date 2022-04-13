@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { Connected, socket } from "../app/socket";
 import { PencilIcon, PlusIcon } from "@heroicons/react/solid";
 
 import { Fragment, useRef, useState } from "react";

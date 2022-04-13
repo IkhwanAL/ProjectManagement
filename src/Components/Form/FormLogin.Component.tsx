@@ -1,40 +1,47 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { QueryArgLogin } from "../../@types/arg.types";
+import { ErrorMsg } from "../../@types/error.types";
 import { useLoginMutation } from "../../redux/auth/authApi";
-import { SetEmailParams, SetTokenParams } from "../../redux/user/userSlice";
+import {
+	SetEmailParams,
+	SetLogin,
+	SetTokenParams,
+} from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
+import AnyModal from "../Modal/Any.Component";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
-	const [Login, { data, isSuccess, isError, isLoading }] = useLoginMutation();
+	const [Login, { data, isSuccess, isError, isLoading, error }] =
+		useLoginMutation();
 
 	const [user, setUser] = useState<QueryArgLogin>({
 		email: "",
 		password: "",
 	});
 
-	const [errorState, setErrorState] = useState<{
-		error: boolean;
-		msg?: string | null;
-	}>({ error: false, msg: null });
+	const [errorState, setErrorState] = useState<ErrorMsg>({ error: false });
 
 	const navigate = useNavigate();
 
-	React.useEffect(() => {
-		if (isSuccess) {
-			dispatch(SetTokenParams(data?.data?.token));
-			navigate("/main/dashboard", { replace: true });
-		}
-	}, [isSuccess, navigate, dispatch, data?.data?.token]);
+	if (isSuccess) {
+		dispatch(SetTokenParams(data?.data?.token));
+		dispatch(SetLogin(true));
+		navigate("/main/dashboard", { replace: true });
+	}
+
+	// React.useEffect(() => {
+
+	// }, [isSuccess]);
 
 	// Modal
 	useEffect(() => {
 		let timeoutAlert: any = null;
 		if (errorState != null && errorState.error === true) {
 			timeoutAlert = setTimeout(() => {
-				setErrorState({ error: false, msg: errorState.msg });
+				setErrorState({ error: false });
 			}, 3000);
 		}
 		return () => {
@@ -43,8 +50,14 @@ export const FormLogin = React.memo(() => {
 	}, [errorState]);
 
 	React.useEffect(() => {
+		const err = error as { [key: string]: any };
 		if (isError) {
-			setErrorState({ error: false, msg: "Terjadi Kesalahan" });
+			setErrorState({
+				...errorState,
+				error: true,
+				head: "gagal login!",
+				msg: err.data.message,
+			});
 		}
 	}, [isError]);
 
@@ -60,65 +73,49 @@ export const FormLogin = React.memo(() => {
 		}
 
 		if (!user.email || user.email.length === 0) {
-			setErrorState({ error: true, msg: "Email Kosong" });
+			setErrorState({
+				error: true,
+				msg: "Email Kosong",
+				head: "Kesalahan Data",
+			});
 			return;
 		}
 
 		if (!user.password || user.password.length === 0) {
-			setErrorState({ error: true, msg: "Password Kosong" });
+			setErrorState({
+				error: true,
+				msg: "Password Kosong",
+				head: "Kesalahan Data",
+			});
 			return;
 		}
 
 		dispatch(SetEmailParams(user.email));
 
-		Login(user).catch(console.error);
+		Login(user);
 	};
 
-	const onChangeInput = (ev: React.ChangeEvent<HTMLInputElement>): void => {
-		ev.preventDefault();
-		const { name, value } = ev.target;
-		setUser({ ...user, [name]: value });
-	};
+	const onChangeInput = useCallback(
+		(ev: React.ChangeEvent<HTMLInputElement>): void => {
+			ev.preventDefault();
+			const { name, value } = ev.target;
+			setUser({ ...user, [name]: value });
+		},
+		[user]
+	);
 
-	const setError = (): ReactElement => {
-		let classAlert: string = "";
-		if (errorState?.error === true) {
-			classAlert = `animate-fade-in-down`;
-		} else if (errorState?.error === false) {
-			classAlert = `animate-fade-in-down-deep invisible`;
-		} else if (errorState?.error == null) {
-			classAlert = `invisible`;
-		}
-
-		return (
-			<div
-				className={`absolute bg-red-100 rounded-lg p-4 mb-4 text-sm text-red-700 top-3 ${classAlert}`}
-				role="alert"
-			>
-				<div className="flex">
-					<svg
-						className="w-5 h-5 inline mr-3"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							fillRule="evenodd"
-							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-							clipRule="evenodd"
-						></path>
-					</svg>
-					<div>
-						<span className="font-medium">{errorState?.msg}</span>
-					</div>
-				</div>
-			</div>
-		);
+	const onCloseModal = () => {
+		setErrorState({ ...errorState, error: false });
 	};
 
 	return (
 		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">
-			{setError()}
+			<AnyModal
+				isOpen={errorState.error}
+				head={errorState?.head as string}
+				msg={errorState?.msg as string}
+				closeModal={onCloseModal}
+			/>
 			<form onSubmit={onSubmit} className=" w-fit shadow-lg z-40">
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
 					<div className="space-y-4">

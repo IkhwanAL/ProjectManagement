@@ -21,8 +21,8 @@ export const UserSlice = createSlice({
 		SetTokenParams: (state, action) => {
 			state.values.token = action.payload;
 		},
-		SetLogin: (state) => {
-			state.values.isLogin = true;
+		SetLogin: (state, action) => {
+			state.values.isLogin = action.payload;
 		},
 		ResetUser: (state) => {
 			state.values = InitialState.values;

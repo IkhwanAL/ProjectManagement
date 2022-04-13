@@ -25,7 +25,6 @@ export default function HeaderUI() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [modal, setModal] = useState<boolean>(false);
-
 	const [activated, setActive] = useState<string>("Home");
 
 	const onClickUserModal = (

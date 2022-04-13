@@ -13,3 +13,10 @@ export interface ModalPropsUI {
 	) => void;
 	modal?: boolean;
 }
+
+export interface AnyModalProps {
+	isOpen: boolean;
+	head?: string;
+	msg?: string;
+	closeModal: (ev: any) => void;
+}

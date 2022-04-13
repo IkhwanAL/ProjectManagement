@@ -1,16 +1,15 @@
-import "dotenv/config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
-import { QueryArgLogin } from "../../@types/arg.types";
+import { ISuccess } from "../../interface/return.interface";
 import { IUser } from "../../interface/user.interface";
 import { user } from "../../@types/database.types";
+import { Environtment } from "..";
 
 const REDUCER_API_PATH_NAME = "Users";
 export const UserApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
 	tagTypes: ["Users"],
 	baseQuery: fetchBaseQuery({
-		baseUrl: process.env.WEB_API_HOST,
+		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
 			const User = api.getState() as IUser;
 
