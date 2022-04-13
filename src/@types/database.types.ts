@@ -1,16 +1,16 @@
-export enum Position {
+export enum projectactivity_position {
 	To_Do = "To_Do",
 	Doing = "Doing",
 	Review = "Review",
 	Done = "Done",
 }
 
-export enum Role {
+export enum userteam_role {
 	Proyek_Manager = "Proyek_Manager",
 	Tim = "Tim",
 }
 
-export type Project = {
+export type project = {
 	projectId: number;
 	projectName: string;
 	projectDescription: string;
@@ -21,13 +21,13 @@ export type Project = {
 	updatedAt: Date | null;
 };
 
-export type ProjectActivity = {
+export type projectactivity = {
 	projectActivityId: number;
 	projectId: number;
 	name: string;
 	critical: boolean | null;
 	progress: number;
-	position: Position;
+	position: projectactivity_position;
 	timeToComplete: number;
 	status: boolean;
 	description: string;
@@ -37,7 +37,7 @@ export type ProjectActivity = {
 	updatedAt: Date | null;
 };
 
-export type SubDetailProjectActivity = {
+export type subdetailprojectactivity = {
 	subDetailProjectActivityId: number;
 	detailProyekId: number;
 	description: string;
@@ -46,34 +46,34 @@ export type SubDetailProjectActivity = {
 	updatedAt: Date | null;
 };
 
-export type User = {
-	id: number;
-	email: string | null;
-	createdAt: Date | null;
-	firstName: string | null;
-	isActive: boolean | null;
-	lastName: string | null;
-	password: string | null;
-	updatedAt: Date | null;
-	username: string | null;
-	phoneNumber: string | null;
+export type user = {
+	id: number | null | undefined;
+	email: string | null | undefined;
+	createdAt?: Date | null | undefined;
+	firstName: string | null | undefined;
+	isActive?: boolean | null | undefined;
+	lastName: string | null | undefined;
+	password?: string | null | undefined;
+	updatedAt?: Date | null | undefined;
+	username: string | null | undefined;
+	phoneNumber: string | null | undefined;
 };
 
-export type UserTaskFromAssignee = {
+export type usertaskfromassignee = {
 	idTask: number;
 	idUser: number;
 	projectActivityId: number;
 	createdAt: Date;
 };
 
-export type UserTeam = {
+export type userteam = {
 	teamId: number;
 	userId: number;
 	projectId: number;
-	role: Role;
+	role: userteam_role;
 	addedAt: Date | null;
 };
-export type Activity = {
+export type activity = {
 	id: number;
 	activity: string;
 	userId: number;

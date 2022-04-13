@@ -4,7 +4,7 @@ import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { resetUser, statusUser } from "../redux/user/userSlice";
+import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 
 const navigation = [
@@ -23,19 +23,10 @@ function classNames(...classes: any[]) {
 
 export default function HeaderUI() {
 	const dispatch = useDispatch();
-	const status = useSelector(statusUser);
 	const navigate = useNavigate();
 	const [modal, setModal] = useState<boolean>(false);
 
 	const [activated, setActive] = useState<string>("Home");
-
-	useEffect(() => {
-		if (status === "idle") {
-			navigate("/", { replace: true });
-		}
-
-		return () => {};
-	}, [status, navigate]);
 
 	const onClickUserModal = (
 		ev:
@@ -61,7 +52,7 @@ export default function HeaderUI() {
 	};
 
 	const Reset = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		dispatch(resetUser());
+		dispatch(ResetUser());
 		navigate("/", { replace: true });
 	};
 

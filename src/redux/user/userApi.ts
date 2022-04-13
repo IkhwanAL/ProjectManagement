@@ -1,7 +1,9 @@
 import "dotenv/config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ISuccess, LoginSuksesData } from "../../@types/return.types";
+import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
 import { QueryArgLogin } from "../../@types/arg.types";
+import { IUser } from "../../interface/user.interface";
+import { user } from "../../@types/database.types";
 
 const REDUCER_API_PATH_NAME = "Users";
 export const UserApi = createApi({
@@ -9,40 +11,28 @@ export const UserApi = createApi({
 	tagTypes: ["Users"],
 	baseQuery: fetchBaseQuery({
 		baseUrl: process.env.WEB_API_HOST,
+		prepareHeaders: (headers, api) => {
+			const User = api.getState() as IUser;
+
+			const token = User.values.token;
+
+			if (token) {
+				headers.set("Authorization", `Bearer ${token}`);
+			}
+
+			return headers;
+		},
 	}),
 	endpoints: (builder) => ({
-		Login: builder.mutation<ISuccess<LoginSuksesData>, QueryArgLogin>({
-			query: (data) => {
+		GetUserById: builder.query<ISuccess<user>, null>({
+			query: () => {
 				return {
-					url: `login`,
-					body: data,
-					method: "POST",
-				};
-			},
-		}),
-		Register: builder.mutation({
-			query: (data) => {
-				return {
-					url: "register",
-					body: data,
-					method: "POST",
-				};
-			},
-		}),
-		RefreshToken: builder.mutation({
-			query: (data) => {
-				return {
-					url: "refreshToken",
-					body: data,
-					method: "POST",
+					url: "/user",
+					method: "GET",
 				};
 			},
 		}),
 	}),
 });
 
-export const {
-	useLoginMutation,
-	useRegisterMutation,
-	useRefreshTokenMutation,
-} = UserApi;
+export const { useGetUserByIdQuery } = UserApi;

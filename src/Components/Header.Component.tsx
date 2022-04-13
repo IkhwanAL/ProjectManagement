@@ -1,21 +1,12 @@
 import { LogoutIcon, UserIcon } from "@heroicons/react/solid";
 import React, { useLayoutEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { modalStore } from "../store/modal.store";
 import Backdrop from "./Modal/Backdrop.Component";
 import InfoModal from "./Modal/InfoUser.Component";
 
 export const Header = () => {
-	const [modal, setModal] = useState<boolean>(modalStore.initValue);
+	const [modal, setModal] = useState<boolean>(false);
 	const navigate = useNavigate();
-
-	useLayoutEffect(() => {
-		const subs = modalStore.subscribe(setModal);
-
-		return () => {
-			subs.unsubscribe();
-		};
-	}, [modal]);
 
 	const onClick = (ev: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
 		ev.preventDefault();
@@ -26,7 +17,7 @@ export const Header = () => {
 		ev: React.MouseEvent<SVGSVGElement, MouseEvent>
 	) => {
 		ev.preventDefault();
-		modalStore.changeValue(!modal);
+		setModal(!modal);
 	};
 
 	return (

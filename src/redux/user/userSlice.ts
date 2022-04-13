@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UserType } from "../../@types/user.types";
+import { IUser } from "../../interface/user.interface";
 import { RootState } from "../../app/store";
 
-const InitialState: UserType = {
+const InitialState: IUser = {
 	values: {
+		id: "",
 		email: "",
 		token: "",
+		isLogin: false,
 	},
 };
 
@@ -14,19 +16,30 @@ export const UserSlice = createSlice({
 	initialState: InitialState,
 	reducers: {
 		SetEmailParams: (state, action) => {
-			state.values = { ...state.values, email: action.payload };
-		},
-		ResetusersParam: (state) => {
-			state.values = InitialState.values;
+			state.values.email = action.payload;
 		},
 		SetTokenParams: (state, action) => {
-			state.values = { ...state.values, token: action.payload };
+			state.values.token = action.payload;
+		},
+		SetLogin: (state) => {
+			state.values.isLogin = true;
+		},
+		ResetUser: (state) => {
+			state.values = InitialState.values;
+		},
+		SetIdUser: (state, action) => {
+			state.values.id = action.payload;
 		},
 	},
 });
 
-export const { SetEmailParams, ResetusersParam, SetTokenParams } =
-	UserSlice.actions;
+export const {
+	SetEmailParams,
+	SetTokenParams,
+	ResetUser,
+	SetIdUser,
+	SetLogin,
+} = UserSlice.actions;
 
 export default UserSlice.reducer;
 
