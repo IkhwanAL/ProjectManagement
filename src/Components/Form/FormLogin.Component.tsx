@@ -2,31 +2,32 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { QueryArgLogin } from "../../@types/arg.types";
-import { useLoginMutation } from "../../redux/user/userApi";
+import { useLoginMutation } from "../../redux/auth/authApi";
 import { SetEmailParams, SetTokenParams } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
-	const [Login, { data, isSuccess, isError, error, isLoading }] =
-		useLoginMutation();
+	const [Login, { data, isSuccess, isError, isLoading }] = useLoginMutation();
 
 	const [user, setUser] = useState<QueryArgLogin>({
 		email: "",
 		password: "",
 	});
+
 	const [errorState, setErrorState] = useState<{
 		error: boolean;
 		msg?: string | null;
 	}>({ error: false, msg: null });
+
 	const navigate = useNavigate();
 
 	React.useEffect(() => {
 		if (isSuccess) {
-			dispatch(SetTokenParams(data?.data.token));
+			dispatch(SetTokenParams(data?.data?.token));
 			navigate("/main/dashboard", { replace: true });
 		}
-	}, [isSuccess, navigate, dispatch, data?.data.token]);
+	}, [isSuccess, navigate, dispatch, data?.data?.token]);
 
 	// Modal
 	useEffect(() => {
@@ -70,7 +71,7 @@ export const FormLogin = React.memo(() => {
 
 		dispatch(SetEmailParams(user.email));
 
-		Login(user).catch(console.log);
+		Login(user).catch(console.error);
 	};
 
 	const onChangeInput = (ev: React.ChangeEvent<HTMLInputElement>): void => {

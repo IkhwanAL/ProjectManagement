@@ -1,9 +1,28 @@
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
+import { user } from "../../@types/database.types";
 import { ModalPropsUI } from "../../Props/Modal.property";
+import { useGetUserByIdQuery } from "../../redux/user/userApi";
 import { userSelector } from "../../redux/user/userSlice";
 
 export default function FormUserUI({ setModal }: ModalPropsUI) {
-	const user = useSelector(userSelector);
+	const { data } = useGetUserByIdQuery(null, {
+		refetchOnReconnect: true,
+	});
+	const [user, setUser] = React.useState<user>();
+
+	React.useEffect(() => {
+		if (data) {
+			setUser({
+				phoneNumber: data.data?.phoneNumber,
+				firstName: data.data?.firstName,
+				lastName: data.data?.lastName,
+				username: data.data?.username,
+				email: data.data?.email,
+				id: data.data?.id,
+			});
+		}
+	}, []);
 
 	return (
 		<>
@@ -21,7 +40,7 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 							type="text"
 							name="first-name"
 							id="first-name"
-							value={user.firstName}
+							value={user?.firstName as string}
 							// autoComplete="given-name"
 							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
 						/>
@@ -39,7 +58,7 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 							id="last-name"
 							autoComplete="family-name"
 							className="mt-1 p-2 focus:ring-indigo-500 border-1 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-							value={user.lastname}
+							value={user?.lastName as string}
 						/>
 					</div>
 				</div>
@@ -56,7 +75,7 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 							name="username"
 							id="usernameId"
 							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
-							value={user.username}
+							value={user?.username as string}
 						/>
 					</div>
 					<div className="col-span-4 sm:col-span-2">
@@ -70,7 +89,7 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 							type="text"
 							name="username"
 							id="usernameId"
-							value={user.phoneNumber}
+							value={user?.phoneNumber as string}
 							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
 						/>
 					</div>
@@ -85,7 +104,7 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 							type="email"
 							name="email"
 							id="email"
-							value={user.email}
+							value={user?.email as string}
 							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
 						/>
 					</div>
