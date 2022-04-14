@@ -1,14 +1,14 @@
 import React from "react";
-import { ErrorMsg } from "../@types/error.types";
+import { Msg } from "../@types/error.types";
 
-export function useError(errorMsg: ErrorMsg) {
-	const [errorState, setErrorState] = React.useState<ErrorMsg>(errorMsg);
+export function useError(errorMsg: Msg) {
+	const [errorState, setErrorState] = React.useState<Msg>(errorMsg);
 
 	React.useEffect(() => {
 		let timeoutAlert: any = null;
 		if (errorState != null && errorState.error === true) {
 			timeoutAlert = setTimeout(() => {
-				setErrorState({ error: false });
+				setErrorState({ error: false, head: null, msg: null });
 			}, 3000);
 		}
 		return () => {

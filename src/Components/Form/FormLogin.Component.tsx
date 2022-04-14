@@ -3,7 +3,11 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { QueryArgLogin } from "../../@types/arg.types";
 import { useError } from "../../hooks/useError";
-import { useLoginMutation } from "../../redux/auth/authApi";
+import { useSuccess } from "../../hooks/useSuccess";
+import {
+	useLoginMutation,
+	useRefreshLinkMutation,
+} from "../../redux/auth/authApi";
 import {
 	SetEmailParams,
 	SetLogin,
@@ -11,12 +15,15 @@ import {
 } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 import AnyModal from "../Modal/Any.Component";
+import { ButtonSmoll } from "../Smoll/Button";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
-	const [verify, setVerify] = useSearchParams();
-	const [Login, { data, isSuccess, isError, isLoading, error }] =
+	const [verify, _setVerify] = useSearchParams();
+	const [Login, { data, isSuccess, isError, isLoading, error, reset }] =
 		useLoginMutation();
+
+	const [RefreshLink, RefHooks] = useRefreshLinkMutation();
 
 	const [user, setUser] = useState<QueryArgLogin>({
 		email: "",
@@ -24,41 +31,41 @@ export const FormLogin = React.memo(() => {
 	});
 
 	const { errorState, setErrorState } = useError({ error: false });
-
-	// const [errorState, setErrorState] = useState<ErrorMsg>({ error: false });
+	const { successState, setSuccessState } = useSuccess({ error: true });
+	const [addLink, setLink] = useState(false);
 
 	const navigate = useNavigate();
-
+	// console.log(errorState, successState);
 	if (isSuccess) {
 		const url = verify.get("Url");
 		const q = verify.get("_q");
 
-		dispatch(SetTokenParams(data?.data?.token));
-		dispatch(SetLogin(true));
-
 		if (url) {
 			navigate(`/${url}`, { replace: true, state: { q: q } });
 		} else {
+			dispatch(SetTokenParams(data?.data?.token));
+			dispatch(SetLogin(true));
 			navigate("/main/dashboard", { replace: true });
 		}
 	}
 
-	// Modal
-	// useEffect(() => {
-	// 	let timeoutAlert: any = null;
-	// 	if (errorState != null && errorState.error === true) {
-	// 		timeoutAlert = setTimeout(() => {
-	// 			setErrorState({ error: false });
-	// 		}, 3000);
-	// 	}
-	// 	return () => {
-	// 		clearTimeout(timeoutAlert);
-	// 	};
-	// }, [errorState]);
+	React.useEffect(() => {
+		if (RefHooks.isSuccess) {
+			setSuccessState({
+				error: false,
+				head: "Success",
+				msg: "Sukses Membuat Link Verfikasi Baru",
+			});
+			setLink(false);
+			RefHooks.reset();
+		}
+	}, [RefHooks.isSuccess]);
 
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
-		if (isError) {
+		if (isError && !addLink) {
+			setLink(true);
+			console.log("called");
 			if (err?.status === "FETCH_ERROR") {
 				setErrorState({
 					...errorState,
@@ -75,6 +82,7 @@ export const FormLogin = React.memo(() => {
 				});
 			}
 		}
+		reset();
 	}, [isError]);
 
 	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
@@ -123,6 +131,21 @@ export const FormLogin = React.memo(() => {
 	const onCloseModal = () => {
 		setErrorState({ ...errorState, error: false });
 	};
+	const onCloseModalSuc = () => {
+		setSuccessState({ ...errorState, error: true });
+	};
+
+	const refreshLink = async () => {
+		try {
+			await RefreshLink({ email: user.email }).unwrap();
+		} catch (error) {
+			setErrorState({
+				error: true,
+				head: "Gagal!",
+				msg: "Gagal Membuat Link Verifikasi",
+			});
+		}
+	};
 
 	return (
 		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">
@@ -131,6 +154,12 @@ export const FormLogin = React.memo(() => {
 				head={errorState?.head as string}
 				msg={errorState?.msg as string}
 				closeModal={onCloseModal}
+			/>
+			<AnyModal
+				closeModal={onCloseModalSuc}
+				isOpen={!successState.error}
+				head={successState.head as string}
+				msg={successState.msg as string}
 			/>
 			<form onSubmit={onSubmit} className=" w-fit shadow-lg z-40">
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
@@ -161,6 +190,18 @@ export const FormLogin = React.memo(() => {
 							/>
 						</div>
 					</div>
+					{addLink ? (
+						<div className="flex justify-center pt-2">
+							<ButtonSmoll
+								textButton="Verify account"
+								fill="#FFFFFF"
+								isLoading={RefHooks.isLoading}
+								onClick={refreshLink}
+							/>
+						</div>
+					) : (
+						<></>
+					)}
 					<button className="mt-4 w-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide">
 						{!isLoading ? (
 							`Sign In`

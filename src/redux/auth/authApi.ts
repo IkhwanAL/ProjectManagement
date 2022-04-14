@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
 import { QueryArgLogin } from "../../@types/arg.types";
 import { Environtment } from "..";
-import { SetLogin } from "../user/userSlice";
+import { SetLogin, SetTokenParams } from "../user/userSlice";
 import { setSessionStorage } from "../../Util/SessionStorage";
 
 const REDUCER_API_PATH_NAME = "Auth";
@@ -49,11 +49,31 @@ export const AuthApi = createApi({
 				};
 			},
 		}),
-		Verify: builder.query({
+		RefreshLink: builder.mutation({
 			query: (data) => {
 				return {
-					url: `/verify?q=${data}`,
+					url: "/refresh",
+					body: data,
+					method: "POST",
 				};
+			},
+		}),
+		Verify: builder.mutation<ISuccess<LoginSuksesData>, { q: string }>({
+			query: (data) => {
+				return {
+					url: `/verify`,
+					method: "POST",
+					body: data,
+				};
+			},
+			async onQueryStarted(arg, api) {
+				try {
+					const { data } = await api.queryFulfilled;
+
+					api.dispatch(SetTokenParams(data.data?.token));
+					setSessionStorage("token", data.data?.token);
+					api.dispatch(SetLogin(true));
+				} catch (error) {}
 			},
 		}),
 	}),
@@ -63,4 +83,6 @@ export const {
 	useLoginMutation,
 	useRegisterMutation,
 	useRefreshTokenMutation,
+	useVerifyMutation,
+	useRefreshLinkMutation,
 } = AuthApi;

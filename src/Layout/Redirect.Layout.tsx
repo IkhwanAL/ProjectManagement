@@ -1,12 +1,42 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useLayoutEffect } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { ButtonSmoll } from "../Components/Smoll/Button";
+import { useVerifyMutation } from "../redux/auth/authApi";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
+import Stack from "@mui/material/Stack";
+import { Button } from "@mui/material";
 
 export const RedirectToVerify = () => {
-	const location = useLocation();
-	console.log(location);
+	const [Verify, { isSuccess, isLoading, data, isError }] =
+		useVerifyMutation();
+	const [verify, _setVerify] = useSearchParams();
+	const navigation = useNavigate();
+
+	useLayoutEffect(() => {
+		if (isSuccess) {
+			navigation("/main/dashboard", { replace: true });
+		}
+	}, [isSuccess]);
+
+	// const location = useLocation();
+	useLayoutEffect(() => {
+		if (isError) {
+			alert("error");
+		}
+	}, [isError]);
+	const onOk = () => {
+		const q = verify.get("_q") as string;
+
+		Verify({ q: q }).unwrap().catch(console.log);
+	};
+
+	const onCancel = () => {
+		navigation("/", { replace: true });
+	};
 	return (
 		<React.Fragment>
-			<div className="wrapper bg-blue-500 h-screen">
+			<div className="wrapper bg-blue-500 h-screen shadow-sm">
 				<div className="flex justify-center items-center h-screen">
 					{/* Card */}
 					<div className="max-w-sm rounded shadow-lg bg-gray-100">
@@ -21,14 +51,36 @@ export const RedirectToVerify = () => {
 								Click Ok The Verify Your Account
 							</p>
 						</div>
-						<div className="flex px-6 pt-4 pb-2 justify-between">
-							<button className="bg-blue-400 hover:bg-blue-700 rounded text-white px-4 py-2">
+						<Stack
+							direction={"row"}
+							paddingX={4}
+							paddingTop={4}
+							paddingBottom={2}
+							justifyContent="space-between"
+						>
+							{/* {isLoading ? (
+								<LoadingButton></LoadingButton>
+							) : (
+								<Button color="primary" variant="contained">
+									Ok
+								</Button>
+							)} */}
+							<LoadingButton
+								color="primary"
+								variant="contained"
+								loading={isLoading}
+								onClick={onOk}
+							>
 								Ok
-							</button>
-							<button className="bg-red-600 hover:bg-red-500 rounded text-white px-4 py-2">
+							</LoadingButton>
+							<Button
+								color="error"
+								variant="contained"
+								onClick={onCancel}
+							>
 								Cancel
-							</button>
-						</div>
+							</Button>
+						</Stack>
 					</div>
 				</div>
 			</div>
