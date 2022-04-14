@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { QueryArgLogin } from "../../@types/arg.types";
-import { ErrorMsg } from "../../@types/error.types";
+import { useError } from "../../hooks/useError";
 import { useLoginMutation } from "../../redux/auth/authApi";
 import {
 	SetEmailParams,
@@ -14,6 +14,7 @@ import AnyModal from "../Modal/Any.Component";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
+	const [verify, setVerify] = useSearchParams();
 	const [Login, { data, isSuccess, isError, isLoading, error }] =
 		useLoginMutation();
 
@@ -22,42 +23,57 @@ export const FormLogin = React.memo(() => {
 		password: "",
 	});
 
-	const [errorState, setErrorState] = useState<ErrorMsg>({ error: false });
+	const { errorState, setErrorState } = useError({ error: false });
+
+	// const [errorState, setErrorState] = useState<ErrorMsg>({ error: false });
 
 	const navigate = useNavigate();
 
 	if (isSuccess) {
+		const url = verify.get("Url");
+		const q = verify.get("_q");
+
 		dispatch(SetTokenParams(data?.data?.token));
 		dispatch(SetLogin(true));
-		navigate("/main/dashboard", { replace: true });
+
+		if (url) {
+			navigate(`/${url}`, { replace: true, state: { q: q } });
+		} else {
+			navigate("/main/dashboard", { replace: true });
+		}
 	}
 
-	// React.useEffect(() => {
-
-	// }, [isSuccess]);
-
 	// Modal
-	useEffect(() => {
-		let timeoutAlert: any = null;
-		if (errorState != null && errorState.error === true) {
-			timeoutAlert = setTimeout(() => {
-				setErrorState({ error: false });
-			}, 3000);
-		}
-		return () => {
-			clearTimeout(timeoutAlert);
-		};
-	}, [errorState]);
+	// useEffect(() => {
+	// 	let timeoutAlert: any = null;
+	// 	if (errorState != null && errorState.error === true) {
+	// 		timeoutAlert = setTimeout(() => {
+	// 			setErrorState({ error: false });
+	// 		}, 3000);
+	// 	}
+	// 	return () => {
+	// 		clearTimeout(timeoutAlert);
+	// 	};
+	// }, [errorState]);
 
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
 		if (isError) {
-			setErrorState({
-				...errorState,
-				error: true,
-				head: "gagal login!",
-				msg: err.data.message,
-			});
+			if (err?.status === "FETCH_ERROR") {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal login!",
+					msg: "Terjadi Kesalahan Pada Server",
+				});
+			} else {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal login!",
+					msg: err.data.message ?? "Terjadi Kesalahan Pada Server",
+				});
+			}
 		}
 	}, [isError]);
 

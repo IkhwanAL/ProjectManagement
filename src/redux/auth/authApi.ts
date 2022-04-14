@@ -49,6 +49,13 @@ export const AuthApi = createApi({
 				};
 			},
 		}),
+		Verify: builder.query({
+			query: (data) => {
+				return {
+					url: `/verify?q=${data}`,
+				};
+			},
+		}),
 	}),
 });
 

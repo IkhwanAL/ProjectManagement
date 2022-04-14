@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { QueryArgRegister } from "../../@types/arg.types";
+import { ErrorMsg } from "../../@types/error.types";
+import { useError } from "../../hooks/useError";
 import { UserRegister } from "../../Props/User.property";
+import { useRegisterMutation } from "../../redux/auth/authApi";
 import classes from "../../Styles/Triangle.module.scss";
 import { ErrorComp } from "../Error.Component";
+import AnyModal from "../Modal/Any.Component";
 
 export const FormRegister = () => {
-	const navigate = useNavigate();
-	const [userRegister, setUserRegister] = useState<
-		{ [key: string]: string } | UserRegister
-	>();
+	const InitialState: QueryArgRegister & { confirmPassword: string } = {
+		email: "",
+		password: "",
+		username: "",
+		confirmPassword: "",
+	};
 
-	const [useError, setErrorState] = useState<{
-		error: boolean;
-		msg?: string | null;
-	}>();
+	const [userRegister, setUserRegister] = useState<
+		QueryArgRegister & { confirmPassword: string }
+	>(InitialState);
+
+	const { errorState, setErrorState } = useError({ error: false });
+	const [Register, {}] = useRegisterMutation();
 
 	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
@@ -52,8 +61,9 @@ export const FormRegister = () => {
 			});
 			return;
 		}
+		const { confirmPassword, ...rest } = userRegister;
 
-		navigate("/main/dashboard", { replace: true });
+		Register(rest);
 	};
 
 	const onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,9 +72,18 @@ export const FormRegister = () => {
 		setUserRegister({ ...userRegister, [name]: value });
 	};
 
+	const onCloseModal = () => {
+		setErrorState({ ...errorState, error: false });
+	};
+
 	return (
 		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">
-			<ErrorComp error={useError?.error} msg={useError?.msg} />
+			<AnyModal
+				isOpen={errorState.error}
+				head={errorState?.head as string}
+				msg={errorState?.msg as string}
+				closeModal={onCloseModal}
+			/>
 			<form className="z-40 w-fit shadow-lg" onSubmit={onSubmit}>
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
 					<div className="space-y-4">
