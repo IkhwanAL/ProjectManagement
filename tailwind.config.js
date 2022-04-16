@@ -18,48 +18,21 @@ module.exports = {
 			zIndex: {
 				100: "100",
 			},
+			colors: {
+				transparent: "transparent",
+				current: "currentColor",
+				primary: "#6730ec",
+				secondary: "#a9d2ff",
+				secondary2: "#a6d7fb",
+				secondaryLightColor: "#d7edfd",
+				secondaryThinColor: "##dcefff",
+				white: "#FFF",
+				blackCustom: "#222",
+			},
+			boxShadowColor: {
+				econdaryThinColor: "##dcefff",
+			},
 		},
-		// keyframes: {
-		// 	"fade-in-down": {
-		// 		"0%": {
-		// 			opacity: "0",
-		// 			transform: "translateY(-10px)",
-		// 		},
-		// 		"100%": {
-		// 			opacity: "1",
-		// 			transform: "translateY(0px)",
-		// 		},
-		// 	},
-		// 	"fade-in-up": {
-		// 		"100%": {
-		// 			opacity: "1",
-		// 			transform: "translateY(0px)",
-		// 		},
-		// 		"0%": {
-		// 			opacity: "1",
-		// 			transform: "translateY(10px)",
-		// 		},
-		// 	},
-		// 	"fade-in-down-deep": {
-		// 		"0%": {
-		// 			opacity: "1",
-		// 			transform: "translateY(0px)",
-		// 			display: "block",
-		// 			visibility: "visible",
-		// 		},
-		// 		"100%": {
-		// 			opacity: "0",
-		// 			transform: "translateY(20px)",
-		// 			display: "none",
-		// 			visibility: "none",
-		// 		},
-		// 	},
-		// },
-		// animation: {
-		// 	"fade-in-down": "fade-in-down 0.5s ease-out",
-		// 	"fade-in-up": "fade-in-up 0.5s ease-out",
-		// 	"fade-in-down-deep": "fade-in-down-deep 0.5s ease-out",
-		// },
 	},
 	// mode: "JIT",
 	plugins: [],

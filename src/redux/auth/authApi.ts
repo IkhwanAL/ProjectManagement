@@ -19,15 +19,28 @@ export const AuthApi = createApi({
 					url: `/login`,
 					body: data,
 					method: "POST",
+					keepalive: true,
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "*/*",
+						"Accept-Encoding": "gzip, deflate, br",
+					},
+					credentials: "include",
 				};
 			},
-			async onQueryStarted(_id, { queryFulfilled, dispatch }) {
+			transformResponse: (response, meta, arg) => {
+				console.log(response, meta, arg);
+
+				return response as ISuccess<LoginSuksesData>;
+			},
+			async onQueryStarted(_id, arg) {
 				try {
-					const { data } = await queryFulfilled;
+					console.log(arg);
+					const { data } = await arg.queryFulfilled;
 
 					setSessionStorage("token", data.data?.token);
 				} catch (error) {
-					dispatch(SetLogin(false));
+					arg.dispatch(SetLogin(false));
 				}
 			},
 		}),

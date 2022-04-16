@@ -17,8 +17,10 @@ const Dashboard = () => {
 	}, []);
 	return (
 		<>
-			<HeaderUI />
-			<Outlet />
+			<div className="bg-primary">
+				<HeaderUI />
+				<Outlet />
+			</div>
 		</>
 	);
 };

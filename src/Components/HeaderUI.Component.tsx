@@ -2,10 +2,12 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import Logo from "../assets/Logo500X500.svg";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -57,7 +59,7 @@ export default function HeaderUI() {
 
 	return (
 		<>
-			<Disclosure as="nav" className="bg-gray-800" key={"1"}>
+			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
 					<>
 						<div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -84,13 +86,13 @@ export default function HeaderUI() {
 								<div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
 									<div className="flex-shrink-0 flex items-center">
 										<img
-											className="block lg:hidden h-8 w-auto"
-											src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+											className="block lg:hidden h-10 w-auto"
+											src={Logo}
 											alt="Workflow"
 										/>
 										<img
-											className="hidden lg:block h-8 w-auto"
-											src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+											className="hidden lg:block h-10 w-auto"
+											src={Logo}
 											alt="Workflow"
 										/>
 									</div>
@@ -166,7 +168,7 @@ export default function HeaderUI() {
 												</span>
 												<img
 													className="h-8 w-8 rounded-full"
-													src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+													src={`https://ui-avatars.com/api/?name=Ikhwan`}
 													alt=""
 												/>
 											</Menu.Button>

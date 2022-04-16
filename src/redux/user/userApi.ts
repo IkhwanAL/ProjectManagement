@@ -27,8 +27,9 @@ export const UserApi = createApi({
 		GetUserById: builder.query<ISuccess<user>, null>({
 			query: () => {
 				return {
-					url: "/user",
+					url: "/users",
 					method: "GET",
+					credentials: "include",
 				};
 			},
 		}),

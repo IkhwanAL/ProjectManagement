@@ -11,9 +11,36 @@ import { RedirectToVerify } from "./Layout/Redirect.Layout";
 import RegisterPage from "./Layout/Register.Layout";
 import { userSelector } from "./redux/user/userSlice";
 
+// declare module "@mui/material/styles" {
+// 	interface Theme {
+// 		status: {
+// 			danger: React.CSSProperties["color"];
+// 		};
+// 	}
+
+// 	interface Palette {
+// 		neutral: Palette["primary"];
+// 	}
+// 	interface PaletteOptions {
+// 		neutral: PaletteOptions["primary"];
+// 	}
+
+// 	interface PaletteColor {
+// 		darker?: string;
+// 	}
+// 	interface SimplePaletteColorOptions {
+// 		darker?: string;
+// 	}
+// 	interface ThemeOptions {
+// 		status: {
+// 			danger: React.CSSProperties["color"];
+// 		};
+// 	}
+// }
+
 function App() {
 	return (
-		<div className="bg-gray-200">
+		<div>
 			<Routes>
 				<Route path="/" element={<LoginPages />} />
 				<Route path="/signup" element={<RegisterPage />} />

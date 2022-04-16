@@ -2,5 +2,5 @@ export interface ButtonProps {
 	isLoading: boolean;
 	textButton?: string;
 	fill: string;
-	onClick: () => any;
+	onClick: (arg?: any) => any;
 }

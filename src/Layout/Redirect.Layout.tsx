@@ -6,23 +6,29 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
 import { Button } from "@mui/material";
+import { useError } from "../hooks/useError";
+import AnyModal from "../Components/Modal/Any.Component";
 
 export const RedirectToVerify = () => {
-	const [Verify, { isSuccess, isLoading, data, isError }] =
+	const [Verify, { isSuccess, isLoading, data, isError, error }] =
 		useVerifyMutation();
 	const [verify, _setVerify] = useSearchParams();
 	const navigation = useNavigate();
+	const { errorState, setErrorState } = useError({ error: false });
 
 	useLayoutEffect(() => {
 		if (isSuccess) {
-			navigation("/main/dashboard", { replace: true });
+			navigation("/", { replace: true, state: { verify: true } });
 		}
 	}, [isSuccess]);
 
-	// const location = useLocation();
 	useLayoutEffect(() => {
 		if (isError) {
-			alert("error");
+			setErrorState({
+				error: true,
+				head: "Gagal memverifikasi!",
+				msg: "Terjadi Kesalahan Mohon diulang untuk beberapa saat",
+			});
 		}
 	}, [isError]);
 	const onOk = () => {
@@ -34,9 +40,19 @@ export const RedirectToVerify = () => {
 	const onCancel = () => {
 		navigation("/", { replace: true });
 	};
+
+	const onCloseAnyModal = () => {
+		setErrorState({ error: false });
+	};
 	return (
 		<React.Fragment>
 			<div className="wrapper bg-blue-500 h-screen shadow-sm">
+				<AnyModal
+					isOpen={errorState.error}
+					head={errorState.head as string}
+					msg={errorState.msg as string}
+					closeModal={onCloseAnyModal}
+				/>
 				<div className="flex justify-center items-center h-screen">
 					{/* Card */}
 					<div className="max-w-sm rounded shadow-lg bg-gray-100">
@@ -58,13 +74,6 @@ export const RedirectToVerify = () => {
 							paddingBottom={2}
 							justifyContent="space-between"
 						>
-							{/* {isLoading ? (
-								<LoadingButton></LoadingButton>
-							) : (
-								<Button color="primary" variant="contained">
-									Ok
-								</Button>
-							)} */}
 							<LoadingButton
 								color="primary"
 								variant="contained"
