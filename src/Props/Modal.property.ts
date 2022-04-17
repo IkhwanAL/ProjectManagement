@@ -6,11 +6,7 @@ export interface ModalProps {
 }
 
 export interface ModalPropsUI {
-	setModal: (
-		ev:
-			| React.MouseEvent<HTMLDivElement, MouseEvent>
-			| React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => void;
+	setModal: (ev: any) => void;
 	modal?: boolean;
 }
 

@@ -32,8 +32,22 @@ export const UserApi = createApi({
 					credentials: "include",
 				};
 			},
+			transformResponse: (res, meta, arg) => {
+				const response = res as ISuccess<user>;
+				return response;
+			},
+		}),
+		PatchUser: builder.mutation({
+			query: (data) => {
+				return {
+					url: "/users",
+					body: data,
+					method: "PATCH",
+					credentials: "include",
+				};
+			},
 		}),
 	}),
 });
 
-export const { useGetUserByIdQuery } = UserApi;
+export const { useGetUserByIdQuery, usePatchUserMutation } = UserApi;

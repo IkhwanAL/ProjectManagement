@@ -39,21 +39,21 @@ export const FormLogin = React.memo(() => {
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
 	const [addLink, setLink] = useState(false);
-	console.log(isLoading, RefHooks.isLoading);
+
 	const navigate = useNavigate();
 
-	if (isSuccess) {
-		const url = verify.get("Url");
-		const q = verify.get("_q");
+	React.useEffect(() => {
+		if (isSuccess) {
+			const url = verify.get("Url");
+			const q = verify.get("_q");
 
-		if (url) {
-			navigate(`/${url}`, { replace: true, state: { q: q } });
-		} else {
-			dispatch(SetTokenParams(data?.data?.token));
-			dispatch(SetLogin(true));
-			navigate("/main/dashboard", { replace: true });
+			if (url) {
+				navigate(`/${url}`, { replace: true, state: { q: q } });
+			} else {
+				navigate("/main/dashboard", { replace: true });
+			}
 		}
-	}
+	}, [isSuccess]);
 
 	React.useLayoutEffect(() => {
 		const outsideState = state as { [key: string]: any } | null;

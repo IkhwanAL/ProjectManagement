@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ChangePassword from "./Modal/Password.Component";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -27,6 +28,7 @@ export default function HeaderUI() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [modal, setModal] = useState<boolean>(false);
+	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
 	const [activated, setActive] = useState<string>("Home");
 
 	const onClickUserModal = (
@@ -34,8 +36,12 @@ export default function HeaderUI() {
 			| React.MouseEvent<HTMLDivElement, MouseEvent>
 			| React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {
-		ev.preventDefault();
-		setModal(!modal);
+		// ev.preventDefault();
+		setModal((prevState) => !prevState);
+	};
+
+	const OnHandleMOdalChangePass = () => {
+		setModalChangePs((prev) => !prev);
 	};
 
 	const onClickLink = (
@@ -219,6 +225,42 @@ export default function HeaderUI() {
 														</div>
 													)}
 												</Menu.Item>
+												<Menu.Item>
+													{({ active }: any) => (
+														<div
+															className={classNames(
+																active
+																	? "bg-gray-100 cursor-pointer"
+																	: "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+															onClick={
+																OnHandleMOdalChangePass
+															}
+														>
+															<p className="pointer-events-none">
+																Change Password
+															</p>
+														</div>
+													)}
+												</Menu.Item>
+												<Menu.Item>
+													{({ active }: any) => (
+														<div
+															className={classNames(
+																active
+																	? "bg-gray-100 cursor-pointer"
+																	: "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+															onClick={Reset}
+														>
+															<p className="pointer-events-none">
+																Delete User
+															</p>
+														</div>
+													)}
+												</Menu.Item>
 											</Menu.Items>
 										</Transition>
 									</Menu>
@@ -252,6 +294,10 @@ export default function HeaderUI() {
 				)}
 			</Disclosure>
 			<InfoUserUI setModal={onClickUserModal} modal={modal} />
+			<ChangePassword
+				closeModal={OnHandleMOdalChangePass}
+				isOpen={modalChangeps}
+			/>
 		</>
 	);
 }

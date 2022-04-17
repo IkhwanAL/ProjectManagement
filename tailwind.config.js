@@ -28,6 +28,8 @@ module.exports = {
 				secondaryThinColor: "##dcefff",
 				white: "#FFF",
 				blackCustom: "#222",
+				text: "#333",
+				error: "#ff3333",
 			},
 			boxShadowColor: {
 				econdaryThinColor: "##dcefff",

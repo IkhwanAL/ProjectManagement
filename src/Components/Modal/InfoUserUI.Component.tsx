@@ -8,7 +8,7 @@ export default function InfoUserUI({
 	setModal,
 	modal,
 }: ModalPropsUI): JSX.Element {
-	const [_, setOpen] = useState(false);
+	// const [_, setOpen] = useState(false);
 
 	const cancelButtonRef = useRef(null);
 
@@ -17,8 +17,8 @@ export default function InfoUserUI({
 			<Dialog
 				as="div"
 				className="fixed z-10 inset-0 overflow-y-auto "
-				initialFocus={cancelButtonRef}
-				onClose={setOpen}
+				// initialFocus={cancelButtonRef}
+				onClose={setModal}
 			>
 				<div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 ">
 					<Transition.Child

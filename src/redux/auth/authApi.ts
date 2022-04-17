@@ -39,6 +39,8 @@ export const AuthApi = createApi({
 					const { data } = await arg.queryFulfilled;
 
 					setSessionStorage("token", data.data?.token);
+					arg.dispatch(SetTokenParams(data?.data?.token));
+					arg.dispatch(SetLogin(true));
 				} catch (error) {
 					arg.dispatch(SetLogin(false));
 				}
@@ -53,13 +55,24 @@ export const AuthApi = createApi({
 				};
 			},
 		}),
-		RefreshToken: builder.mutation({
-			query: (data) => {
+		RefreshToken: builder.query<ISuccess<LoginSuksesData>, null>({
+			query: () => {
 				return {
 					url: "/refreshToken",
-					body: data,
-					method: "POST",
+					method: "GET",
 				};
+			},
+			async onQueryStarted(_id, arg) {
+				try {
+					console.log(arg);
+					const { data } = await arg.queryFulfilled;
+
+					setSessionStorage("token", data.data?.token);
+					arg.dispatch(SetTokenParams(data?.data?.token));
+					arg.dispatch(SetLogin(true));
+				} catch (error) {
+					arg.dispatch(SetLogin(false));
+				}
 			},
 		}),
 		RefreshLink: builder.mutation({
@@ -95,7 +108,7 @@ export const AuthApi = createApi({
 export const {
 	useLoginMutation,
 	useRegisterMutation,
-	useRefreshTokenMutation,
+	useLazyRefreshTokenQuery,
 	useVerifyMutation,
 	useRefreshLinkMutation,
 } = AuthApi;
