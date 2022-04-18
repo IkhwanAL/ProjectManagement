@@ -47,7 +47,31 @@ export const UserApi = createApi({
 				};
 			},
 		}),
+		ChangePassword: builder.mutation({
+			query: (data) => {
+				return {
+					url: "/users/changeps",
+					body: data,
+					method: "PATCH",
+					credentials: "include",
+				};
+			},
+		}),
+		DeleteUser: builder.query({
+			query: () => {
+				return {
+					url: "/users",
+					method: "DELETE",
+					credentials: "include",
+				};
+			},
+		}),
 	}),
 });
 
-export const { useGetUserByIdQuery, usePatchUserMutation } = UserApi;
+export const {
+	useGetUserByIdQuery,
+	usePatchUserMutation,
+	useChangePasswordMutation,
+	useLazyDeleteUserQuery,
+} = UserApi;

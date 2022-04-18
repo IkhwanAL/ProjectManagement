@@ -1,13 +1,13 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import Logo from "../assets/Logo500X500.svg";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddIcon from "@mui/icons-material/Add";
 import ChangePassword from "./Modal/Password.Component";
 
 const navigation = [
@@ -163,6 +163,16 @@ export default function HeaderUI() {
 											className="h-6 w-6"
 											aria-hidden="true"
 										/>
+									</button>
+
+									<button
+										type="button"
+										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white ml-3"
+									>
+										<span className="sr-only">
+											Add Proyek
+										</span>
+										<AddIcon className="h-6 w-6" />
 									</button>
 
 									{/* Profile dropdown */}

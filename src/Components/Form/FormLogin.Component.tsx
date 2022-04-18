@@ -13,11 +13,7 @@ import {
 	useLoginMutation,
 	useRefreshLinkMutation,
 } from "../../redux/auth/authApi";
-import {
-	SetEmailParams,
-	SetLogin,
-	SetTokenParams,
-} from "../../redux/user/userSlice";
+import { SetEmailParams } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 import AnyModal from "../Modal/Any.Component";
 import { ButtonSmoll } from "../Smoll/Button";

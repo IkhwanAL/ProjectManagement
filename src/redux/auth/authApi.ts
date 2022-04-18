@@ -64,7 +64,6 @@ export const AuthApi = createApi({
 			},
 			async onQueryStarted(_id, arg) {
 				try {
-					console.log(arg);
 					const { data } = await arg.queryFulfilled;
 
 					setSessionStorage("token", data.data?.token);

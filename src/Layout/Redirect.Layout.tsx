@@ -1,9 +1,7 @@
 import React, { useLayoutEffect } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { ButtonSmoll } from "../Components/Smoll/Button";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useVerifyMutation } from "../redux/auth/authApi";
 import LoadingButton from "@mui/lab/LoadingButton";
-import SaveIcon from "@mui/icons-material/Save";
 import Stack from "@mui/material/Stack";
 import { Button } from "@mui/material";
 import { useError } from "../hooks/useError";

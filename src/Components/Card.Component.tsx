@@ -7,7 +7,7 @@ const CardProject = (project: ProjectData) => {
 		: `detail/${project.id}`;
 
 	return (
-		<div className="text-blackCustom max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-secondary p-4 py-5 px-5 rounded-xl hover:shadow-md hover:shadow-secondary2">
+		<div className="text-white max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-primary p-4 py-5 px-5 rounded-xl hover:shadow-md hover:shadow-secondary2">
 			<Link to={link}>
 				<div className="flex justify-between">
 					<div>
