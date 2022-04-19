@@ -73,7 +73,7 @@ export const FormLogin = React.memo(() => {
 			RefHooks.reset();
 		}
 	}, [RefHooks.isSuccess]);
-	// console.log(error);
+
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
 		if (isError) {
@@ -98,11 +98,10 @@ export const FormLogin = React.memo(() => {
 				});
 			}
 		}
-	}, [isError, error]);
-
-	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
-		ev.preventDefault();
-
+	}, [isError]);
+	//_ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	const onSubmit = (arg: any) => {
+		arg.preventDefault();
 		if (Object.keys(user).length === 0) {
 			setErrorState({
 				error: true,
@@ -176,7 +175,7 @@ export const FormLogin = React.memo(() => {
 				head={successState.head as string}
 				msg={successState.msg as string}
 			/>
-			<form onSubmit={onSubmit} className=" w-fit shadow-lg z-40">
+			<form className=" w-fit shadow-lg z-40">
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
 					<div className="space-y-4">
 						<h1 className="text-center text-2xl font-semibold text-gray-600">

@@ -66,6 +66,15 @@ export const UserApi = createApi({
 				};
 			},
 		}),
+		Logout: builder.query({
+			query: () => {
+				return {
+					url: "/logout",
+					method: "GET",
+					credential: "include",
+				};
+			},
+		}),
 	}),
 });
 
@@ -74,4 +83,5 @@ export const {
 	usePatchUserMutation,
 	useChangePasswordMutation,
 	useLazyDeleteUserQuery,
+	useLazyLogoutQuery,
 } = UserApi;

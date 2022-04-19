@@ -20,11 +20,11 @@ export const AuthApi = createApi({
 					body: data,
 					method: "POST",
 					keepalive: true,
-					headers: {
-						"Content-Type": "application/json",
-						Accept: "*/*",
-						"Accept-Encoding": "gzip, deflate, br",
-					},
+					// headers: {
+					// 	"Content-Type": "application/json",
+					// 	Accept: "*/*",
+					// 	"Accept-Encoding": "gzip, deflate, br",
+					// },
 					credentials: "include",
 				};
 			},
@@ -60,6 +60,7 @@ export const AuthApi = createApi({
 				return {
 					url: "/refreshToken",
 					method: "GET",
+					credentials: "include",
 				};
 			},
 			async onQueryStarted(_id, arg) {

@@ -7,31 +7,31 @@ const CardProject = (project: ProjectData) => {
 		: `detail/${project.id}`;
 
 	return (
-		<div className="text-white max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-primary p-4 py-5 px-5 rounded-xl hover:shadow-md hover:shadow-secondary2">
+		<div className="text-black max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-white p-4 py-5 px-5 rounded-xl shadow-md hover:shadow-lg hover:shadow-gray-400 ">
 			<Link to={link}>
 				<div className="flex justify-between">
 					<div>
 						<h2 className="text-lg"> {project.projectName} </h2>
 					</div>
 					<div className="flex items-center ">
-						<div className="pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-10 ">
+						<div className="pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-10">
 							<img
 								src="https://ui-avatars.com/api/?name=Ikhwan"
-								className="w-full h-full rounded-full"
+								className="w-full h-full rounded-full border-1 border-primary"
 								alt="User"
 							/>
 						</div>
 						<div className="pb-5 pl-5 bg-opacity-30 rounded-full w-14 h-14 -ml-9 ">
 							<img
 								src="https://ui-avatars.com/api/?name=Ananda"
-								className="w-full h-full rounded-full"
+								className="w-full h-full rounded-full border-1 border-primary"
 								alt="User"
 							/>
 						</div>
 						<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -ml-8 ">
 							<img
 								src="https://ui-avatars.com/api/?name=Abi"
-								className="w-full h-full rounded-full"
+								className="w-full h-full rounded-full border-1 border-primary"
 								alt="User"
 							/>
 						</div>

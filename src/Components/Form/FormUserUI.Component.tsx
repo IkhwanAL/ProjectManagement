@@ -111,6 +111,18 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 					head: "Gagal login!",
 					msg: "Terjadi Kesalahan Pada Server",
 				});
+			} else if (err.data.data.name === "TokenExpire") {
+				triggerRefreshToken(null, true)
+					.unwrap()
+					.then(() => {
+						if (user?.id) {
+							const { id, ...rest } = user;
+							PatchUser(rest).unwrap().catch(console.log);
+						} else {
+							PatchUser(user).unwrap().catch(console.log);
+						}
+					})
+					.catch(console.log);
 			} else {
 				setErrorState({
 					...errorState,
@@ -229,8 +241,8 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 				<Stack direction={"row"} justifyContent="space-between" mt={3}>
 					<Button
 						variant="contained"
-						style={{ background: Colors.error }}
 						onClick={setModal}
+						color="secondary"
 					>
 						Cancel
 					</Button>

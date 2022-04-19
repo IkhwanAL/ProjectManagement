@@ -4,7 +4,7 @@ import fullData from "../_mock/_recent.json";
 const ProjectPage = () => {
 	return (
 		<>
-			<div className={`flex-col min-h-screen`}>
+			<div className={`flex-col`}>
 				<div className="pt-10">
 					<p className="text-center text-2xl font-semibold text-blackCustom pb-10">
 						PROYEK

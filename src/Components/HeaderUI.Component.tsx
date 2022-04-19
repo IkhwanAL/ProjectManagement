@@ -9,6 +9,15 @@ import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 import AddIcon from "@mui/icons-material/Add";
 import ChangePassword from "./Modal/Password.Component";
+import { useError } from "../hooks/useError";
+import InfoModal from "./Modal/Info.Component";
+import { useConfirm } from "../hooks/useConfirm";
+import {
+	useLazyDeleteUserQuery,
+	useLazyLogoutQuery,
+} from "../redux/user/userApi";
+import { AirlineSeatLegroomExtraRounded } from "@mui/icons-material";
+import ProyekModal from "./Modal/ProyekModal.Component";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -25,11 +34,17 @@ function classNames(...classes: any[]) {
 }
 
 export default function HeaderUI() {
+	const [triggerDeleteUser] = useLazyDeleteUserQuery();
+	const [triggerLogout] = useLazyLogoutQuery();
+	const [load, setLoad] = React.useState(false);
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [modal, setModal] = useState<boolean>(false);
 	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
+	const [modalProyek, setModalProyek] = useState<boolean>(true);
 	const [activated, setActive] = useState<string>("Home");
+	const { confirm, setConfirm, onHandle } = useConfirm(false);
 
 	const onClickUserModal = (
 		ev:
@@ -44,6 +59,10 @@ export default function HeaderUI() {
 		setModalChangePs((prev) => !prev);
 	};
 
+	const OnHandleModalProyek = () => {
+		setModalProyek((prev) => !prev);
+	};
+
 	const onClickLink = (
 		ev: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
 		name: string
@@ -55,16 +74,45 @@ export default function HeaderUI() {
 		if (value) {
 			navigate(value.href);
 		}
-		return;
+		return 0;
 	};
 
 	const Reset = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		dispatch(ResetUser());
-		navigate("/", { replace: true });
+		triggerLogout(null, false)
+			.unwrap()
+			.then(() => {
+				dispatch(ResetUser());
+				navigate("/", { replace: true });
+			})
+			.catch();
+	};
+
+	const handleAccept = () => {
+		setLoad(true);
+		triggerDeleteUser(null, true)
+			.unwrap()
+			.then(() => {
+				setLoad(false);
+				setConfirm(false);
+				dispatch(ResetUser());
+				navigate("/", { replace: true });
+			})
+			.catch((e) => {
+				console.log(e);
+				setLoad(false);
+			});
 	};
 
 	return (
 		<>
+			<InfoModal
+				closeModal={onHandle}
+				head="Menghapus User"
+				msg="Apakah Anda Yakin Untuk Menghapus User?"
+				isOpen={confirm}
+				onAccept={handleAccept}
+				loading={load}
+			/>
 			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
 					<>
@@ -168,6 +216,7 @@ export default function HeaderUI() {
 									<button
 										type="button"
 										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white ml-3"
+										onClick={OnHandleModalProyek}
 									>
 										<span className="sr-only">
 											Add Proyek
@@ -263,7 +312,7 @@ export default function HeaderUI() {
 																	: "",
 																"block px-4 py-2 text-sm text-gray-700"
 															)}
-															onClick={Reset}
+															onClick={onHandle}
 														>
 															<p className="pointer-events-none">
 																Delete User
@@ -308,6 +357,7 @@ export default function HeaderUI() {
 				closeModal={OnHandleMOdalChangePass}
 				isOpen={modalChangeps}
 			/>
+			<ProyekModal setModal={OnHandleModalProyek} modal={modalProyek} />
 		</>
 	);
 }

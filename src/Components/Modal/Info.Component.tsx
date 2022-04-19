@@ -1,0 +1,96 @@
+import React from "react";
+import { Colors } from "../../Styles/Colors";
+import { Dialog, Transition } from "@headlessui/react";
+import { InfoModalProps } from "../../Props/Modal.property";
+import { Button, Stack } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+
+export default function InfoModal({
+	isOpen,
+	closeModal,
+	onAccept,
+	head,
+	msg,
+	loading,
+}: InfoModalProps) {
+	return (
+		<React.Fragment>
+			<Transition appear show={isOpen} as={React.Fragment}>
+				<Dialog
+					as="div"
+					className="fixed inset-0 z-100 overflow-y-auto"
+					onClose={closeModal}
+				>
+					<div className="min-h-screen px-4 text-center">
+						<Transition.Child
+							as={React.Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0"
+							enterTo="opacity-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
+						>
+							<Dialog.Overlay className="fixed inset-0" />
+						</Transition.Child>
+
+						{/* This element is to trick the browser into centering the modal contents. */}
+						<span
+							className="inline-block h-screen align-middle"
+							aria-hidden="true"
+						>
+							&#8203;
+						</span>
+						<Transition.Child
+							as={React.Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0 scale-95"
+							enterTo="opacity-100 scale-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100 scale-100"
+							leaveTo="opacity-0 scale-95"
+						>
+							<div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+								<Dialog.Title
+									as="h3"
+									className="text-lg font-medium leading-6 text-gray-900"
+								>
+									{head ? head : "This Is Title"}
+								</Dialog.Title>
+								<div className="mt-2">
+									<p className="text-sm text-gray-500">
+										{msg ? msg : "This is Message"}
+									</p>
+								</div>
+
+								<Stack
+									mt={4}
+									direction={"row"}
+									justifyContent="space-between"
+								>
+									<Button
+										type="button"
+										onClick={closeModal}
+										variant="contained"
+									>
+										Close
+									</Button>
+									<LoadingButton
+										// className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-error border border-transparent rounded-md hover:bg-opacity-75 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+										onClick={onAccept}
+										// style={{ background: Colors.error }}
+										loading={loading}
+										variant="contained"
+										color="error"
+									>
+										Ok
+									</LoadingButton>
+								</Stack>
+							</div>
+						</Transition.Child>
+					</div>
+				</Dialog>
+			</Transition>
+		</React.Fragment>
+	);
+}

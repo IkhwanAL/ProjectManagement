@@ -4,8 +4,9 @@ import { Backdrop } from "@mui/material";
 import { Fragment, useRef, useState } from "react";
 import { ModalPropsUI } from "../../Props/Modal.property";
 import FormUserUI from "../Form/FormUserUI.Component";
+import ProyekForm from "../Form/Proyek.Component";
 
-export default function InfoUserUI({
+export default function ProyekModal({
 	setModal,
 	modal,
 }: ModalPropsUI): JSX.Element {
@@ -50,8 +51,8 @@ export default function InfoUserUI({
 							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 						>
-							<div className="inline-block align-bottom w-3/4 bg-gray-100 lg:max-w-2xl rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:w-2/4">
-								<FormUserUI setModal={setModal} />
+							<div className="inline-block align-bottom min-w-screen bg-gray-100 lg:max-w-2xl rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle  sm:w-2/4">
+								<ProyekForm setModal={setModal} />
 							</div>
 						</Transition.Child>
 					</div>

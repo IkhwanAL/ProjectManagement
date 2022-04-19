@@ -16,3 +16,12 @@ export interface AnyModalProps {
 	msg?: string;
 	closeModal: (ev: any) => void;
 }
+
+export interface InfoModalProps {
+	isOpen: boolean;
+	head?: string;
+	msg?: string;
+	closeModal: (ev: any) => void;
+	onAccept?: (ev: any) => void;
+	loading?: boolean;
+}

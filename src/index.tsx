@@ -1,21 +1,46 @@
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider, createTheme, useTheme } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import { theme } from "./Styles/Theme";
 import { store } from "./app/store";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+
+export const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#6730ec",
+			light: "#9c74f3",
+			dark: "#4821a5",
+			"900": "#0007cf",
+		},
+		secondary: {
+			main: "#a9d3ff",
+			light: "#c9e3ff",
+			dark: "#77b2ff",
+			"900": "#4c53a9",
+		},
+		error: {
+			main: "#ff200c",
+		},
+		info: {
+			main: "#3056ec",
+		},
+		warning: {
+			main: "#ec6830",
+		},
+	},
+});
 
 ReactDOM.render(
 	<Provider store={store}>
 		<BrowserRouter>
 			<React.StrictMode>
-				{/* <ThemeProvider theme={theme}> */}
-				<App />
-				{/* </ThemeProvider> */}
+				<ThemeProvider theme={theme}>
+					<App />
+				</ThemeProvider>
 			</React.StrictMode>
 		</BrowserRouter>
 	</Provider>,

@@ -8,8 +8,8 @@ export function useError(errorMsg: Msg) {
 		let timeoutAlert: any = null;
 		if (errorState != null && errorState.error === true) {
 			timeoutAlert = setTimeout(() => {
-				setErrorState({ error: false, head: null, msg: null });
-			}, 3000);
+				setErrorState({ error: false });
+			}, 4000);
 		}
 		return () => {
 			clearTimeout(timeoutAlert);
