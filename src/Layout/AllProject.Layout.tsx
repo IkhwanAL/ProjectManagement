@@ -1,7 +1,9 @@
 import CardProject from "../Components/Card.Component";
+import { useGetAllProjectQuery } from "../redux/project/projectApi";
 import fullData from "../_mock/_recent.json";
 
 const ProjectPage = () => {
+	const { data, isLoading, isFetching } = useGetAllProjectQuery(null);
 	return (
 		<>
 			<div className={`flex-col`}>
@@ -10,14 +12,14 @@ const ProjectPage = () => {
 						PROYEK
 					</p>
 					<div className="flex content-start flex-wrap items-center justify-center">
-						{fullData.map((x) => {
+						{data?.data?.map((x) => {
 							return (
 								<CardProject
-									owner={x.owner}
-									key={"" + x.id}
-									id={x.id}
-									description={x.description}
-									dueDate={x.dueDate}
+									owner={x.user.username}
+									key={"" + x.projectId}
+									id={x.projectId}
+									description={x.projectDescription}
+									dueDate={x.deadlineInString}
 									projectName={x.projectName}
 								/>
 							);

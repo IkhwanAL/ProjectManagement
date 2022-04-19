@@ -77,7 +77,6 @@ export const FormLogin = React.memo(() => {
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
 		if (isError) {
-			console.log(err, "errro");
 			if (err?.data?.data?.isActive === false) {
 				setLink(true);
 			}

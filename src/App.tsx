@@ -2,9 +2,9 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import ProjectPage from "./Layout/AllProject.Layout";
 import Dashboard from "./Layout/Dashboard.Layout";
+import LayoutDetailProyek from "./Layout/LayoutDetail.Layout";
 import LoginPages from "./Layout/Login.Layout";
 import NotFound from "./Layout/NotFound.Layout";
-import OneProject from "./Layout/OneProject.Layout";
 import RecentPage from "./Layout/Recent.Layout";
 import { RedirectToVerify } from "./Layout/Redirect.Layout";
 import RegisterPage from "./Layout/Register.Layout";
@@ -25,7 +25,8 @@ function App() {
 					<Route path="project" element={<ProjectPage />} />
 					<Route
 						path="project/detail/:idProject"
-						element={<OneProject />}
+						element={<LayoutDetailProyek />}
+						// element={<OneProject />}
 					/>
 				</Route>
 				{/* <Route path="*" element={<NotFound />} /> */}

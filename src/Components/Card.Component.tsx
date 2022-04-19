@@ -1,14 +1,24 @@
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { ProjectData } from "../Props/Project.property";
+import { SetIdProyek } from "../redux/project/projectSlice";
 
 const CardProject = (project: ProjectData) => {
 	const link = project.recent
 		? `project/detail/${project.id}`
 		: `detail/${project.id}`;
 
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const OnHandleProyek = (id: number) => {
+		dispatch(SetIdProyek(id));
+		navigate(link, { replace: false });
+	};
+
 	return (
 		<div className="text-black max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-white p-4 py-5 px-5 rounded-xl shadow-md hover:shadow-lg hover:shadow-gray-400 ">
-			<Link to={link}>
+			<button onClick={() => OnHandleProyek(project.id)}>
 				<div className="flex justify-between">
 					<div>
 						<h2 className="text-lg"> {project.projectName} </h2>
@@ -52,7 +62,7 @@ const CardProject = (project: ProjectData) => {
 						</p>
 					</div>
 				</div>
-			</Link>
+			</button>
 		</div>
 	);
 };

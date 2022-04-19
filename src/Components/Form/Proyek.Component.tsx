@@ -11,35 +11,120 @@ import {
 	Typography,
 } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
-import { user } from "../../@types/database.types";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { QueryArgProject } from "../../@types/arg.types";
 import { useError } from "../../hooks/useError";
-import { useSuccess } from "../../hooks/useSuccess";
-import { ProyekValueState } from "../../interface/proyek.interface";
 import { ModalPropsUI } from "../../Props/Modal.property";
 import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
-import { userSelector } from "../../redux/user/userSlice";
-import { Colors } from "../../Styles/Colors";
+import {
+	useCreateProjectMutation,
+	usePatchProjectMutation,
+} from "../../redux/project/projectApi";
+import { SetIdProyek } from "../../redux/project/projectSlice";
 import AnyModal from "../Modal/Any.Component";
 
-export default function ProyekForm({ setModal }: ModalPropsUI) {
-	const initial: ProyekValueState = {
+export default function ProyekForm({
+	setModal,
+	projectId,
+}: ModalPropsUI & { projectId?: number }) {
+	const [CreateProject, CreateHooks] = useCreateProjectMutation();
+
+	const [PatchProject, PatchHooks] = usePatchProjectMutation();
+
+	const [triggerRefresh] = useLazyRefreshTokenQuery();
+
+	const initial: QueryArgProject & { projectId?: number } = {
+		projectId: projectId ? projectId : undefined,
 		projectName: "",
 		projectDescription: "",
 	};
 
-	const [proyek, setProyek] = React.useState<ProyekValueState>(initial);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { setErrorState, errorState } = useError({ error: false });
+	const [proyek, setProyek] = React.useState<
+		QueryArgProject & { projectId?: number }
+	>(initial);
 
 	const OnChangeTextField = (
 		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
 		setProyek((prev) => ({ ...prev, [ev.target.name]: ev.target.value }));
 	};
+	console.log(proyek);
+	React.useEffect(() => {
+		if (CreateHooks.isSuccess) {
+			const id = CreateHooks.data.data?.projectId;
+			dispatch(SetIdProyek(id));
+			setModal("asd");
+			navigate(`project/detail/${id}`);
+		}
+		if (PatchHooks.isSuccess) {
+			dispatch(SetIdProyek(PatchHooks.data.data?.projectId));
+		}
+	}, [CreateHooks.isSuccess, PatchHooks.isSuccess]);
+
+	React.useEffect(() => {
+		const err = CreateHooks.error as { [key: string]: any };
+		if (CreateHooks.isError) {
+			if (err?.status === "FETCH_ERROR") {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: "Terjadi Kesalahan Pada jaringan",
+				});
+			} else if (err.data.data.name === "TokenExpire") {
+				triggerRefresh(null, true)
+					.unwrap()
+					.then(() => {
+						if (proyek.projectId) {
+							PatchProject(proyek).unwrap();
+						} else {
+							const { projectId, ...rest } = proyek;
+							CreateProject(rest).unwrap();
+						}
+					})
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
+			} else {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: err.data.message ?? "Terjadi Kesalahan Pada Server",
+				});
+			}
+		}
+	}, [CreateHooks.isError, PatchHooks.isError]);
+
+	const onHandleSubmit = () => {
+		if (proyek.projectId) {
+			PatchProject(proyek);
+		} else {
+			const { projectId, ...rest } = proyek;
+			CreateProject(rest);
+		}
+	};
 
 	return (
 		<>
-			<Box display="flex" justifyContent="center" alignItems="center">
-				<Typography variant="h4">Edit Profile</Typography>
+			<Box
+				display="flex"
+				justifyContent="center"
+				alignItems="center"
+				mt={3}
+			>
+				<Typography variant="h4">
+					{" "}
+					{projectId ? "Update Proyek" : "Proyek Baru"}
+				</Typography>
 			</Box>
 			<Box
 				component={"form"}
@@ -82,7 +167,6 @@ export default function ProyekForm({ setModal }: ModalPropsUI) {
 				<Stack direction={"row"} justifyContent="space-between" mt={3}>
 					<Button
 						variant="contained"
-						// style={{ background: Colors.error }}
 						onClick={setModal}
 						color="secondary"
 					>
@@ -90,8 +174,8 @@ export default function ProyekForm({ setModal }: ModalPropsUI) {
 					</Button>
 					<LoadingButton
 						variant="contained"
-						// onClick={OnSave}
-						// loading={PathUserHooks.isLoading}
+						onClick={onHandleSubmit}
+						loading={PatchHooks.isLoading || CreateHooks.isLoading}
 					>
 						Save
 					</LoadingButton>

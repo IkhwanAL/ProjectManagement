@@ -9,7 +9,8 @@ import ProyekForm from "../Form/Proyek.Component";
 export default function ProyekModal({
 	setModal,
 	modal,
-}: ModalPropsUI): JSX.Element {
+	projectId,
+}: ModalPropsUI & { projectId?: number }): JSX.Element {
 	// const [_, setOpen] = useState(false);
 
 	const cancelButtonRef = useRef(null);
@@ -52,7 +53,10 @@ export default function ProyekModal({
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 						>
 							<div className="inline-block align-bottom min-w-screen bg-gray-100 lg:max-w-2xl rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle  sm:w-2/4">
-								<ProyekForm setModal={setModal} />
+								<ProyekForm
+									setModal={setModal}
+									projectId={projectId}
+								/>
 							</div>
 						</Transition.Child>
 					</div>

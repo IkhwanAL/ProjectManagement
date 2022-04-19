@@ -8,3 +8,8 @@ export type QueryArgRegister = {
 	email: string;
 	password: string;
 };
+
+export type QueryArgProject = {
+	projectName: string;
+	projectDescription: string;
+};

@@ -29,13 +29,10 @@ export const AuthApi = createApi({
 				};
 			},
 			transformResponse: (response, meta, arg) => {
-				console.log(response, meta, arg);
-
 				return response as ISuccess<LoginSuksesData>;
 			},
 			async onQueryStarted(_id, arg) {
 				try {
-					console.log(arg);
 					const { data } = await arg.queryFulfilled;
 
 					setSessionStorage("token", data.data?.token);

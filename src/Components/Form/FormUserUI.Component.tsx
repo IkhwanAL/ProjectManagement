@@ -64,7 +64,13 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 					.then(() => {
 						refetch();
 					})
-					.catch(console.log);
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
 			}
 		}
 	}, [isError]);
@@ -79,12 +85,11 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 	};
 
 	const OnSave = () => {
-		console.log(user);
 		if (user?.id) {
 			const { id, ...rest } = user;
-			PatchUser(rest).unwrap().catch(console.log);
+			PatchUser(rest).unwrap();
 		} else {
-			PatchUser(user).unwrap().catch(console.log);
+			PatchUser(user).unwrap();
 		}
 	};
 
@@ -117,12 +122,18 @@ export default function FormUserUI({ setModal }: ModalPropsUI) {
 					.then(() => {
 						if (user?.id) {
 							const { id, ...rest } = user;
-							PatchUser(rest).unwrap().catch(console.log);
+							PatchUser(rest).unwrap();
 						} else {
-							PatchUser(user).unwrap().catch(console.log);
+							PatchUser(user).unwrap();
 						}
 					})
-					.catch(console.log);
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
 			} else {
 				setErrorState({
 					...errorState,

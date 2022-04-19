@@ -131,7 +131,13 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 
 						ChangePs(rest);
 					})
-					.catch(console.log);
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
 			} else {
 				setErrorState({
 					error: true,

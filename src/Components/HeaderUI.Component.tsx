@@ -3,7 +3,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import React, { Fragment, useState } from "react";
 import Logo from "../assets/Logo500X500.svg";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
@@ -18,6 +18,7 @@ import {
 } from "../redux/user/userApi";
 import { AirlineSeatLegroomExtraRounded } from "@mui/icons-material";
 import ProyekModal from "./Modal/ProyekModal.Component";
+import { proyekSelector, ResetIdProyek } from "../redux/project/projectSlice";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -40,9 +41,11 @@ export default function HeaderUI() {
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const idProject = useSelector(proyekSelector);
+
 	const [modal, setModal] = useState<boolean>(false);
 	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
-	const [modalProyek, setModalProyek] = useState<boolean>(true);
+	const [modalProyek, setModalProyek] = useState<boolean>(false);
 	const [activated, setActive] = useState<string>("Home");
 	const { confirm, setConfirm, onHandle } = useConfirm(false);
 
@@ -74,6 +77,8 @@ export default function HeaderUI() {
 		if (value) {
 			navigate(value.href);
 		}
+
+		dispatch(ResetIdProyek());
 		return 0;
 	};
 
@@ -98,7 +103,6 @@ export default function HeaderUI() {
 				navigate("/", { replace: true });
 			})
 			.catch((e) => {
-				console.log(e);
 				setLoad(false);
 			});
 	};
@@ -247,7 +251,7 @@ export default function HeaderUI() {
 											leaveFrom="transform opacity-100 scale-100"
 											leaveTo="transform opacity-0 scale-95"
 										>
-											<Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+											<Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
 												<Menu.Item>
 													{({ active }: any) => (
 														<div
@@ -357,7 +361,11 @@ export default function HeaderUI() {
 				closeModal={OnHandleMOdalChangePass}
 				isOpen={modalChangeps}
 			/>
-			<ProyekModal setModal={OnHandleModalProyek} modal={modalProyek} />
+			<ProyekModal
+				setModal={OnHandleModalProyek}
+				modal={modalProyek}
+				projectId={idProject.id}
+			/>
 		</>
 	);
 }

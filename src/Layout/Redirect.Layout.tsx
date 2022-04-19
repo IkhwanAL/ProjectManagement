@@ -32,7 +32,15 @@ export const RedirectToVerify = () => {
 	const onOk = () => {
 		const q = verify.get("_q") as string;
 
-		Verify({ q: q }).unwrap().catch(console.log);
+		Verify({ q: q })
+			.unwrap()
+			.catch(() => {
+				setErrorState({
+					error: true,
+					head: "Gagal memverifikasi!",
+					msg: "Terjadi Kesalahan Pada Server",
+				});
+			});
 	};
 
 	const onCancel = () => {

@@ -6,9 +6,9 @@ import HeaderUI from "../Components/HeaderUI.Component";
 import { userSelector } from "../redux/user/userSlice";
 
 const Dashboard = () => {
-	// const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const user = useSelector(userSelector);
+
 	useEffect(() => {
 		if (!user.isLogin) {
 			navigate("/", { replace: true });
@@ -16,10 +16,12 @@ const Dashboard = () => {
 		}
 		return () => {};
 	}, []);
+
 	return (
 		<>
 			<div className="h-full m-auto p-auto flex-col">
 				<HeaderUI />
+
 				<Outlet />
 				<Footer />
 			</div>

@@ -1,65 +1,65 @@
 [
     {
-        "id": 1,
+        "projectId": 1,
         "projectName": "ABC",
-        "dueDate": "2022-09-12",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-12",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 2,
+        "projectId": 2,
         "projectName": "ACFS",
-        "dueDate": "2022-09-09",
-        "owner": "THEN",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-09",
+        "userOwner": "THEN",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 3,
+        "projectId": 3,
         "projectName": "FAW",
-        "dueDate": "2022-09-01",
-        "owner": "We",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-01",
+        "userOwner": "We",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 4,
+        "projectId": 4,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 5,
+        "projectId": 5,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 6,
+        "projectId": 6,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 7,
+        "projectId": 7,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 8,
+        "projectId": 8,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     },
     {
-        "id": 9,
+        "projectId": 9,
         "projectName": "ABC",
-        "dueDate": "2022-09-10",
-        "owner": "You",
-        "description": "Test ABC Data"
+        "deadlineInString": "2022-09-10",
+        "userOwner": "You",
+        "projectDescription": "Test ABC Data"
     }
 ]

@@ -4,3 +4,9 @@ export interface ProyekForm {
 }
 
 export interface ProyekValueState extends Partial<ProyekForm> {}
+
+export interface IProyek {
+	values: {
+		id?: number;
+	};
+}

@@ -10,7 +10,6 @@
 // 		refetchOnReconnect: true,
 // 	});
 // 	const [user, setUser] = React.useState<user>();
-// 	console.log(document.cookie);
 // 	React.useEffect(() => {
 // 		if (data) {
 // 			setUser({

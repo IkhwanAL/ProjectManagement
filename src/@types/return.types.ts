@@ -8,3 +8,21 @@ export interface ISuccess<T> {
 export interface LoginSuksesData {
 	token: string;
 }
+
+export interface GetProjectReturn {
+	user: {
+		username: string;
+	};
+	projectId: number;
+	projectName: string;
+	deadline: Date;
+	projectDescription: string;
+	deadlineInString: string;
+	userteam: {
+		user: {
+			username: string;
+		};
+	}[];
+}
+
+export type GetAllProjectReturn = GetProjectReturn[];
