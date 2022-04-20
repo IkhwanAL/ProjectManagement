@@ -1,13 +1,19 @@
+import React from "react";
+import { useDispatch } from "react-redux";
 import CardProject from "../Components/Card.Component";
 import { useGetAllProjectQuery } from "../redux/project/projectApi";
-import Data from "../_mock/_recent.json";
+import { ResetIdProyek } from "../redux/project/projectSlice";
 
 const MAX_NUMBER = 4;
 const RecentPage = () => {
 	const { data, isLoading, isFetching } = useGetAllProjectQuery(null, {
 		pollingInterval: 100 * 60,
 	});
-	console.log(data);
+	const dispatch = useDispatch();
+
+	React.useEffect(() => {
+		dispatch(ResetIdProyek());
+	}, []);
 	return (
 		<>
 			<div className={`flex-col`}>

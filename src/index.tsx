@@ -1,5 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
@@ -39,7 +41,9 @@ ReactDOM.render(
 		<BrowserRouter>
 			<React.StrictMode>
 				<ThemeProvider theme={theme}>
-					<App />
+					<DndProvider backend={HTML5Backend}>
+						<App />
+					</DndProvider>
 				</ThemeProvider>
 			</React.StrictMode>
 		</BrowserRouter>

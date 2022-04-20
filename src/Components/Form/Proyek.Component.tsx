@@ -3,9 +3,6 @@ import {
 	Box,
 	Button,
 	FormControl,
-	Grid,
-	InputLabel,
-	InputLabelProps,
 	Stack,
 	TextField,
 	Typography,
@@ -15,11 +12,13 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { QueryArgProject } from "../../@types/arg.types";
 import { useError } from "../../hooks/useError";
+import { useSuccess } from "../../hooks/useSuccess";
 import { ModalPropsUI } from "../../Props/Modal.property";
 import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
 import {
 	useCreateProjectMutation,
 	usePatchProjectMutation,
+	useLazyGetOneProjectNoCalcQuery,
 } from "../../redux/project/projectApi";
 import { SetIdProyek } from "../../redux/project/projectSlice";
 import AnyModal from "../Modal/Any.Component";
@@ -34,7 +33,9 @@ export default function ProyekForm({
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 
-	const initial: QueryArgProject & { projectId?: number } = {
+	const [triggerGetProyek] = useLazyGetOneProjectNoCalcQuery();
+
+	const initial: Partial<QueryArgProject & { projectId?: number }> = {
 		projectId: projectId ? projectId : undefined,
 		projectName: "",
 		projectDescription: "",
@@ -42,25 +43,39 @@ export default function ProyekForm({
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
 	const { setErrorState, errorState } = useError({ error: false });
-	const [proyek, setProyek] = React.useState<
-		QueryArgProject & { projectId?: number }
-	>(initial);
+	const { successState, setSuccessState } = useSuccess({ error: true });
+
+	const [proyek, setProyek] =
+		React.useState<Partial<QueryArgProject & { projectId?: number }>>(
+			initial
+		);
 
 	const OnChangeTextField = (
 		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
 		setProyek((prev) => ({ ...prev, [ev.target.name]: ev.target.value }));
 	};
-	console.log(proyek);
+
 	React.useEffect(() => {
 		if (CreateHooks.isSuccess) {
 			const id = CreateHooks.data.data?.projectId;
 			dispatch(SetIdProyek(id));
+			setSuccessState({
+				error: false,
+				head: "Berhasil",
+				msg: "Berhasil Membuat ",
+			});
 			setModal("asd");
 			navigate(`project/detail/${id}`);
 		}
 		if (PatchHooks.isSuccess) {
+			setSuccessState({
+				error: false,
+				head: "Berhasil",
+				msg: "Berhasil Memperbarui",
+			});
 			dispatch(SetIdProyek(PatchHooks.data.data?.projectId));
 		}
 	}, [CreateHooks.isSuccess, PatchHooks.isSuccess]);
@@ -91,6 +106,7 @@ export default function ProyekForm({
 							error: true,
 							head: "Gagal Memperbarui Data",
 							msg: "Terjadi Kesalahan Pada Server",
+							action: () => navigate("/", { replace: true }),
 						});
 					});
 			} else {
@@ -113,8 +129,52 @@ export default function ProyekForm({
 		}
 	};
 
+	React.useEffect(() => {
+		if (projectId) {
+			triggerGetProyek(projectId, false)
+				.unwrap()
+				.then((res) => {
+					setProyek({
+						projectId: res.data?.projectId,
+						projectName: res.data?.projectName,
+						projectDescription: res.data?.projectDescription,
+					});
+				})
+				.catch(console.warn);
+		}
+	}, []);
+
+	const OnCloseErrorModal = () => {
+		setErrorState({
+			error: false,
+			head: undefined,
+			msg: undefined,
+		});
+	};
+
+	const OnCloseSuccessErrorModal = () => {
+		setSuccessState({
+			error: true,
+			head: null,
+			msg: null,
+		});
+	};
+
 	return (
 		<>
+			<AnyModal
+				isOpen={errorState.error}
+				closeModal={OnCloseErrorModal}
+				head={errorState.head as string}
+				msg={errorState.msg as string}
+			/>
+
+			<AnyModal
+				isOpen={!successState.error}
+				closeModal={OnCloseSuccessErrorModal}
+				head={successState.head as string}
+				msg={successState.msg as string}
+			/>
 			<Box
 				display="flex"
 				justifyContent="center"
@@ -160,7 +220,6 @@ export default function ProyekForm({
 							}}
 							multiline
 							rows={3}
-							maxRows={4}
 						/>
 					</FormControl>
 				</Stack>

@@ -117,19 +117,20 @@ export const OneProject = () => {
 											</label>
 											<select
 												name=""
+												defaultValue={""}
 												id=""
 												className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
 											>
-												<option selected>
+												<option value="">
 													-Pilih Kegiatan Sebelumnya-
 												</option>
-												<option value="">
+												<option value="A">
 													Kegiatan A
 												</option>
-												<option value="">
+												<option value="B">
 													Kegiatan B
 												</option>
-												<option value="">
+												<option value="C">
 													Kegiatan C
 												</option>
 											</select>
@@ -189,6 +190,7 @@ export const OneProject = () => {
 			</Transition.Root>
 			<div className="w-full h-screen max-w-7xl mx-auto">
 				<div className="grid grid-cols-4">
+					{/* Start To Do */}
 					<div>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
@@ -221,6 +223,8 @@ export const OneProject = () => {
 							</div>
 						</div>
 					</div>
+					{/* End Todo */}
+					{/* Start Doing */}
 					<div>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
@@ -232,6 +236,8 @@ export const OneProject = () => {
 							</div>
 						</div>
 					</div>
+					{/* End Doing */}
+					{/* Start Review */}
 					<div>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
@@ -245,6 +251,8 @@ export const OneProject = () => {
 							</div>
 						</div>
 					</div>
+					{/* End Review */}
+					{/* Start Done */}
 					<div>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
@@ -256,6 +264,7 @@ export const OneProject = () => {
 							</div>
 						</div>
 					</div>
+					{/* End Done */}
 				</div>
 			</div>
 		</>

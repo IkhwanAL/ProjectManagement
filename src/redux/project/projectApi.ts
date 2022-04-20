@@ -4,7 +4,10 @@ import { Environtment } from "..";
 import { RootState } from "../../app/store";
 import { project } from "../../@types/database.types";
 import { QueryArgProject } from "../../@types/arg.types";
-import { GetAllProjectReturn } from "../../@types/return.types";
+import {
+	GetAllProjectReturn,
+	GetProjectSmall,
+} from "../../@types/return.types";
 
 const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
@@ -27,7 +30,7 @@ export const ProjectApi = createApi({
 	endpoints: (builder) => ({
 		CreateProject: builder.mutation<
 			ISuccess<project>,
-			QueryArgProject & { projectId?: number }
+			Partial<QueryArgProject & { projectId?: number }>
 		>({
 			query: (data) => {
 				return {
@@ -40,12 +43,12 @@ export const ProjectApi = createApi({
 		}),
 		PatchProject: builder.mutation<
 			ISuccess<project>,
-			QueryArgProject & { projectId?: number }
+			Partial<QueryArgProject & { projectId?: number }>
 		>({
-			query: (data) => {
+			query: ({ projectId, ...rest }) => {
 				return {
-					url: "/project",
-					body: data,
+					url: `/project/${projectId}`,
+					body: rest,
 					credentials: "include",
 					method: "PATCH",
 				};
@@ -60,6 +63,15 @@ export const ProjectApi = createApi({
 				};
 			},
 		}),
+		GetOneProjectNoCalc: builder.query<ISuccess<GetProjectSmall>, number>({
+			query: (data) => {
+				return {
+					url: `/project/get/${data}`,
+					credentials: "include",
+					method: "GET",
+				};
+			},
+		}),
 	}),
 });
 
@@ -67,4 +79,5 @@ export const {
 	useCreateProjectMutation,
 	usePatchProjectMutation,
 	useGetAllProjectQuery,
+	useLazyGetOneProjectNoCalcQuery,
 } = ProjectApi;
