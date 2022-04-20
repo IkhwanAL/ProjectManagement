@@ -25,3 +25,10 @@ export interface InfoModalProps {
 	onAccept?: (ev: any) => void;
 	loading?: boolean;
 }
+
+export interface ProyekKegiatanProps {
+	isOpen: boolean;
+	handleShow: (arg?: any) => void;
+	idProjectActivity?: number;
+	ActivityName: string;
+}
