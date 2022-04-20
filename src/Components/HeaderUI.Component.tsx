@@ -237,7 +237,7 @@ export default function HeaderUI() {
 												</span>
 												<img
 													className="h-8 w-8 rounded-full"
-													src={`https://ui-avatars.com/api/?name=Ikhwan`}
+													src={`https://ui-avatars.com/api/?name=😂`}
 													alt=""
 												/>
 											</Menu.Button>

@@ -14,6 +14,7 @@ const Dashboard = () => {
 			navigate("/", { replace: true });
 			return () => {};
 		}
+
 		return () => {};
 	}, []);
 
@@ -21,7 +22,6 @@ const Dashboard = () => {
 		<>
 			<div className="h-full m-auto p-auto flex-col">
 				<HeaderUI />
-
 				<Outlet />
 				<Footer />
 			</div>

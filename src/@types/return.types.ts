@@ -25,4 +25,10 @@ export interface GetProjectReturn {
 	}[];
 }
 
+export interface GetProjectSmall {
+	projectId?: number;
+	projectName?: string;
+	projectDescription?: string;
+}
+
 export type GetAllProjectReturn = GetProjectReturn[];
