@@ -1,5 +1,5 @@
 import React from "react";
-import { Msg } from "../@types/error.types";
+import { Msg } from "../types/error.types";
 
 export function useSuccess(successMsg: Msg) {
 	const [successState, setSuccessState] = React.useState<Msg>(successMsg);

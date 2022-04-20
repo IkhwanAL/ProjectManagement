@@ -21,6 +21,17 @@ export type project = {
 	updatedAt: Date | null;
 };
 
+export type PReturn = {
+	projectId: number;
+	projectName: string;
+	projectDescription: string;
+	deadline: Date | null;
+	deadlineInString: string | null;
+	user: {
+		username: string;
+	};
+	userteam: Array<{ user: { username: string } }>;
+};
 export type projectactivity = {
 	projectActivityId: number;
 	projectId: number;

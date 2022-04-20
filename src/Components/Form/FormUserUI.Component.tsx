@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
-import { user } from "../../@types/database.types";
+import { user } from "../../types/database.types";
 import { useError } from "../../hooks/useError";
 import { useSuccess } from "../../hooks/useSuccess";
 import { ModalPropsUI } from "../../Props/Modal.property";

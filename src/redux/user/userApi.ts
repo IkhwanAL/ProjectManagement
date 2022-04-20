@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess } from "../../interface/return.interface";
-import { user } from "../../@types/database.types";
+import { user } from "../../types/database.types";
 import { Environtment } from "..";
 import { RootState } from "../../app/store";
 // import { getSessionStorage } from "../../Util/SessionStorage";

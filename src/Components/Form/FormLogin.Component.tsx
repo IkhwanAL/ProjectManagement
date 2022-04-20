@@ -6,7 +6,7 @@ import {
 	useNavigate,
 	useSearchParams,
 } from "react-router-dom";
-import { QueryArgLogin } from "../../@types/arg.types";
+import { QueryArgLogin } from "../../types/arg.types";
 import { useError } from "../../hooks/useError";
 import { useSuccess } from "../../hooks/useSuccess";
 import {

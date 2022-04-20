@@ -1,5 +1,5 @@
 import React from "react";
-import { Msg } from "../@types/error.types";
+import { Msg } from "../types/error.types";
 
 export function useError(errorMsg: Msg & { action?: () => void | null }) {
 	const [errorState, setErrorState] = React.useState<

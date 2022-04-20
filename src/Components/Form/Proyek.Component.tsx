@@ -10,7 +10,7 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { QueryArgProject } from "../../@types/arg.types";
+import { QueryArgProject } from "../../types/arg.types";
 import { useError } from "../../hooks/useError";
 import { useSuccess } from "../../hooks/useSuccess";
 import { ModalPropsUI } from "../../Props/Modal.property";

@@ -25,3 +25,5 @@ export type ProjecType = project & {
 export type ProjectActivityType = projectactivity & {
 	subdetailprojectactivity: subdetailprojectactivity[];
 };
+
+export type ActProject = projectactivity & { handleShow?: (arg?: any) => void };

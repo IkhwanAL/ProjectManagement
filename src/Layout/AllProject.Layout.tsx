@@ -24,12 +24,15 @@ const ProjectPage = () => {
 						{data?.data?.map((x) => {
 							return (
 								<CardProject
-									owner={x.user.username}
+									user={{ username: x.user.username }}
 									key={"" + x.projectId}
-									id={x.projectId}
-									description={x.projectDescription}
-									dueDate={x.deadlineInString}
+									projectId={x.projectId}
+									projectDescription={x.projectDescription}
+									deadline={x.deadline}
 									projectName={x.projectName}
+									recent={true}
+									deadlineInString={x.deadlineInString}
+									userteam={x.userteam}
 								/>
 							);
 						})}

@@ -1,12 +1,13 @@
+import moment from "moment";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { ProjectData } from "../Props/Project.property";
+import { useNavigate } from "react-router-dom";
 import { SetIdProyek } from "../redux/project/projectSlice";
+import { PReturn } from "../types/database.types";
 
-const CardProject = (project: ProjectData) => {
+const CardProject = (project: PReturn & { recent: boolean }) => {
 	const link = project.recent
-		? `project/detail/${project.id}`
-		: `detail/${project.id}`;
+		? `project/detail/${project.projectId}`
+		: `detail/${project.projectId}`;
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -18,7 +19,10 @@ const CardProject = (project: ProjectData) => {
 
 	return (
 		<div className="text-black max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-white p-4 py-5 px-5 rounded-xl shadow-md hover:shadow-lg hover:shadow-gray-400 ">
-			<button onClick={() => OnHandleProyek(project.id)}>
+			<button
+				onClick={() => OnHandleProyek(project.projectId)}
+				className="w-full	"
+			>
 				<div className="flex justify-between">
 					<div>
 						<h2 className="text-lg"> {project.projectName} </h2>
@@ -48,17 +52,19 @@ const CardProject = (project: ProjectData) => {
 					</div>
 				</div>
 				<div className="mt-5 flex justify-between items-center w-52">
-					<span>{project.description}</span>
+					<span>{project.projectDescription}</span>
 				</div>
-				<div className="flex justify-between mt-5 w-48 ">
+				<div className="flex justify-between mt-5  w-full">
 					<div>
 						<h3 className="text-xs"> Owner </h3>
-						<p className="font-bold"> {project.owner} </p>
+						<p className="font-bold"> {project.user.username} </p>
 					</div>
 					<div>
-						<h3 className="text-xs"> Due Date </h3>
+						<h3 className="text-xs mr-auto"> Due Date </h3>
 						<p className="font-bold">
-							{project.dueDate ? project.dueDate : " "}
+							{project.deadline
+								? moment(project.deadline).format("LL")
+								: " "}
 						</p>
 					</div>
 				</div>

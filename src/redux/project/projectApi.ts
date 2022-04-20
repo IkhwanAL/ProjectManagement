@@ -2,12 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess } from "../../interface/return.interface";
 import { Environtment } from "..";
 import { RootState } from "../../app/store";
-import { project } from "../../@types/database.types";
-import { QueryArgProject } from "../../@types/arg.types";
-import {
-	GetAllProjectReturn,
-	GetProjectSmall,
-} from "../../@types/return.types";
+import { project } from "../../types/database.types";
+import { QueryArgProject } from "../../types/arg.types";
+import { GetAllProjectReturn, GetProjectSmall } from "../../types/return.types";
 
 const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
@@ -62,6 +59,7 @@ export const ProjectApi = createApi({
 					method: "GET",
 				};
 			},
+			keepUnusedDataFor: 0,
 		}),
 		GetOneProjectNoCalc: builder.query<ISuccess<GetProjectSmall>, number>({
 			query: (data) => {

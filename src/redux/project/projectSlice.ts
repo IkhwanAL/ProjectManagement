@@ -9,7 +9,7 @@ const InitialState: IProyek = {
 };
 
 export const ProyekSlice = createSlice({
-	name: "users",
+	name: "Proyek",
 	initialState: InitialState,
 	reducers: {
 		SetIdProyek: (state, action) => {

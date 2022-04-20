@@ -11,6 +11,13 @@ const RecentPage = () => {
 	});
 	const dispatch = useDispatch();
 
+	// const [position, setPosition] = React.useState({
+	// 	To_Do: [],
+	// 	Doing: [],
+	// 	Review: [],
+	// 	Done: [],
+	// });
+
 	React.useEffect(() => {
 		dispatch(ResetIdProyek());
 	}, []);
@@ -25,13 +32,15 @@ const RecentPage = () => {
 						{data?.data?.map((x) => {
 							return (
 								<CardProject
-									owner={x.user.username}
-									key={"" + x.projectId}
-									id={x.projectId}
-									description={x.projectDescription}
-									dueDate={x.deadlineInString}
-									projectName={x.projectName}
+									user={{ username: x?.user?.username }}
+									key={"" + x?.projectId}
+									projectId={x?.projectId}
+									projectDescription={x?.projectDescription}
+									deadline={x?.deadline}
+									projectName={x?.projectName}
 									recent={true}
+									deadlineInString={x?.deadlineInString}
+									userteam={x?.userteam}
 								/>
 							);
 						})}

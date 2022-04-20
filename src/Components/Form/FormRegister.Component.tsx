@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { QueryArgRegister } from "../../@types/arg.types";
+import { QueryArgRegister } from "../../types/arg.types";
 import { useError } from "../../hooks/useError";
 import { UserRegister } from "../../Props/User.property";
 import { useRegisterMutation } from "../../redux/auth/authApi";

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
-import { QueryArgLogin } from "../../@types/arg.types";
+import { QueryArgLogin } from "../../types/arg.types";
 import { Environtment } from "..";
 import { SetLogin, SetTokenParams } from "../user/userSlice";
 import { setSessionStorage } from "../../Util/SessionStorage";
