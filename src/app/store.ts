@@ -7,6 +7,7 @@ import proyekReducer from "../redux/project/projectSlice";
 import proyekActivitiesReducer from "../redux/projectActivity/projectActivitySlice";
 import { UserApi } from "../redux/user/userApi";
 import { ProjectApi } from "../redux/project/projectApi";
+import { ProjectActApi } from "../redux/projectActivity/projectActivityApi";
 
 const rootReducer = combineReducers({
 	User: userReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
 	[AuthApi.reducerPath]: AuthApi.reducer,
 	[UserApi.reducerPath]: UserApi.reducer,
 	[ProjectApi.reducerPath]: ProjectApi.reducer,
+	[ProjectActApi.reducerPath]: ProjectActApi.reducer,
 });
 
 export const store = configureStore({
@@ -28,6 +30,7 @@ export const store = configureStore({
 		AuthApi.middleware,
 		UserApi.middleware,
 		ProjectApi.middleware,
+		ProjectActApi.middleware,
 	],
 	devTools: true,
 });

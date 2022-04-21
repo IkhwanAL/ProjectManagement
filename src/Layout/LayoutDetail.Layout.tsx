@@ -7,6 +7,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { OneProject } from "./OneProject.Layout";
+import { TabContext } from "@mui/lab";
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -26,11 +27,7 @@ function TabPanel(props: TabPanelProps) {
 			aria-labelledby={`full-width-tab-${index}`}
 			{...other}
 		>
-			{value === index && (
-				<Box sx={{ p: 3 }}>
-					<Typography>{children}</Typography>
-				</Box>
-			)}
+			{value === index && <Box sx={{ p: 3 }}>{children}</Box>}
 		</div>
 	);
 }
@@ -48,6 +45,7 @@ export default function LayoutDetailProyek() {
 
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
+		event.stopPropagation();
 	};
 
 	const handleChangeIndex = (index: number) => {
@@ -69,18 +67,22 @@ export default function LayoutDetailProyek() {
 					<Tab label="Gantt Chart" {...a11yProps(1)} />
 				</Tabs>
 			</AppBar>
-			<SwipeableViews
+			{/* <SwipeableViews
 				axis={theme.direction === "rtl" ? "x-reverse" : "x"}
 				index={value}
 				onChangeIndex={handleChangeIndex}
-			>
+			> */}
+			{/* <Tabs value={value} textColor="inherit"> */}
+			<Box>
 				<TabPanel value={value} index={0} dir={theme.direction}>
 					<OneProject />
 				</TabPanel>
 				<TabPanel value={value} index={1} dir={theme.direction}>
 					Item Two
 				</TabPanel>
-			</SwipeableViews>
+			</Box>
+			{/* </Tabs> */}
+			{/* </SwipeableViews> */}
 		</Box>
 	);
 }

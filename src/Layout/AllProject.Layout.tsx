@@ -30,7 +30,7 @@ const ProjectPage = () => {
 									projectDescription={x.projectDescription}
 									deadline={x.deadline}
 									projectName={x.projectName}
-									recent={true}
+									recent={false}
 									deadlineInString={x.deadlineInString}
 									userteam={x.userteam}
 								/>

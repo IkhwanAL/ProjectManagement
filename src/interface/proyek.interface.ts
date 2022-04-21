@@ -1,5 +1,3 @@
-import { projectactivity } from "../types/database.types";
-
 export interface ProyekForm {
 	projectName: string;
 	projectDescription: string;

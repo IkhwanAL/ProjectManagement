@@ -41,9 +41,9 @@ ReactDOM.render(
 		<BrowserRouter>
 			<React.StrictMode>
 				<ThemeProvider theme={theme}>
-					<DndProvider backend={HTML5Backend}>
-						<App />
-					</DndProvider>
+					{/* <DndProvider backend={HTML5Backend}> */}
+					<App />
+					{/* </DndProvider> */}
 				</ThemeProvider>
 			</React.StrictMode>
 		</BrowserRouter>

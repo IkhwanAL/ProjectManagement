@@ -140,7 +140,7 @@ export default function ProyekForm({
 						projectDescription: res.data?.projectDescription,
 					});
 				})
-				.catch(console.warn);
+				.catch(console.log);
 		}
 	}, []);
 

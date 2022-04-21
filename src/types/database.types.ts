@@ -42,10 +42,10 @@ export type projectactivity = {
 	timeToComplete: number;
 	status: boolean;
 	description: string;
-	parent: string | null;
-	child: string | null;
-	createdAt: Date | null;
-	updatedAt: Date | null;
+	parent?: string | null;
+	child?: string | null;
+	createdAt?: Date | null;
+	updatedAt?: Date | null;
 };
 
 export type subdetailprojectactivity = {

@@ -11,13 +11,6 @@ const RecentPage = () => {
 	});
 	const dispatch = useDispatch();
 
-	// const [position, setPosition] = React.useState({
-	// 	To_Do: [],
-	// 	Doing: [],
-	// 	Review: [],
-	// 	Done: [],
-	// });
-
 	React.useEffect(() => {
 		dispatch(ResetIdProyek());
 	}, []);

@@ -22,8 +22,17 @@ export type ProjecType = project & {
 	})[];
 };
 
+export type ProjectActicityForState = projectactivity & {
+	f?: number;
+	critical?: boolean;
+	subdetailprojectactivity?: subdetailprojectactivity[];
+};
+
 export type ProjectActivityType = projectactivity & {
 	subdetailprojectactivity: subdetailprojectactivity[];
 };
 
-export type ActProject = projectactivity & { handleShow?: (arg?: any) => void };
+export type ActProject = ProjectActicityForState & {
+	handleShow?: (arg?: any) => void;
+	userteam?: Partial<userteam & { user: { username: string } }>[];
+};

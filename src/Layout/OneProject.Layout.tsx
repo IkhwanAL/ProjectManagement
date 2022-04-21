@@ -1,104 +1,191 @@
-import { useParams } from "react-router-dom";
-import { PencilIcon, PlusIcon } from "@heroicons/react/solid";
-
-import { Fragment, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/outline";
+import { useNavigate, useParams } from "react-router-dom";
+import { useLazyRefreshTokenQuery } from "../redux/auth/authApi";
+import React, { useState } from "react";
 import { useGetOneProjectActQuery } from "../redux/projectActivity/projectActivityApi";
+import { projectactivity_position } from "../types/database.types";
+import { ProjectActicityForState } from "../types/project.types";
+import { GridPosition } from "../Components/PositionGrid.Component";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { useSuccess } from "../hooks/useSuccess";
+import { useError } from "../hooks/useError";
+export interface StateActivityProject {
+	[key: string]: Array<ProjectActicityForState>;
+	// Doing: Array<ProjectActicityForState>;
+	// Review: Array<ProjectActicityForState>;
+	// Done: Array<ProjectActicityForState>;
+}
 
 export const OneProject = () => {
 	const { idProject } = useParams();
-	const { currentData } = useGetOneProjectActQuery(
+	const navigate = useNavigate();
+	const {
+		currentData,
+		data,
+		isFetching,
+		isSuccess,
+		isError,
+		error,
+		refetch,
+	} = useGetOneProjectActQuery(
 		{ idProject: parseInt(idProject as string) },
 		{
 			refetchOnMountOrArgChange: true,
+			refetchOnFocus: true,
 		}
 	);
+	const [triggerRefresh] = useLazyRefreshTokenQuery();
 	const [open, setOpen] = useState(false);
+	const { errorState, setErrorState } = useError({ error: false });
+	const { successState, setSuccessState } = useSuccess({ error: true });
 
-	console.log(currentData);
+	const intialState: StateActivityProject = {
+		To_Do: [],
+		Doing: [],
+		Review: [],
+		Done: [],
+	};
+
+	const [positionData, setPositionData] = React.useState(intialState);
+
+	const handleShow = () => {
+		setOpen((prev) => !prev);
+	};
+
+	React.useEffect(() => {
+		if (isSuccess) {
+			const d = data?.data?.projectactivity;
+
+			let payload: StateActivityProject = {
+				To_Do: [],
+				Doing: [],
+				Review: [],
+				Done: [],
+			};
+
+			if (d) {
+				for (const iterator of d) {
+					payload[iterator.position].push(iterator);
+				}
+
+				setPositionData(payload);
+			}
+		}
+	}, [isSuccess]);
+
+	React.useEffect(() => {
+		const err = error as { [key: string]: any };
+		if (isError) {
+			if (err?.status === "FETCH_ERROR") {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: "Terjadi Kesalahan Pada jaringan",
+				});
+			} else if (err?.data?.data?.name === "TokenExpire") {
+				triggerRefresh(null, true)
+					.unwrap()
+					.then(() => {
+						refetch();
+					})
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+							action: () => navigate("/", { replace: true }),
+						});
+					});
+			} else {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: err.data.message ?? "Terjadi Kesalahan Pada Server",
+				});
+			}
+		}
+	}, [isError]);
+
+	const onDragEnd = (result: DropResult) => {
+		const { destination, source } = result;
+
+		if (!destination) {
+			return;
+		}
+
+		if (
+			destination.droppableId === source.droppableId &&
+			destination.index === source.index
+		) {
+			return;
+		}
+
+		// Cari Data
+		const sourceData = positionData[source.droppableId].filter(
+			(x) => x.projectActivityId === source.index
+		)[0];
+
+		setPositionData((prev) => ({
+			...prev,
+			[destination.droppableId]: [
+				...prev[destination.droppableId],
+				sourceData,
+			],
+		}));
+
+		setPositionData((prev) => ({
+			...prev,
+			[source.droppableId]: prev[source.droppableId].filter(
+				(x) => x.projectActivityId !== source.index
+			),
+		}));
+	};
 
 	return (
 		<>
-			<div className="w-full h-screen max-w-7xl mx-auto">
-				<div className="grid grid-cols-4">
-					{/* Start To Do */}
-					<div>
-						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-							<div className="flex justify-between items-center">
-								<div></div>
-								<h3 className="text-center font-bold">To Do</h3>
-								<button onClick={() => setOpen(true)}>
-									<PlusIcon width={20} />
-								</button>
-							</div>
-
-							<div className="bg-white p-3 mt-5 rounded-xl">
-								<div className="flex justify-between">
-									<h4 className="font-bold">Create UI/UX</h4>
-									<button onClick={() => setOpen(true)}>
-										Edit
-									</button>
-								</div>
-								<p className="text-gray-600">
-									Dekripsi Singkat
-								</p>
-
-								<div className="mt-3">
-									<p className="text-gray-600 mb-2">
-										Progress
-									</p>
-									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-										<div className="bg-blue-600 h-2.5 rounded-full w-1/2"></div>
-									</div>
-								</div>
-							</div>
-						</div>
+			<DragDropContext onDragEnd={onDragEnd}>
+				<div className="w-full h-screen max-w-7xl mx-auto">
+					<div className="grid grid-cols-4">
+						{/* Start To Do */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.To_Do}
+							positionDesc="To Do"
+							positionData={positionData.To_Do}
+							key={"" + 1}
+						/>
+						{/* End Todo */}
+						{/* Start Doing */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Doing}
+							positionDesc={"Doing"}
+							positionData={positionData.Doing}
+							key={"" + 2}
+						/>
+						{/* End Doing */}
+						{/* Start Review */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Review}
+							positionDesc={"Review"}
+							positionData={positionData.Review}
+							key={"" + 3}
+						/>
+						{/* End Review */}
+						{/* Start Done */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Done}
+							positionDesc={"Review"}
+							positionData={positionData.Done}
+							key={"" + 4}
+						/>
+						{/* End Done */}
 					</div>
-					{/* End Todo */}
-					{/* Start Doing */}
-					<div>
-						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-							<div className="flex justify-between items-center">
-								<div></div>
-								<h3 className="text-center font-bold">Doing</h3>
-								<button onClick={() => setOpen(true)}>
-									<PlusIcon width={20} />
-								</button>
-							</div>
-						</div>
-					</div>
-					{/* End Doing */}
-					{/* Start Review */}
-					<div>
-						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-							<div className="flex justify-between items-center">
-								<div></div>
-								<h3 className="text-center font-bold">
-									Review
-								</h3>
-								<button onClick={() => setOpen(true)}>
-									<PlusIcon width={20} />
-								</button>
-							</div>
-						</div>
-					</div>
-					{/* End Review */}
-					{/* Start Done */}
-					<div>
-						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-							<div className="flex justify-between items-center">
-								<div></div>
-								<h3 className="text-center font-bold">Done</h3>
-								<button onClick={() => setOpen(true)}>
-									<PlusIcon width={20} />
-								</button>
-							</div>
-						</div>
-					</div>
-					{/* End Done */}
 				</div>
-			</div>
+			</DragDropContext>
 		</>
 	);
 };
