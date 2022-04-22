@@ -1,13 +1,17 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useLazyRefreshTokenQuery } from "../redux/auth/authApi";
 import React, { useState } from "react";
-import { useGetOneProjectActQuery } from "../redux/projectActivity/projectActivityApi";
+import {
+	useGetOneProjectActQuery,
+	useMoveActivityPositionMutation,
+} from "../redux/projectActivity/projectActivityApi";
 import { projectactivity_position } from "../types/database.types";
 import { ProjectActicityForState } from "../types/project.types";
 import { GridPosition } from "../Components/PositionGrid.Component";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useSuccess } from "../hooks/useSuccess";
 import { useError } from "../hooks/useError";
+import { MoveStateReturn } from "../interface/proyek.interface";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 	// Doing: Array<ProjectActicityForState>;
@@ -34,6 +38,7 @@ export const OneProject = () => {
 		}
 	);
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
+	const [Move, MoveHooks] = useMoveActivityPositionMutation();
 	const [open, setOpen] = useState(false);
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
@@ -126,20 +131,30 @@ export const OneProject = () => {
 			(x) => x.projectActivityId === source.index
 		)[0];
 
-		setPositionData((prev) => ({
-			...prev,
-			[destination.droppableId]: [
-				...prev[destination.droppableId],
-				sourceData,
-			],
-		}));
+		const payload = {
+			projectActivityId: sourceData.projectActivityId,
+			position: destination.droppableId,
+		} as MoveStateReturn;
 
-		setPositionData((prev) => ({
-			...prev,
-			[source.droppableId]: prev[source.droppableId].filter(
-				(x) => x.projectActivityId !== source.index
-			),
-		}));
+		Move(payload)
+			.unwrap()
+			.then(() => {
+				setPositionData((prev) => ({
+					...prev,
+					[destination.droppableId]: [
+						...prev[destination.droppableId],
+						sourceData,
+					],
+				}));
+
+				setPositionData((prev) => ({
+					...prev,
+					[source.droppableId]: prev[source.droppableId].filter(
+						(x) => x.projectActivityId !== source.index
+					),
+				}));
+			})
+			.catch(console.error);
 	};
 
 	return (
@@ -178,7 +193,7 @@ export const OneProject = () => {
 						<GridPosition
 							handleShow={handleShow}
 							positionName={projectactivity_position.Done}
-							positionDesc={"Review"}
+							positionDesc={"Done	"}
 							positionData={positionData.Done}
 							key={"" + 4}
 						/>

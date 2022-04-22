@@ -200,7 +200,7 @@ export default function ProyekForm({
 							margin="normal"
 							name="projectName"
 							onChange={OnChangeTextField}
-							value={proyek?.projectName}
+							value={proyek?.projectName as string}
 							id="projectName"
 							InputLabelProps={{
 								shrink: true,
@@ -213,7 +213,7 @@ export default function ProyekForm({
 							margin="normal"
 							name="projectDescription"
 							onChange={OnChangeTextField}
-							value={proyek?.projectDescription}
+							value={proyek?.projectDescription as string}
 							id="projectDescription"
 							InputLabelProps={{
 								shrink: true,

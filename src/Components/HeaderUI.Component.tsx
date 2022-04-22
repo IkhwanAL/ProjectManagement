@@ -106,7 +106,7 @@ export default function HeaderUI() {
 				setLoad(false);
 			});
 	};
-
+	console.log(idProject);
 	return (
 		<>
 			<InfoModal
@@ -364,7 +364,7 @@ export default function HeaderUI() {
 			<ProyekModal
 				setModal={OnHandleModalProyek}
 				modal={modalProyek}
-				projectId={idProject.id}
+				projectId={idProject ?? undefined}
 			/>
 		</>
 	);

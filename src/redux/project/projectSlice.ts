@@ -25,4 +25,4 @@ export const { SetIdProyek, ResetIdProyek } = ProyekSlice.actions;
 
 export default ProyekSlice.reducer;
 
-export const proyekSelector = (state: RootState) => state.Proyek.values;
+export const proyekSelector = (state: RootState) => state.Proyek.values.id;

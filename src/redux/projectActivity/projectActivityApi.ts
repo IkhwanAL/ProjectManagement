@@ -5,6 +5,8 @@ import { RootState } from "../../app/store";
 import { ProjecType } from "../../types/project.types";
 import { QueryArgProject } from "../../types/arg.types";
 import { GetAllProjectReturn, GetProjectSmall } from "../../types/return.types";
+import { MoveStateReturn } from "../../interface/proyek.interface";
+import { projectactivity_position } from "../../types/database.types";
 
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
@@ -37,7 +39,21 @@ export const ProjectActApi = createApi({
 				};
 			},
 		}),
+		MoveActivityPosition: builder.mutation<
+			ISuccess<MoveStateReturn>,
+			MoveStateReturn
+		>({
+			query: ({ projectActivityId, position }) => {
+				return {
+					url: `/projectactivity/move/${projectActivityId}`,
+					body: { position },
+					credentials: "include",
+					method: "PATCH",
+				};
+			},
+		}),
 	}),
 });
 
-export const { useGetOneProjectActQuery } = ProjectActApi;
+export const { useGetOneProjectActQuery, useMoveActivityPositionMutation } =
+	ProjectActApi;
