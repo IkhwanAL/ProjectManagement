@@ -15,6 +15,7 @@ export interface AnyModalProps {
 	head?: string;
 	msg?: string;
 	closeModal: (ev: any) => void;
+	action?: (...arg: any) => void;
 }
 
 export interface InfoModalProps {

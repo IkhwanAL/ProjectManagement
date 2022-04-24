@@ -13,7 +13,8 @@ const RecentPage = () => {
 
 	React.useEffect(() => {
 		dispatch(ResetIdProyek());
-	}, []);
+	}, [dispatch]);
+
 	return (
 		<>
 			<div className={`flex-col`}>

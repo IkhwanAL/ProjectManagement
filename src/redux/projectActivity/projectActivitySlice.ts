@@ -26,4 +26,4 @@ export const { SetIdProyekActivities, ResetIdProyekActivities } =
 
 export default ProyekActivitiesSlice.reducer;
 
-export const proyekSelector = (state: RootState) => state.Proyek.values;
+export const proyekActSelector = (state: RootState) => state.Proyek.values;

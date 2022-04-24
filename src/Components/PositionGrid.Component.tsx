@@ -2,9 +2,12 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { Droppable } from "react-beautiful-dnd";
 import { ProjectActicityForState } from "../types/project.types";
 import { CardActivities } from "./CardActivity.Component";
+import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
+import { useSelector } from "react-redux";
+import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
 
 interface GridPositionProps {
-	handleShow: (arg?: any) => any;
+	handleShow: (arg?: any) => any; // untuk Form
 	positionName: string;
 	positionDesc: string;
 	positionData: Array<ProjectActicityForState>;
@@ -27,7 +30,9 @@ export const GridPosition = ({
 								<h3 className="text-center font-bold">
 									{positionDesc}
 								</h3>
-								<button onClick={handleShow}>
+								<button
+									onClick={() => handleShow(positionDesc)}
+								>
 									<PlusIcon width={20} />
 								</button>
 							</div>
@@ -35,6 +40,7 @@ export const GridPosition = ({
 								positionData.map((x) => (
 									<CardActivities
 										handleShow={handleShow}
+										ActivtyName={positionDesc}
 										name={x.name}
 										projectActivityId={x.projectActivityId}
 										projectId={x.projectId}

@@ -12,15 +12,16 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useSuccess } from "../hooks/useSuccess";
 import { useError } from "../hooks/useError";
 import { MoveStateReturn } from "../interface/proyek.interface";
+import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
+import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
+import { useSelector } from "react-redux";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
-	// Doing: Array<ProjectActicityForState>;
-	// Review: Array<ProjectActicityForState>;
-	// Done: Array<ProjectActicityForState>;
 }
 
 export const OneProject = () => {
 	const { idProject } = useParams();
+	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
 	const {
 		currentData,
@@ -42,6 +43,7 @@ export const OneProject = () => {
 	const [open, setOpen] = useState(false);
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
+	const ActivityName = React.useRef("");
 
 	const intialState: StateActivityProject = {
 		To_Do: [],
@@ -52,7 +54,8 @@ export const OneProject = () => {
 
 	const [positionData, setPositionData] = React.useState(intialState);
 
-	const handleShow = () => {
+	const handleShow = (name: string) => {
+		ActivityName.current = name;
 		setOpen((prev) => !prev);
 	};
 
@@ -126,6 +129,8 @@ export const OneProject = () => {
 			return;
 		}
 
+		console.log(result);
+
 		// Cari Data
 		const sourceData = positionData[source.droppableId].filter(
 			(x) => x.projectActivityId === source.index
@@ -159,6 +164,12 @@ export const OneProject = () => {
 
 	return (
 		<>
+			<FormKegiatan
+				idProjectActivity={proyekactivity.id}
+				handleShow={handleShow}
+				ActivityName={ActivityName.current}
+				isOpen={open}
+			/>
 			<DragDropContext onDragEnd={onDragEnd}>
 				<div className="w-full h-screen max-w-7xl mx-auto">
 					<div className="grid grid-cols-4">
@@ -168,7 +179,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.To_Do}
 							positionDesc="To Do"
 							positionData={positionData.To_Do}
-							key={"" + 1}
+							key={"" + "A"}
 						/>
 						{/* End Todo */}
 						{/* Start Doing */}
@@ -177,7 +188,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Doing}
 							positionDesc={"Doing"}
 							positionData={positionData.Doing}
-							key={"" + 2}
+							key={"" + "B"}
 						/>
 						{/* End Doing */}
 						{/* Start Review */}
@@ -186,7 +197,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Review}
 							positionDesc={"Review"}
 							positionData={positionData.Review}
-							key={"" + 3}
+							key={"" + "C"}
 						/>
 						{/* End Review */}
 						{/* Start Done */}
@@ -195,7 +206,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Done}
 							positionDesc={"Done	"}
 							positionData={positionData.Done}
-							key={"" + 4}
+							key={"" + "D"}
 						/>
 						{/* End Done */}
 					</div>

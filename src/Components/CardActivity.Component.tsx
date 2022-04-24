@@ -1,20 +1,22 @@
 import { LinearProgress, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Draggable } from "react-beautiful-dnd";
-import { useDrag } from "react-dnd";
 import { ActProject } from "../types/project.types";
+import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 
 export const CardActivities = ({
+	isOpen,
 	handleShow,
 	name,
 	progress,
 	description,
 	projectActivityId,
-}: ActProject) => {
+	ActivtyName,
+}: ActProject & { ActivtyName: string }) => {
 	return (
 		<>
 			<Draggable
-				draggableId={projectActivityId.toString()}
+				draggableId={"" + projectActivityId}
 				index={projectActivityId}
 			>
 				{(provided, snapshot) => (
@@ -32,7 +34,15 @@ export const CardActivities = ({
 							>
 								{name}
 							</Typography>
-							<button onClick={handleShow}>Edit</button>
+							<button
+								onClick={() => {
+									if (handleShow) {
+										handleShow(ActivtyName);
+									}
+								}}
+							>
+								Edit
+							</button>
 						</div>
 						{/* <span className="text-gray-600 "> */}
 						<Typography noWrap color="gray">

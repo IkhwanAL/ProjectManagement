@@ -21,7 +21,7 @@ const CardProject = (project: PReturn & { recent: boolean }) => {
 		<div className="text-black max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-white p-4 py-5 px-5 rounded-xl shadow-md hover:shadow-lg hover:shadow-gray-400 ">
 			<button
 				onClick={() => OnHandleProyek(project.projectId)}
-				className="w-full	"
+				className="w-full"
 			>
 				<div className="flex justify-between">
 					<div>
