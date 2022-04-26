@@ -1,3 +1,5 @@
+import { userteam_role } from "./database.types";
+
 export interface ISuccess<T> {
 	sukses: boolean;
 	message: string;
@@ -32,3 +34,12 @@ export interface GetProjectSmall {
 }
 
 export type GetAllProjectReturn = GetProjectReturn[];
+
+export interface UserTeamSelect {
+	userId: number;
+	teamId: number;
+	role: userteam_role;
+	user: {
+		username: string;
+	};
+}

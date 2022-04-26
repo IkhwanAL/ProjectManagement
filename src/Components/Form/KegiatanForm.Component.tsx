@@ -24,6 +24,11 @@ import {
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddProyekDetail from "./ProyekActDet.Component";
 import { v4 as uuidv4 } from "uuid";
+import { ListTeam } from "./ListTeam.Component";
+import { useGetUserTeamQuery } from "../../redux/project/projectApi";
+import { useSelector } from "react-redux";
+import { proyekSelector } from "../../redux/project/projectSlice";
+import { UserTeamSelect } from "../../types/return.types";
 
 interface ProjectActivityStateForm {
 	name: string;
@@ -34,7 +39,7 @@ interface ProjectActivityStateForm {
 	parent: Array<any>;
 	parentNameActivity: Array<Array<any>>;
 	SubDetailProjectActivity: Array<{ [key: string]: any }>;
-	// idSubDetailAct: []
+	ListAcceptTeam: [{}];
 }
 
 const style = {
@@ -50,17 +55,30 @@ const style = {
 	px: 4,
 	pb: 3,
 };
-
+/**
+ * Pada Form ini Data Yang di Fetch
+ * Ada 2 Yaitu Data ProjectActivity Jika Ada
+ * Dan Data UserTeam Pada Project Menggunakan IdProject
+ * @returns
+ */
 export const FormKegiatan = ({
 	isOpen,
 	handleShow,
 	idProjectActivity,
 	ActivityName,
 }: ProyekKegiatanProps) => {
+	const idProyek = useSelector(proyekSelector);
+	const TeamList = useGetUserTeamQuery(idProyek as number);
+
 	const [form, setForm] = useState<{ [key: string]: any }>({});
 	const [openDetail, setOpenDetail] = useState(false);
+	const [openListTeam, setOpenListTeam] = useState(false);
 
-	const cancelButtonRef = useRef(null);
+	// React.useLayoutEffect(() => {
+	// 	if(TeamList.isSuccess){
+	// 		setForm()
+	// 	}
+	// }, [TeamList.isSuccess]);
 
 	const OnSubmit = () => {
 		console.log(form);
@@ -68,10 +86,12 @@ export const FormKegiatan = ({
 		setForm({});
 	};
 
-	console.log(isOpen, "outside");
-
 	const onOpen = () => {
 		setOpenDetail((prev) => !prev);
+	};
+
+	const onOpenListTeam = () => {
+		setOpenListTeam((prev) => !prev);
 	};
 
 	const SaveStateDetailProyekActivity = (ev: string) => {
@@ -104,12 +124,6 @@ export const FormKegiatan = ({
 			].filter((x: any) => x.id !== uuid),
 		}));
 	};
-
-	// const Checklist = (uuid: any, isComplete: boolean) => {
-	// 	let data = form['SubDetailProjectActivity'].filter((x: any) => x.id === uuid)[0];
-
-	// 	data.isComplete = isComplete;
-	// }
 
 	const OnChangeInputField = (ev: React.ChangeEvent<HTMLInputElement>) => {
 		setForm((prev) => ({
@@ -162,11 +176,6 @@ export const FormKegiatan = ({
 
 	return (
 		<>
-			<AddProyekDetail
-				closeModal={onOpen}
-				isOpen={openDetail}
-				action={SaveStateDetailProyekActivity}
-			/>
 			<Modal
 				open={isOpen}
 				onClose={() => {
@@ -189,6 +198,16 @@ export const FormKegiatan = ({
 								direction={"row"}
 								justifyContent="space-between"
 							>
+								<AddProyekDetail
+									closeModal={onOpen}
+									isOpen={openDetail}
+									action={SaveStateDetailProyekActivity}
+								/>
+								<ListTeam
+									closeModal={onOpenListTeam}
+									isOpen={openListTeam}
+									data={TeamList.data?.data}
+								/>
 								<Typography
 									variant="h5"
 									textAlign={"center"}
@@ -198,7 +217,7 @@ export const FormKegiatan = ({
 									Kegiatan {ActivityName}
 								</Typography>
 								<Box>
-									<Stack direction={"row"}>
+									<Stack direction={"row-reverse"}>
 										<div className="pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-10">
 											<img
 												src="https://ui-avatars.com/api/?name=Ikhwan"
@@ -220,14 +239,17 @@ export const FormKegiatan = ({
 												alt="User"
 											/>
 										</div>
-										<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -ml-8 ">
+										<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -	ml-8 ">
 											{/* <img
 												src="https://ui-avatars.com/api/?name="
 												className="w-full h-full rounded-full border-1 border-primary"
 												alt="User"
 											/> */}
 
-											<IconButton color="primary">
+											<IconButton
+												color="primary"
+												onClick={onOpenListTeam}
+											>
 												<AddCircleIcon />
 											</IconButton>
 										</div>
@@ -475,9 +497,6 @@ export const FormKegiatan = ({
 						</LoadingButton>
 					</div>
 				</Box>
-				{/* <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-					
-				</div> */}
 			</Modal>
 		</>
 	);

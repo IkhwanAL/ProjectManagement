@@ -4,7 +4,11 @@ import { Environtment } from "..";
 import { RootState } from "../../app/store";
 import { project } from "../../types/database.types";
 import { QueryArgProject } from "../../types/arg.types";
-import { GetAllProjectReturn, GetProjectSmall } from "../../types/return.types";
+import {
+	GetAllProjectReturn,
+	GetProjectSmall,
+	UserTeamSelect,
+} from "../../types/return.types";
 
 const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
@@ -70,6 +74,13 @@ export const ProjectApi = createApi({
 				};
 			},
 		}),
+		GetUserTeam: builder.query<ISuccess<UserTeamSelect>, number>({
+			query: (data) => ({
+				url: `/project/userteam/${data}`,
+				credentials: "include",
+				method: "GET",
+			}),
+		}),
 	}),
 });
 
@@ -78,4 +89,5 @@ export const {
 	usePatchProjectMutation,
 	useGetAllProjectQuery,
 	useLazyGetOneProjectNoCalcQuery,
+	useGetUserTeamQuery,
 } = ProjectApi;

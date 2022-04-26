@@ -16,6 +16,9 @@ export interface AnyModalProps {
 	msg?: string;
 	closeModal: (ev: any) => void;
 	action?: (...arg: any) => void;
+	idProyek?: number;
+	data?: any;
+	dataToCompare?: any;
 }
 
 export interface InfoModalProps {
