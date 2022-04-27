@@ -1,4 +1,9 @@
-import { projectactivity_position } from "../types/database.types";
+import {
+	projectactivity,
+	projectactivity_position,
+	subdetailprojectactivity,
+	usertaskfromassignee,
+} from "./database.interface";
 
 export interface ProyekForm {
 	projectName: string;
@@ -22,4 +27,12 @@ export interface IProyekActivities {
 export interface MoveStateReturn {
 	projectActivityId: number;
 	position: projectactivity_position;
+}
+
+export interface GetOneProjectActivity extends projectactivity {
+	ParentActivityName: Array<any> | null;
+	subdetailprojectactivity: subdetailprojectactivity[] | null;
+	usertaskfromassignee:
+		| (usertaskfromassignee & { user: { username: string } })
+		| null;
 }

@@ -33,7 +33,7 @@ export type ProjectActivityType = projectactivity & {
 };
 
 export type ActProject = ProjectActicityForState & {
-	handleShow?: (arg?: any) => void;
+	handleShow?: (...arg: any) => void;
 	isOpen?: boolean;
 	userteam?: Partial<userteam & { user: { username: string } }>[];
 };

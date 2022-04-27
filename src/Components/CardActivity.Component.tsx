@@ -37,7 +37,10 @@ export const CardActivities = ({
 							<button
 								onClick={() => {
 									if (handleShow) {
-										handleShow(ActivtyName);
+										handleShow(
+											ActivtyName,
+											projectActivityId
+										);
 									}
 								}}
 							>

@@ -44,6 +44,9 @@ export const OneProject = () => {
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
 	const ActivityName = React.useRef("");
+	const [IdProjectAct, setIdProjectAct] = React.useState<
+		number | undefined
+	>();
 
 	const intialState: StateActivityProject = {
 		To_Do: [],
@@ -54,8 +57,13 @@ export const OneProject = () => {
 
 	const [positionData, setPositionData] = React.useState(intialState);
 
-	const handleShow = (name: string) => {
+	const handleShow = (name: string, idProjectActivityId?: number) => {
 		ActivityName.current = name;
+		if (idProjectActivityId) {
+			setIdProjectAct(idProjectActivityId);
+		} else {
+			setIdProjectAct(undefined);
+		}
 		setOpen((prev) => !prev);
 	};
 
@@ -165,7 +173,7 @@ export const OneProject = () => {
 	return (
 		<>
 			<FormKegiatan
-				idProjectActivity={proyekactivity.id}
+				idProjectActivity={IdProjectAct}
 				handleShow={handleShow}
 				ActivityName={ActivityName.current}
 				isOpen={open}

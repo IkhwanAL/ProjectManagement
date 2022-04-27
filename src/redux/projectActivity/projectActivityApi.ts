@@ -5,7 +5,10 @@ import { RootState } from "../../app/store";
 import { ProjecType } from "../../types/project.types";
 import { QueryArgProject } from "../../types/arg.types";
 import { GetAllProjectReturn, GetProjectSmall } from "../../types/return.types";
-import { MoveStateReturn } from "../../interface/proyek.interface";
+import {
+	GetOneProjectActivity,
+	MoveStateReturn,
+} from "../../interface/proyek.interface";
 import { projectactivity_position } from "../../types/database.types";
 
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
@@ -52,8 +55,33 @@ export const ProjectActApi = createApi({
 				};
 			},
 		}),
+		GetOneProjectActivity: builder.query<
+			ISuccess<GetOneProjectActivity>,
+			number
+		>({
+			query: (idProjectActivity) => {
+				return {
+					url: `/ProjectActivity/GET/${idProjectActivity}`,
+					credentials: "include",
+					method: "GET",
+				};
+			},
+		}),
+		GetSimple: builder.query({
+			query: (idProjectActivity) => {
+				return {
+					url: `/ProjectActivity/GET/${idProjectActivity}`,
+					credentials: "include",
+					method: "GET",
+				};
+			},
+		}),
 	}),
 });
 
-export const { useGetOneProjectActQuery, useMoveActivityPositionMutation } =
-	ProjectActApi;
+export const {
+	useGetOneProjectActQuery,
+	useMoveActivityPositionMutation,
+	useLazyGetOneProjectActivityQuery,
+	useLazyGetSimpleQuery,
+} = ProjectActApi;

@@ -109,6 +109,7 @@ export const ListTeam = ({
 											handleChange,
 											x.teamId
 										)}
+										key={x.teamId}
 										label={x.user.username}
 									/>
 								))

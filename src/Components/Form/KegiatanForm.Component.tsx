@@ -29,18 +29,18 @@ import { useGetUserTeamQuery } from "../../redux/project/projectApi";
 import { useSelector } from "react-redux";
 import { proyekSelector } from "../../redux/project/projectSlice";
 import { UserTeamSelect } from "../../types/return.types";
+import {
+	useLazyGetOneProjectActivityQuery,
+	useLazyGetSimpleQuery,
+} from "../../redux/projectActivity/projectActivityApi";
+import { GetOneProjectActivity } from "../../interface/proyek.interface";
 
-interface ProjectActivityStateForm {
-	name: string;
-	progress: number;
-	timeToComplte: number;
-	status: boolean;
-	description: string;
-	parent: Array<any>;
-	parentNameActivity: Array<Array<any>>;
-	SubDetailProjectActivity: Array<{ [key: string]: any }>;
-	ListAcceptTeam: [{}];
-}
+// interface ProjectActivityStateForm extends GetOneProjectActivity {
+// 	parentArray: Array<any>;
+// 	parentNameActivity: Array<Array<any>>;
+// 	subdetailprojectactivity: Array<{ [key: string]: any }>;
+// 	ListAcceptTeam: [{}];
+// }
 
 const style = {
 	position: "absolute" as "absolute",
@@ -67,18 +67,59 @@ export const FormKegiatan = ({
 	idProjectActivity,
 	ActivityName,
 }: ProyekKegiatanProps) => {
+	console.log(idProjectActivity, "FORM");
 	const idProyek = useSelector(proyekSelector);
 	const TeamList = useGetUserTeamQuery(idProyek as number);
+	const [triggerFetching] = useLazyGetOneProjectActivityQuery();
+	const [trg] = useLazyGetSimpleQuery();
 
 	const [form, setForm] = useState<{ [key: string]: any }>({});
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openListTeam, setOpenListTeam] = useState(false);
 
-	// React.useLayoutEffect(() => {
-	// 	if(TeamList.isSuccess){
-	// 		setForm()
-	// 	}
-	// }, [TeamList.isSuccess]);
+	React.useEffect(() => {
+		if (idProjectActivity) {
+			const subscribing = triggerFetching(idProjectActivity);
+			subscribing.then((x) => {
+				const { data } = x;
+				console.log(data);
+				if (data?.data) {
+					const res = data.data as GetOneProjectActivity;
+
+					for (const key in res) {
+						if (key === "usertaskfromassignee") {
+							setForm((prev) => {
+								return {
+									...prev,
+									["ListAcceptTeam"]: res[key],
+								};
+							});
+						} else if (key === "parent") {
+							setForm((prev) => ({
+								...prev,
+								["parent"]: res[key],
+								["parentArray"]: res[key]?.split(","),
+							}));
+						} else if (key === "ParentActivityName") {
+							setForm((prev) => ({
+								...prev,
+								["parentNameActivity"]: res[key],
+							}));
+						} else {
+							setForm((prev) => {
+								return {
+									...prev,
+									[key]: res[
+										key as keyof GetOneProjectActivity
+									],
+								};
+							});
+						}
+					}
+				}
+			});
+		}
+	}, [idProjectActivity]);
 
 	const OnSubmit = () => {
 		console.log(form);
@@ -100,16 +141,16 @@ export const FormKegiatan = ({
 			description: ev,
 			isComplete: false,
 		};
-		if (!form["SubDetailProjectActivity"]) {
+		if (!form["subdetailprojectactivity"]) {
 			setForm((prev) => ({
 				...prev,
-				["SubDetailProjectActivity"]: [payload],
+				["subdetailprojectactivity"]: [payload],
 			}));
 		} else {
 			setForm((prev) => ({
 				...prev,
-				["SubDetailProjectActivity"]: [
-					...form["SubDetailProjectActivity"],
+				["subdetailprojectactivity"]: [
+					...form["subdetailprojectactivity"],
 					payload,
 				],
 			}));
@@ -119,8 +160,8 @@ export const FormKegiatan = ({
 	const RemoveStateDetailProyekAct = (uuid: any) => {
 		setForm((prev) => ({
 			...prev,
-			["SubDetailProjectActivity"]: prev[
-				"SubDetailProjectActivity"
+			["subdetailprojectactivity"]: prev[
+				"subdetailprojectactivity"
 			].filter((x: any) => x.id !== uuid),
 		}));
 	};
@@ -133,19 +174,18 @@ export const FormKegiatan = ({
 	};
 
 	const OnChangeSelect = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-		console.log(ev.target.value);
-
 		if (!form[ev.target.name]) {
 			setForm((prev) => ({
 				...prev,
-				["parent"]: [ev.target.value.split(",")[0]],
+				["parentArray"]: [ev.target.value.split(",")[0]],
 				["parentNameActivity"]: [ev.target.value.split(",")],
+				["parent"]: [ev.target.value.split(",")[0].toString()],
 			}));
 		} else {
 			setForm((prev) => ({
 				...prev,
-				[ev.target.name]: [
-					...prev[ev.target.name],
+				["parentArray"]: [
+					...prev["parentArray"],
 					ev.target.value.split(",")[0],
 				],
 				// eslint-disable-next-line no-useless-computed-key
@@ -153,6 +193,10 @@ export const FormKegiatan = ({
 					...prev["parentNameActivity"],
 					ev.target.value.split(","),
 				],
+				["parent"]: [
+					...prev["parentArray"],
+					ev.target.value.split(",")[0],
+				].join(","),
 			}));
 		}
 	};
@@ -167,10 +211,11 @@ export const FormKegiatan = ({
 	const deletePrevActivity = (id: any) => {
 		setForm((prev) => ({
 			...prev,
-			["parent"]: prev["parent"].filter((x: any) => x !== id),
+			["parentArray"]: prev["parent"].filter((x: any) => x !== id),
 			["parentNameActivity"]: prev["parentNameActivity"].filter(
 				(x: Array<any>) => x[0] !== id
 			),
+			["parent"]: prev["parent"].filter((x: any) => x !== id).join(","),
 		}));
 	};
 
@@ -276,6 +321,7 @@ export const FormKegiatan = ({
 									type="text"
 									name="name"
 									id="name"
+									value={form.name ?? ""}
 									onChange={OnChangeInputField}
 									className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
 								/>
@@ -289,8 +335,10 @@ export const FormKegiatan = ({
 								</label>
 								<input
 									type="text"
-									name="waktu"
-									id="waktu"
+									name="timeToComplete"
+									id="timeToComplete"
+									value={form.timeToComplete ?? ""}
+									onChange={OnChangeInputField}
 									placeholder="Waktu untuk selesai, cth 5"
 									className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
 								/>
@@ -304,6 +352,10 @@ export const FormKegiatan = ({
 								</label>
 								<textarea
 									className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
+									value={form.description ?? ""}
+									id={"description"}
+									name="description"
+									onChange={() => {}}
 									placeholder="Deksripsi"
 								></textarea>
 							</div>
@@ -360,6 +412,7 @@ export const FormKegiatan = ({
 															<DeleteIcon />
 														</IconButton>
 													}
+													key={x[0]}
 												>
 													<ListItemText
 														primary={x[1] as string}
@@ -437,10 +490,10 @@ export const FormKegiatan = ({
 								borderRadius={4}
 							>
 								<List dense={false}>
-									{form["SubDetailProjectActivity"] &&
-									form["SubDetailProjectActivity"].length !==
+									{form["subdetailprojectactivity"] &&
+									form["subdetailprojectactivity"].length !==
 										0 ? (
-										form["SubDetailProjectActivity"].map(
+										form["subdetailprojectactivity"].map(
 											(x: any) => (
 												<>
 													<ListItem
