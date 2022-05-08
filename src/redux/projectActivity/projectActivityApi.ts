@@ -15,6 +15,7 @@ const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
 	tagTypes: ["Projects"],
+	keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {

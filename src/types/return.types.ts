@@ -1,5 +1,4 @@
-import { userteam_role } from "./database.types";
-
+import { userteam_role, user } from "./database.types";
 export interface ISuccess<T> {
 	sukses: boolean;
 	message: string;
@@ -42,4 +41,9 @@ export interface UserTeamSelect {
 	user: {
 		username: string;
 	};
+}
+
+export interface LeaderInterface {
+	user: user;
+	userowner: number;
 }

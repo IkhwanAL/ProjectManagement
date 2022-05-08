@@ -14,7 +14,7 @@ export interface AnyModalProps {
 	isOpen: boolean;
 	head?: string;
 	msg?: string;
-	closeModal: (ev: any) => void;
+	closeModal: (ev?: any) => void;
 	action?: (...arg: any) => void;
 	idProyek?: number;
 	data?: any;

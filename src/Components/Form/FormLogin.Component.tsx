@@ -43,7 +43,7 @@ export const FormLogin = React.memo(() => {
 			const url = verify.get("Url");
 			const q = verify.get("_q");
 
-			if (url) {
+			if (url === "verify") {
 				navigate(`/${url}`, { replace: true, state: { q: q } });
 			} else {
 				navigate("/main/dashboard", { replace: true });
@@ -51,6 +51,7 @@ export const FormLogin = React.memo(() => {
 		}
 	}, [isSuccess]);
 
+	// Verifikasi
 	React.useLayoutEffect(() => {
 		const outsideState = state as { [key: string]: any } | null;
 		if (outsideState?.verify) {
@@ -59,6 +60,23 @@ export const FormLogin = React.memo(() => {
 				head: "Verifikasi!",
 				msg: "Verifikasi Sukses",
 			});
+		}
+	}, []);
+
+	// Ganti Proyek Manager
+	React.useLayoutEffect(() => {
+		const URL = verify.get("Url");
+
+		if (URL === "ChangeOwner") {
+			const Query = verify.get("_q");
+
+			if (Query === "true") {
+				setSuccessState({
+					error: false,
+					head: "Sukses !!",
+					msg: "Sukses Menganti Proyek Manager",
+				});
+			}
 		}
 	}, []);
 

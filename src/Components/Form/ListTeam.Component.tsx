@@ -48,7 +48,7 @@ export const ListTeam = ({
 
 	React.useEffect(() => {
 		if (data) {
-			// console.log(data);
+			//
 			const res = data as UserTeamSelect[];
 
 			const payloadList = [];
@@ -78,9 +78,7 @@ export const ListTeam = ({
 		ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {};
 
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		console.log(event);
-	};
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {};
 
 	const ControlCheckBox = (
 		checked: boolean,

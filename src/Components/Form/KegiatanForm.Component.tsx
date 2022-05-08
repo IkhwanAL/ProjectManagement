@@ -67,7 +67,6 @@ export const FormKegiatan = ({
 	idProjectActivity,
 	ActivityName,
 }: ProyekKegiatanProps) => {
-	console.log(idProjectActivity, "FORM");
 	const idProyek = useSelector(proyekSelector);
 	const TeamList = useGetUserTeamQuery(idProyek as number);
 	const [triggerFetching] = useLazyGetOneProjectActivityQuery();
@@ -82,7 +81,6 @@ export const FormKegiatan = ({
 			const subscribing = triggerFetching(idProjectActivity);
 			subscribing.then((x) => {
 				const { data } = x;
-				console.log(data);
 				if (data?.data) {
 					const res = data.data as GetOneProjectActivity;
 
@@ -122,7 +120,6 @@ export const FormKegiatan = ({
 	}, [idProjectActivity]);
 
 	const OnSubmit = () => {
-		console.log(form);
 		handleShow(ActivityName);
 		setForm({});
 	};

@@ -34,7 +34,7 @@ export const AuthApi = createApi({
 			async onQueryStarted(_id, arg) {
 				try {
 					const { data } = await arg.queryFulfilled;
-
+					console.log(data);
 					setSessionStorage("token", data.data?.token);
 					arg.dispatch(SetTokenParams(data?.data?.token));
 					arg.dispatch(SetLogin(true));

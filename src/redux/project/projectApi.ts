@@ -7,6 +7,7 @@ import { QueryArgProject } from "../../types/arg.types";
 import {
 	GetAllProjectReturn,
 	GetProjectSmall,
+	LeaderInterface,
 	UserTeamSelect,
 } from "../../types/return.types";
 
@@ -14,6 +15,7 @@ const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
 	tagTypes: ["Projects"],
+	keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -44,7 +46,7 @@ export const ProjectApi = createApi({
 		}),
 		PatchProject: builder.mutation<
 			ISuccess<project>,
-			Partial<QueryArgProject & { projectId?: number }>
+			Partial<QueryArgProject & { projectId: number }>
 		>({
 			query: ({ projectId, ...rest }) => {
 				return {
@@ -68,17 +70,37 @@ export const ProjectApi = createApi({
 		GetOneProjectNoCalc: builder.query<ISuccess<GetProjectSmall>, number>({
 			query: (data) => {
 				return {
-					url: `/project/get/${data}`,
+					url: `/project/get/data/${data}`,
 					credentials: "include",
 					method: "GET",
 				};
 			},
 		}),
-		GetUserTeam: builder.query<ISuccess<UserTeamSelect>, number>({
+		GetUserTeam: builder.query<ISuccess<UserTeamSelect[]>, number>({
 			query: (data) => ({
 				url: `/project/userteam/${data}`,
 				credentials: "include",
 				method: "GET",
+			}),
+		}),
+		GetLeader: builder.query<ISuccess<LeaderInterface>, number>({
+			query: (data) => ({
+				url: `/project/getCurrentLeader/${data}`,
+				method: "GET",
+				credentials: "include",
+			}),
+		}),
+		ChangeOwner: builder.mutation({
+			query: ({ idProject, idUserInvitation }) => ({
+				url: `/changeowner/${idProject}/${idUserInvitation}`,
+				method: "POST",
+				credentials: "include",
+			}),
+			invalidatesTags: ["Projects"],
+		}),
+		DeleteUserTeam: builder.mutation({
+			query: (data) => ({
+				url: `/`,
 			}),
 		}),
 	}),
@@ -90,4 +112,6 @@ export const {
 	useGetAllProjectQuery,
 	useLazyGetOneProjectNoCalcQuery,
 	useGetUserTeamQuery,
+	useGetLeaderQuery,
+	useChangeOwnerMutation,
 } = ProjectApi;

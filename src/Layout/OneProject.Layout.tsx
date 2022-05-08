@@ -137,8 +137,6 @@ export const OneProject = () => {
 			return;
 		}
 
-		console.log(result);
-
 		// Cari Data
 		const sourceData = positionData[source.droppableId].filter(
 			(x) => x.projectActivityId === source.index

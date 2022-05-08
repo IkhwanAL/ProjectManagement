@@ -35,8 +35,8 @@ export default function ProyekForm({
 
 	const [triggerGetProyek] = useLazyGetOneProjectNoCalcQuery();
 
-	const initial: Partial<QueryArgProject & { projectId?: number }> = {
-		projectId: projectId ? projectId : undefined,
+	const initial: Partial<QueryArgProject & { projectId: number | null }> = {
+		projectId: projectId ? projectId : null,
 		projectName: "",
 		projectDescription: "",
 	};
@@ -48,7 +48,7 @@ export default function ProyekForm({
 	const { successState, setSuccessState } = useSuccess({ error: true });
 
 	const [proyek, setProyek] =
-		React.useState<Partial<QueryArgProject & { projectId?: number }>>(
+		React.useState<Partial<QueryArgProject & { projectId: number | null }>>(
 			initial
 		);
 
@@ -95,7 +95,11 @@ export default function ProyekForm({
 					.unwrap()
 					.then(() => {
 						if (proyek.projectId) {
-							PatchProject(proyek).unwrap();
+							PatchProject({
+								projectId: proyek.projectId,
+								projectName: proyek.projectName,
+								projectDescription: proyek.projectDescription,
+							}).unwrap();
 						} else {
 							const { projectId, ...rest } = proyek;
 							CreateProject(rest).unwrap();
@@ -122,7 +126,11 @@ export default function ProyekForm({
 
 	const onHandleSubmit = () => {
 		if (proyek.projectId) {
-			PatchProject(proyek);
+			PatchProject({
+				projectId: proyek.projectId,
+				projectName: proyek.projectName,
+				projectDescription: proyek.projectDescription,
+			});
 		} else {
 			const { projectId, ...rest } = proyek;
 			CreateProject(rest);
@@ -140,7 +148,7 @@ export default function ProyekForm({
 						projectDescription: res.data?.projectDescription,
 					});
 				})
-				.catch(console.log);
+				.catch(console.warn);
 		}
 	}, []);
 
@@ -200,7 +208,7 @@ export default function ProyekForm({
 							margin="normal"
 							name="projectName"
 							onChange={OnChangeTextField}
-							value={proyek?.projectName as string}
+							value={proyek.projectName}
 							id="projectName"
 							InputLabelProps={{
 								shrink: true,
@@ -213,7 +221,7 @@ export default function ProyekForm({
 							margin="normal"
 							name="projectDescription"
 							onChange={OnChangeTextField}
-							value={proyek?.projectDescription as string}
+							value={proyek.projectDescription}
 							id="projectDescription"
 							InputLabelProps={{
 								shrink: true,
@@ -236,7 +244,7 @@ export default function ProyekForm({
 						onClick={onHandleSubmit}
 						loading={PatchHooks.isLoading || CreateHooks.isLoading}
 					>
-						Save
+						Simpan
 					</LoadingButton>
 				</Stack>
 			</Box>

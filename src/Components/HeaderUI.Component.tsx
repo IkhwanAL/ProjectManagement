@@ -9,16 +9,18 @@ import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 import AddIcon from "@mui/icons-material/Add";
 import ChangePassword from "./Modal/Password.Component";
-import { useError } from "../hooks/useError";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import InfoModal from "./Modal/Info.Component";
 import { useConfirm } from "../hooks/useConfirm";
 import {
 	useLazyDeleteUserQuery,
 	useLazyLogoutQuery,
 } from "../redux/user/userApi";
-import { AirlineSeatLegroomExtraRounded } from "@mui/icons-material";
+import PeopleIcon from "@mui/icons-material/People";
 import ProyekModal from "./Modal/ProyekModal.Component";
 import { proyekSelector, ResetIdProyek } from "../redux/project/projectSlice";
+import { MainListTeam } from "./Modal/ListTeamModal.Component";
+import { ChangeOwnerForm } from "./Form/ChangeOwnership.Component";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -46,6 +48,9 @@ export default function HeaderUI() {
 	const [modal, setModal] = useState<boolean>(false);
 	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
 	const [modalProyek, setModalProyek] = useState<boolean>(false);
+	const [modalListTeam, setModalListTeam] = useState<boolean>(false);
+	const [modalChangeOwner, setChangeOWner] = useState<boolean>(false);
+
 	const [activated, setActive] = useState<string>("Home");
 	const { confirm, setConfirm, onHandle } = useConfirm(false);
 
@@ -64,6 +69,10 @@ export default function HeaderUI() {
 
 	const OnHandleModalProyek = () => {
 		setModalProyek((prev) => !prev);
+	};
+
+	const OnHandleChangeOwnerModal = () => {
+		setChangeOWner((prev) => !prev);
 	};
 
 	const onClickLink = (
@@ -106,7 +115,11 @@ export default function HeaderUI() {
 				setLoad(false);
 			});
 	};
-	console.log(idProject);
+
+	const handleModalListTeam = () => {
+		setModalListTeam((prev) => !prev);
+	};
+
 	return (
 		<>
 			<InfoModal
@@ -116,6 +129,16 @@ export default function HeaderUI() {
 				isOpen={confirm}
 				onAccept={handleAccept}
 				loading={load}
+			/>
+			<MainListTeam
+				closeModal={handleModalListTeam}
+				isOpen={modalListTeam}
+				idProyek={idProject ?? undefined}
+			/>
+			<ChangeOwnerForm
+				closeModal={OnHandleChangeOwnerModal}
+				isOpen={modalChangeOwner}
+				idProyek={idProject ?? undefined}
 			/>
 			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
@@ -203,10 +226,46 @@ export default function HeaderUI() {
 										</div>
 									</div>
 								</div>
-								<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+								<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 justify-around">
+									{idProject ? (
+										<>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Team List
+												</span>
+												<PeopleIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={
+														handleModalListTeam
+													}
+												/>
+											</button>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Pindah Kepemilikan
+												</span>
+												<ChangeCircleIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={
+														OnHandleChangeOwnerModal
+													}
+												/>
+											</button>
+										</>
+									) : (
+										<></>
+									)}
 									<button
 										type="button"
-										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-4"
 									>
 										<span className="sr-only">
 											View notifications
