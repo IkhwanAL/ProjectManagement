@@ -21,17 +21,16 @@ const rootReducer = combineReducers({
 
 export const store = configureStore({
 	reducer: rootReducer,
-	middleware: (getDefaultMiddelware) => [
-		...getDefaultMiddelware({
+	middleware: (getDefaultMiddelware) =>
+		getDefaultMiddelware({
 			serializableCheck: {
 				warnAfter: 128,
 			},
-		}),
-		AuthApi.middleware,
-		UserApi.middleware,
-		ProjectApi.middleware,
-		ProjectActApi.middleware,
-	],
+		})
+			.concat(AuthApi.middleware)
+			.concat(UserApi.middleware)
+			.concat(ProjectApi.middleware)
+			.concat(ProjectActApi.middleware),
 	devTools: true,
 });
 

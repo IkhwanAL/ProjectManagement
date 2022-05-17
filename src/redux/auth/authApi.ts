@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
 import { QueryArgLogin } from "../../types/arg.types";
 import { Environtment } from "..";
-import { SetLogin, SetTokenParams } from "../user/userSlice";
+import { SetIdUser, SetLogin, SetTokenParams } from "../user/userSlice";
 import { setSessionStorage } from "../../Util/SessionStorage";
 
 const REDUCER_API_PATH_NAME = "Auth";
@@ -20,11 +20,6 @@ export const AuthApi = createApi({
 					body: data,
 					method: "POST",
 					keepalive: true,
-					// headers: {
-					// 	"Content-Type": "application/json",
-					// 	Accept: "*/*",
-					// 	"Accept-Encoding": "gzip, deflate, br",
-					// },
 					credentials: "include",
 				};
 			},
@@ -34,9 +29,9 @@ export const AuthApi = createApi({
 			async onQueryStarted(_id, arg) {
 				try {
 					const { data } = await arg.queryFulfilled;
-					console.log(data);
 					setSessionStorage("token", data.data?.token);
 					arg.dispatch(SetTokenParams(data?.data?.token));
+					arg.dispatch(SetIdUser(data?.data?.id));
 					arg.dispatch(SetLogin(true));
 				} catch (error) {
 					arg.dispatch(SetLogin(false));

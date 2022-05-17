@@ -16,5 +16,21 @@ export function useSuccess(successMsg: Msg) {
 		};
 	}, [setSuccessState]);
 
-	return { successState, setSuccessState };
+	const HandleControlStateSuccess = (
+		head?: string,
+		msg?: string,
+		action?: (...arg: any) => void
+	) => {
+		setSuccessState((prev) => ({
+			error: !prev.error,
+			head: head ?? "",
+			msg: msg ?? "",
+		}));
+
+		if (action) {
+			action();
+		}
+	};
+
+	return { successState, setSuccessState, HandleControlStateSuccess };
 }

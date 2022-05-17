@@ -42,6 +42,7 @@ export const ProjectActApi = createApi({
 					credentials: "include",
 				};
 			},
+			keepUnusedDataFor: 0,
 		}),
 		MoveActivityPosition: builder.mutation<
 			ISuccess<MoveStateReturn>,

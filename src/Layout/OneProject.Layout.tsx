@@ -23,21 +23,15 @@ export const OneProject = () => {
 	const { idProject } = useParams();
 	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
-	const {
-		currentData,
-		data,
-		isFetching,
-		isSuccess,
-		isError,
-		error,
-		refetch,
-	} = useGetOneProjectActQuery(
-		{ idProject: parseInt(idProject as string) },
-		{
-			refetchOnMountOrArgChange: true,
-			refetchOnFocus: true,
-		}
-	);
+	const { data, isFetching, isSuccess, isError, error, refetch } =
+		useGetOneProjectActQuery(
+			{ idProject: parseInt(idProject as string) },
+			{
+				refetchOnMountOrArgChange: true,
+				refetchOnFocus: true,
+			}
+		);
+
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 	const [Move, MoveHooks] = useMoveActivityPositionMutation();
 	const [open, setOpen] = useState(false);

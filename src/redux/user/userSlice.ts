@@ -30,6 +30,9 @@ export const UserSlice = createSlice({
 		SetIdUser: (state, action) => {
 			state.values.id = action.payload;
 		},
+		ResetIdUser: (state, action) => {
+			state.values.id = InitialState.values.id;
+		},
 	},
 });
 

@@ -13,11 +13,24 @@ import {
 } from "@mui/material";
 import React from "react";
 import { AnyModalProps } from "../../Props/Modal.property";
-import { useGetUserTeamQuery } from "../../redux/project/projectApi";
+import {
+	ProjectApi,
+	useDeleteUserTeamMutation,
+	useGetUserTeamQuery,
+} from "../../redux/project/projectApi";
 import { UserTeamSelect } from "../../types/return.types";
 import { useSelector } from "react-redux";
 import { userSelector } from "../../redux/user/userSlice";
 import FormAddTeam from "../Form/FormAddTeam.Component";
+import { useError } from "../../hooks/useError";
+import ModalInfo from "./ErrorModal.Component";
+import { ISuccess } from "../../interface/return.interface";
+import { useSuccess } from "../../hooks/useSuccess";
+import { proyekSelector } from "../../redux/project/projectSlice";
+
+interface UserTeamChecked extends UserTeamSelect {
+	isChecked: boolean;
+}
 
 const style = {
 	position: "absolute" as "absolute",
@@ -33,10 +46,6 @@ const style = {
 	pb: 3,
 };
 
-interface UserTeamChecked extends UserTeamSelect {
-	isChecked: boolean;
-}
-
 /**
  * Mengambil Data Team Dari Id Proyek
  *
@@ -48,14 +57,28 @@ export const MainListTeam = ({
 	idProyek,
 }: AnyModalProps) => {
 	const User = useSelector(userSelector);
+	const Proyek = useSelector(proyekSelector);
+	const { data, isSuccess, isFetching, refetch } = useGetUserTeamQuery(
+		idProyek as number,
+		{
+			refetchOnMountOrArgChange: true,
+			refetchOnFocus: true,
+		}
+	);
 
-	const { data, isSuccess } = useGetUserTeamQuery(idProyek as number, {
-		refetchOnMountOrArgChange: true,
+	const [DeleteUser] = useDeleteUserTeamMutation();
+
+	const { errorState, HandleControlStateError } = useError({
+		error: false,
+	});
+
+	const { successState, HandleControlStateSuccess } = useSuccess({
+		error: true,
 	});
 
 	const [userControl, setUserControl] = React.useState<UserTeamChecked[]>([]);
 
-	const [removeUser, setRemoveUser] = React.useState<Array<any>>([]);
+	const [removeUser, setRemoveUser] = React.useState<Array<number>>([]);
 
 	const [showFormAddListTim, setShowFormAddListTim] =
 		React.useState<boolean>(false);
@@ -64,11 +87,11 @@ export const MainListTeam = ({
 		setShowFormAddListTim((pre) => !pre);
 	};
 
-	const OnChecked = (teamid: number) => {
+	const OnChecked = (userId: number) => {
 		const payload = [];
 		for (const iterator of userControl) {
 			const team = iterator;
-			if (team.teamId === teamid) {
+			if (team.userId === userId) {
 				team.isChecked = !team.isChecked;
 			}
 
@@ -78,22 +101,21 @@ export const MainListTeam = ({
 		setUserControl(payload);
 
 		// Filter Data Dengan Data Terbaru
-		const findUser = payload.filter((x) => x.teamId === teamid)[0];
+		const findUser = payload.filter((x) => x.userId === userId)[0];
 
 		// Jika True Check, Revert To False
 		// And Remove From RemoveUser State
 		if (findUser.isChecked) {
-			setRemoveUser((prev) => [...prev, teamid]);
+			setRemoveUser((prev) => [...prev, userId]);
 		} else {
-			setRemoveUser((prev) => prev.filter((x) => x !== teamid));
+			setRemoveUser((prev) => prev.filter((x) => x !== userId));
 		}
 	};
-
-	// console.log(userControl);
-
+	console.log(isFetching, "Refetch");
 	React.useEffect(() => {
-		if (isSuccess && data?.data) {
+		if (!isFetching && data?.data) {
 			const payload1 = [];
+
 			for (const iterator of data.data) {
 				const payload = {
 					...iterator,
@@ -104,20 +126,64 @@ export const MainListTeam = ({
 
 			setUserControl(payload1);
 		}
-	}, [isSuccess]);
 
-	const OnSubmit = () => {
+		return () => {};
+	}, [isSuccess, isFetching]);
+
+	const OnSubmitRemove = () => {
 		const findIndex = removeUser.findIndex((x) => x === User?.id);
 
 		if (findIndex === -1) {
-			console.log(userControl, removeUser);
+			// return;
+			DeleteUser({ Data: removeUser, idProject: Proyek })
+				.unwrap()
+				.then((payload: ISuccess) => {
+					if (payload.data) {
+						HandleControlStateSuccess(
+							"Success",
+							"Berhasil Manghapus",
+							refetch
+						);
+					} else {
+						HandleControlStateError(
+							"Gagal!",
+							payload.error?.data.message
+						);
+					}
+				})
+				.catch((err) => {
+					HandleControlStateError(
+						"Gagal!",
+						err.data.message ?? "Terjadi Kesalahan Pada Server"
+					);
+				});
+			return;
 		}
+
+		HandleControlStateError("Gagal!", "Tidak Bisa Menghapus Diri Sendiri");
 	};
 
 	return (
 		<React.Fragment>
 			<Modal open={isOpen} onClose={closeModal}>
 				<Box sx={{ ...style, width: 400 }}>
+					<ModalInfo
+						isOpen={errorState.error}
+						closeModal={HandleControlStateError}
+						head={(errorState.head as string) ?? "Gagal!"}
+						msg={
+							(errorState.msg as string) ??
+							"Terjadi Kesalahan Pada Server"
+						}
+					/>
+					<ModalInfo
+						isOpen={!successState.error}
+						closeModal={HandleControlStateSuccess}
+						head={(successState.head as string) ?? "Success"}
+						msg={
+							(successState.msg as string) ?? "Berhasil mengubah"
+						}
+					/>
 					<Stack
 						direction={"row"}
 						justifyContent="space-between"
@@ -141,12 +207,12 @@ export const MainListTeam = ({
 											<Checkbox
 												checked={x.isChecked}
 												onChange={() =>
-													OnChecked(x.teamId)
+													OnChecked(x.userId)
 												}
 											/>
 										}
 										label={x.user.username}
-										key={x.teamId}
+										key={x.userId}
 									/>
 								))
 							) : (
@@ -165,7 +231,7 @@ export const MainListTeam = ({
 						<Button
 							color="error"
 							variant="contained"
-							onClick={OnSubmit}
+							onClick={OnSubmitRemove}
 						>
 							Hapus
 						</Button>

@@ -24,5 +24,13 @@ export function useError(errorMsg: Msg & { action?: () => void | null }) {
 		};
 	}, [errorState]);
 
-	return { errorState, setErrorState };
+	const HandleControlStateError = (head?: string, msg?: string) => {
+		setErrorState((prev) => ({
+			error: !prev.error,
+			head: head ?? "",
+			msg: msg ?? "",
+		}));
+	};
+
+	return { errorState, setErrorState, HandleControlStateError };
 }

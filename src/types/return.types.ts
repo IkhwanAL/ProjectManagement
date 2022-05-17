@@ -39,6 +39,7 @@ export interface UserTeamSelect {
 	teamId: number;
 	role: userteam_role;
 	user: {
+		email: string;
 		username: string;
 	};
 }

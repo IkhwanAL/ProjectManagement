@@ -14,8 +14,8 @@ import {
 const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects"],
-	keepUnusedDataFor: 0,
+	tagTypes: ["Projects", "Teams", "DetailProject", "Leader"],
+	// keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -43,6 +43,7 @@ export const ProjectApi = createApi({
 					method: "POST",
 				};
 			},
+			invalidatesTags: ["Projects"],
 		}),
 		PatchProject: builder.mutation<
 			ISuccess<project>,
@@ -56,6 +57,7 @@ export const ProjectApi = createApi({
 					method: "PATCH",
 				};
 			},
+			invalidatesTags: ["Projects"],
 		}),
 		GetAllProject: builder.query<ISuccess<GetAllProjectReturn>, null>({
 			query: () => {
@@ -65,7 +67,7 @@ export const ProjectApi = createApi({
 					method: "GET",
 				};
 			},
-			keepUnusedDataFor: 0,
+			providesTags: ["Projects"],
 		}),
 		GetOneProjectNoCalc: builder.query<ISuccess<GetProjectSmall>, number>({
 			query: (data) => {
@@ -75,6 +77,7 @@ export const ProjectApi = createApi({
 					method: "GET",
 				};
 			},
+			providesTags: ["DetailProject"],
 		}),
 		GetUserTeam: builder.query<ISuccess<UserTeamSelect[]>, number>({
 			query: (data) => ({
@@ -82,6 +85,10 @@ export const ProjectApi = createApi({
 				credentials: "include",
 				method: "GET",
 			}),
+			providesTags: ["Teams"],
+			onQueryStarted(arg, api) {
+				console.log(arg);
+			},
 		}),
 		GetLeader: builder.query<ISuccess<LeaderInterface>, number>({
 			query: (data) => ({
@@ -89,6 +96,7 @@ export const ProjectApi = createApi({
 				method: "GET",
 				credentials: "include",
 			}),
+			providesTags: ["Leader"],
 		}),
 		ChangeOwner: builder.mutation({
 			query: ({ idProject, idUserInvitation }) => ({
@@ -99,9 +107,15 @@ export const ProjectApi = createApi({
 			invalidatesTags: ["Projects"],
 		}),
 		DeleteUserTeam: builder.mutation({
-			query: (data) => ({
-				url: `/`,
+			query: ({ Data, idProject }) => ({
+				url: `/userteam/delete/${idProject}`,
+				body: {
+					Data: Data,
+				},
+				method: "DELETE",
+				credentials: "include",
 			}),
+			invalidatesTags: ["Teams"],
 		}),
 	}),
 });
@@ -114,4 +128,5 @@ export const {
 	useGetUserTeamQuery,
 	useGetLeaderQuery,
 	useChangeOwnerMutation,
+	useDeleteUserTeamMutation,
 } = ProjectApi;

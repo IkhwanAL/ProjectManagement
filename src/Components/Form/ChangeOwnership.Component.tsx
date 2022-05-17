@@ -87,7 +87,6 @@ export const ChangeOwnerForm = ({
 	const onChangeLeader = useCallback(
 		(ev: React.ChangeEvent<HTMLInputElement>, value: string) => {
 			const payload = [];
-			// console.log(ev.target.value, value);
 			for (const iterator of list) {
 				if (iterator.userId === parseInt(value)) {
 					const pay = { ...iterator, isSelect: true };
