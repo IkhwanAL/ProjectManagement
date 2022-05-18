@@ -50,14 +50,15 @@ export const ListTeam = ({
 		if (data) {
 			//
 			const res = data as UserTeamSelect[];
-
+			console.log(data, "Data");
+			console.log(dataToCompare, "Data To Compare");
 			const payloadList = [];
 			if (dataToCompare) {
-				const ComparingData = dataToCompare as UserTeamSelect[];
+				const ComparingData = dataToCompare;
 				for (const iterator of res) {
 					const it = iterator;
 					const arr = ComparingData.find(
-						(x) => x.teamId === it.teamId
+						(x: any) => x.idUser === it.userId
 					);
 
 					payloadList.push({ ...it, isSelect: arr ? true : false });
@@ -72,7 +73,7 @@ export const ListTeam = ({
 			const SRT = payloadList as UserTeamSelected[];
 			setList(SRT);
 		}
-	}, []);
+	}, [data, dataToCompare]);
 
 	const OnSubmit = (
 		ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -82,10 +83,18 @@ export const ListTeam = ({
 
 	const ControlCheckBox = (
 		checked: boolean,
-		onChange: (...arg: any) => void,
-		key: any
+		key: any,
+		username: string,
+		idUser: number,
+		onChange: (...arg: any) => void
 	) => {
-		return <Checkbox checked={checked} onChange={onChange} key={key} />;
+		return (
+			<Checkbox
+				checked={checked}
+				onChange={(ev) => onChange(ev, idUser, username)}
+				key={key}
+			/>
+		);
 	};
 
 	return (
@@ -104,8 +113,10 @@ export const ListTeam = ({
 									<FormControlLabel
 										control={ControlCheckBox(
 											x.isSelect,
-											handleChange,
-											x.teamId
+											x.teamId,
+											x.user.username,
+											x.userId,
+											action ?? handleChange
 										)}
 										key={x.teamId}
 										label={x.user.username}

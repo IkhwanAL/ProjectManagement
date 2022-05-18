@@ -111,7 +111,7 @@ export const MainListTeam = ({
 			setRemoveUser((prev) => prev.filter((x) => x !== userId));
 		}
 	};
-	console.log(isFetching, "Refetch");
+
 	React.useEffect(() => {
 		if (!isFetching && data?.data) {
 			const payload1 = [];

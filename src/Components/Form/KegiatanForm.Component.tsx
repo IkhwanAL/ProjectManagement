@@ -10,6 +10,7 @@ import { ProyekKegiatanProps } from "../../Props/Modal.property";
 import { LoadingButton } from "@mui/lab";
 import {
 	Box,
+	Button,
 	Checkbox,
 	IconButton,
 	List,
@@ -124,6 +125,11 @@ export const FormKegiatan = ({
 		setForm({});
 	};
 
+	const OnClose = () => {
+		handleShow(ActivityName);
+		setForm({});
+	};
+
 	const onOpen = () => {
 		setOpenDetail((prev) => !prev);
 	};
@@ -216,6 +222,40 @@ export const FormKegiatan = ({
 		}));
 	};
 
+	const SaveListTeam = (
+		event: React.ChangeEvent<HTMLInputElement>,
+		idUser: number,
+		username: string
+	) => {
+		const payload = {
+			idUser: idUser,
+			user: {
+				username: username,
+			},
+		};
+		console.log(form);
+		if (event.target.checked) {
+			if (!form["ListAcceptTeam"]) {
+				setForm((prev) => ({
+					...prev,
+					["ListAcceptTeam"]: [payload],
+				}));
+			} else {
+				setForm((prev) => ({
+					...prev,
+					["ListAcceptTeam"]: [...form["ListAcceptTeam"], payload],
+				}));
+			}
+		} else {
+			setForm((prev) => ({
+				...prev,
+				["ListAcceptTeam"]: form["ListAcceptTeam"].filter(
+					(x: any) => x.idUser !== idUser
+				),
+			}));
+		}
+	};
+
 	return (
 		<>
 			<Modal
@@ -249,6 +289,8 @@ export const FormKegiatan = ({
 									closeModal={onOpenListTeam}
 									isOpen={openListTeam}
 									data={TeamList.data?.data}
+									dataToCompare={form.ListAcceptTeam}
+									action={SaveListTeam}
 								/>
 								<Typography
 									variant="h5"
@@ -260,27 +302,30 @@ export const FormKegiatan = ({
 								</Typography>
 								<Box>
 									<Stack direction={"row-reverse"}>
-										<div className="pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-10">
-											<img
-												src="https://ui-avatars.com/api/?name=Ikhwan"
-												className="w-full h-full rounded-full border-1 border-primary"
-												alt="User"
-											/>
-										</div>
-										<div className="pb-5 pl-5 bg-opacity-30 rounded-full w-14 h-14 -ml-9 ">
-											<img
-												src="https://ui-avatars.com/api/?name=Ananda"
-												className="w-full h-full rounded-full border-1 border-primary"
-												alt="User"
-											/>
-										</div>
-										<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -ml-8 ">
-											<img
-												src="https://ui-avatars.com/api/?name=Abi"
-												className="w-full h-full rounded-full border-1 border-primary"
-												alt="User"
-											/>
-										</div>
+										{typeof form.ListAcceptTeam !==
+											"undefined" &&
+										form.ListAcceptTeam.length !== 0 ? (
+											form.ListAcceptTeam?.slice(
+												0,
+												3
+											).map(
+												(list: any, index: number) => (
+													<div
+														className={`pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-${
+															10 - index
+														}`}
+													>
+														<img
+															src={`https://ui-avatars.com/api/?name=${list.user.username}`}
+															className="w-full h-full rounded-full border-1 border-primary"
+															alt="User"
+														/>
+													</div>
+												)
+											)
+										) : (
+											<></>
+										)}
 										<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -	ml-8 ">
 											{/* <img
 												src="https://ui-avatars.com/api/?name="
@@ -541,11 +586,25 @@ export const FormKegiatan = ({
 							</Box>
 						</div>
 					</div>
-					<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-						<LoadingButton variant="contained" onClick={OnSubmit}>
-							Simpan
-						</LoadingButton>
-					</div>
+					<Stack direction={"row"} justifyContent="space-between">
+						<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+							<Button
+								variant="contained"
+								onClick={OnClose}
+								color="secondary"
+							>
+								Tutup
+							</Button>
+						</div>
+						<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+							<LoadingButton
+								variant="contained"
+								onClick={OnSubmit}
+							>
+								Simpan
+							</LoadingButton>
+						</div>
+					</Stack>
 				</Box>
 			</Modal>
 		</>
