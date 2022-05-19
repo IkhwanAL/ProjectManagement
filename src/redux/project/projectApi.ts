@@ -86,9 +86,6 @@ export const ProjectApi = createApi({
 				method: "GET",
 			}),
 			providesTags: ["Teams"],
-			onQueryStarted(arg, api) {
-				console.log(arg);
-			},
 		}),
 		GetLeader: builder.query<ISuccess<LeaderInterface>, number>({
 			query: (data) => ({

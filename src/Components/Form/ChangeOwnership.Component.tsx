@@ -149,14 +149,16 @@ export const ChangeOwnerForm = ({
 					</Typography>
 
 					<FormControl component={"fieldset"} variant="standard">
-						<FormLabel> </FormLabel>
 						<RadioGroup onChange={onChangeLeader}>
 							{list && list.length !== 0 ? (
 								list.map((x) => (
 									<>
 										<FormControlLabel
 											control={
-												<Radio checked={x.isSelect} />
+												<Radio
+													checked={x.isSelect}
+													key={x.teamId + ""}
+												/>
 											}
 											key={"" + x.teamId}
 											label={x.user.username}

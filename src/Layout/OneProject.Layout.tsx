@@ -62,7 +62,7 @@ export const OneProject = () => {
 	};
 
 	React.useEffect(() => {
-		if (isSuccess) {
+		if (isSuccess || !isFetching) {
 			const d = data?.data?.projectactivity;
 
 			let payload: StateActivityProject = {
@@ -80,7 +80,7 @@ export const OneProject = () => {
 				setPositionData(payload);
 			}
 		}
-	}, [isSuccess]);
+	}, [isSuccess, isFetching]);
 
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
