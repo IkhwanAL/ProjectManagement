@@ -14,7 +14,7 @@ import { projectactivity_position } from "../../types/database.types";
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects"],
+	tagTypes: ["Projects", "ProjectActivity"],
 	keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
@@ -43,6 +43,7 @@ export const ProjectActApi = createApi({
 				};
 			},
 			keepUnusedDataFor: 0,
+			providesTags: ["Projects"],
 		}),
 		MoveActivityPosition: builder.mutation<
 			ISuccess<MoveStateReturn>,
@@ -56,6 +57,7 @@ export const ProjectActApi = createApi({
 					method: "PATCH",
 				};
 			},
+			invalidatesTags: ["Projects"],
 		}),
 		GetOneProjectActivity: builder.query<
 			ISuccess<GetOneProjectActivity>,
@@ -68,6 +70,7 @@ export const ProjectActApi = createApi({
 					method: "GET",
 				};
 			},
+			providesTags: ["ProjectActivity"],
 		}),
 		GetSimple: builder.query({
 			query: (idProjectActivity) => {
@@ -77,6 +80,23 @@ export const ProjectActApi = createApi({
 					method: "GET",
 				};
 			},
+			providesTags: ["ProjectActivity"],
+		}),
+		CreateOne: builder.mutation({
+			query: ({ idProject, data }) => ({
+				url: "/projectactivity/project/" + idProject,
+				body: data,
+				method: "POST",
+				credentials: "include",
+			}),
+			invalidatesTags: ["Projects"],
+		}),
+		GetAllActivity: builder.query({
+			query: (idProject) => ({
+				url: "/projectactivity/project/" + idProject,
+				method: "GET",
+				credentials: "include",
+			}),
 		}),
 	}),
 });
@@ -86,4 +106,6 @@ export const {
 	useMoveActivityPositionMutation,
 	useLazyGetOneProjectActivityQuery,
 	useLazyGetSimpleQuery,
+	useCreateOneMutation,
+	useGetAllActivityQuery,
 } = ProjectActApi;

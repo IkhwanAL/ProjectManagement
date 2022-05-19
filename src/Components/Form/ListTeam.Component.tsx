@@ -50,8 +50,6 @@ export const ListTeam = ({
 		if (data) {
 			//
 			const res = data as UserTeamSelect[];
-			console.log(data, "Data");
-			console.log(dataToCompare, "Data To Compare");
 			const payloadList = [];
 			if (dataToCompare) {
 				const ComparingData = dataToCompare;
@@ -75,9 +73,9 @@ export const ListTeam = ({
 		}
 	}, [data, dataToCompare]);
 
-	const OnSubmit = (
-		ev: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {};
+	const OnSubmit = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		closeModal();
+	};
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {};
 

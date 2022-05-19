@@ -31,10 +31,16 @@ import { useSelector } from "react-redux";
 import { proyekSelector } from "../../redux/project/projectSlice";
 import { UserTeamSelect } from "../../types/return.types";
 import {
+	useCreateOneMutation,
+	useGetAllActivityQuery,
 	useLazyGetOneProjectActivityQuery,
 	useLazyGetSimpleQuery,
 } from "../../redux/projectActivity/projectActivityApi";
 import { GetOneProjectActivity } from "../../interface/proyek.interface";
+import {
+	projectactivity,
+	projectactivity_position,
+} from "../../types/database.types";
 
 // interface ProjectActivityStateForm extends GetOneProjectActivity {
 // 	parentArray: Array<any>;
@@ -42,6 +48,8 @@ import { GetOneProjectActivity } from "../../interface/proyek.interface";
 // 	subdetailprojectactivity: Array<{ [key: string]: any }>;
 // 	ListAcceptTeam: [{}];
 // }
+
+interface SubmitForm extends Partial<projectactivity> {}
 
 const style = {
 	position: "absolute" as "absolute",
@@ -72,57 +80,131 @@ export const FormKegiatan = ({
 	const TeamList = useGetUserTeamQuery(idProyek as number);
 	const [triggerFetching] = useLazyGetOneProjectActivityQuery();
 	const [trg] = useLazyGetSimpleQuery();
+	const Activity = useGetAllActivityQuery(idProyek, {
+		refetchOnMountOrArgChange: true,
+		refetchOnFocus: true,
+	});
 
 	const [form, setForm] = useState<{ [key: string]: any }>({});
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openListTeam, setOpenListTeam] = useState(false);
 
+	const [Create] = useCreateOneMutation();
+
 	React.useEffect(() => {
 		if (idProjectActivity) {
 			const subscribing = triggerFetching(idProjectActivity);
-			subscribing.then((x) => {
-				const { data } = x;
-				if (data?.data) {
-					const res = data.data as GetOneProjectActivity;
+			subscribing
+				.unwrap()
+				.then((x) => {
+					const { data } = x;
+					if (data) {
+						const res = data;
 
-					for (const key in res) {
-						if (key === "usertaskfromassignee") {
-							setForm((prev) => {
-								return {
+						for (const key in res) {
+							if (key === "usertaskfromassignee") {
+								setForm((prev) => {
+									return {
+										...prev,
+										["ListAcceptTeam"]: res[key],
+									};
+								});
+							} else if (key === "parent") {
+								setForm((prev) => ({
 									...prev,
-									["ListAcceptTeam"]: res[key],
-								};
-							});
-						} else if (key === "parent") {
-							setForm((prev) => ({
-								...prev,
-								["parent"]: res[key],
-								["parentArray"]: res[key]?.split(","),
-							}));
-						} else if (key === "ParentActivityName") {
-							setForm((prev) => ({
-								...prev,
-								["parentNameActivity"]: res[key],
-							}));
-						} else {
-							setForm((prev) => {
-								return {
+									["parent"]: res[key],
+									["parentArray"]: res[key]?.split(","),
+								}));
+							} else if (key === "ParentActivityName") {
+								setForm((prev) => ({
 									...prev,
-									[key]: res[
-										key as keyof GetOneProjectActivity
-									],
-								};
-							});
+									["parentNameActivity"]: res[key],
+								}));
+							} else if (key === "status") {
+								setForm((prev) => ({
+									...prev,
+									status: res["status"] ? "aktif" : "unaktif",
+								}));
+							} else {
+								setForm((prev) => {
+									return {
+										...prev,
+										[key]: res[
+											key as keyof GetOneProjectActivity
+										],
+									};
+								});
+							}
 						}
 					}
-				}
-			});
+				})
+				.catch(console.log);
 		}
-	}, [idProjectActivity]);
+
+		return () => {
+			setForm({});
+		};
+	}, [idProjectActivity, triggerFetching]);
 
 	const OnSubmit = () => {
-		handleShow(ActivityName);
-		setForm({});
+		const RefactorForm = {} as projectactivity & { [key: string]: any };
+
+		if (form["ListAcceptTeam"]) {
+			const ListAcceptTeam = form["ListAcceptTeam"] as Array<any>;
+
+			RefactorForm.usertaskfromassignee = ListAcceptTeam.map(
+				(x) => x.idUser
+			);
+		}
+
+		if (form["parentArray"]) {
+			RefactorForm.parent = form["parentArray"].join(",");
+		}
+
+		if (form["subdetailprojectactivity"]) {
+			const SubDetailProjectActivity = form[
+				"subdetailprojectactivity"
+			] as Array<any>;
+
+			RefactorForm["subdetailprojectactivity"] =
+				SubDetailProjectActivity.map((x) => ({
+					subDetailProjectActivityId:
+						x?.subDetailProjectActivityId ?? "",
+					description: x?.description ?? "",
+					isComplete: x?.isComplete ?? "",
+				}));
+		}
+
+		switch (ActivityName) {
+			case "To Do":
+				RefactorForm.position = projectactivity_position.To_Do;
+				break;
+			case "Doing":
+				RefactorForm.position = projectactivity_position.Doing;
+				break;
+			case "Review":
+				RefactorForm.position = projectactivity_position.Review;
+				break;
+			default:
+				RefactorForm.position = projectactivity_position.Done;
+				break;
+		}
+
+		RefactorForm.name = form.name;
+		RefactorForm.description = form.description;
+		RefactorForm.status = form.status === "aktif" ? true : false;
+		RefactorForm.timeToComplete = parseInt(form.timeToComplete);
+
+		Create({ idProject: idProyek, data: RefactorForm })
+			.unwrap()
+			.then((succ) => {
+				console.log(succ);
+				handleShow(ActivityName);
+				setForm({});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	const OnClose = () => {
@@ -169,7 +251,9 @@ export const FormKegiatan = ({
 		}));
 	};
 
-	const OnChangeInputField = (ev: React.ChangeEvent<HTMLInputElement>) => {
+	const OnChangeInputField = (
+		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
 		setForm((prev) => ({
 			...prev,
 			[ev.target.name]: ev.target.value,
@@ -397,7 +481,7 @@ export const FormKegiatan = ({
 									value={form.description ?? ""}
 									id={"description"}
 									name="description"
-									onChange={() => {}}
+									onChange={OnChangeInputField}
 									placeholder="Deksripsi"
 								></textarea>
 							</div>
@@ -418,7 +502,27 @@ export const FormKegiatan = ({
 									<option value="">
 										-Pilih Kegiatan Sebelumnya-
 									</option>
-									<option value={["A", "Kegiatan A"]}>
+									{Activity?.data?.data &&
+									Activity?.data?.data.length !== 0 ? (
+										Activity?.data?.data?.map((x: any) => {
+											return (
+												<option
+													value={[
+														x.projectActivityId,
+														x.name,
+													]}
+													key={
+														x.projectActivityId + ""
+													}
+												>
+													{x.name}
+												</option>
+											);
+										})
+									) : (
+										<></>
+									)}
+									{/* <option value={["A", "Kegiatan A"]}>
 										Kegiatan A
 									</option>
 									<option value={["B", "Kegiatan B"]}>
@@ -426,7 +530,7 @@ export const FormKegiatan = ({
 									</option>
 									<option value={["C", "Kegiatan C"]}>
 										Kegiatan C
-									</option>
+									</option> */}
 								</select>
 							</div>
 							<Box
@@ -485,6 +589,11 @@ export const FormKegiatan = ({
 										name="status"
 										type="radio"
 										value={"aktif"}
+										checked={
+											form.status === "aktif"
+												? true
+												: false
+										}
 										className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 										onChange={RadioHandle}
 									/>
@@ -501,6 +610,11 @@ export const FormKegiatan = ({
 										name="status"
 										type="radio"
 										value={"unaktif"}
+										checked={
+											form.status === "unaktif"
+												? true
+												: false
+										}
 										className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 										onChange={RadioHandle}
 									/>
@@ -554,6 +668,7 @@ export const FormKegiatan = ({
 																</IconButton>
 															</>
 														}
+														key={x.id}
 													>
 														<ListItemButton>
 															<ListItemIcon>

@@ -40,12 +40,13 @@ export type projectactivity = {
 	progress: number;
 	position: projectactivity_position;
 	timeToComplete: number;
-	status: boolean;
+	status: number | boolean;
 	description: string;
 	parent?: string | null;
 	child?: string | null;
 	createdAt?: Date | null;
 	updatedAt?: Date | null;
+	usertaskfromassignee?: Array<number>;
 };
 
 export type subdetailprojectactivity = {
