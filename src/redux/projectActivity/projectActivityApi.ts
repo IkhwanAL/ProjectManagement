@@ -89,6 +89,15 @@ export const ProjectActApi = createApi({
 			}),
 			invalidatesTags: ["Projects"],
 		}),
+		PatchOne: builder.mutation({
+			query: ({ idProject, data }) => ({
+				url: "/projectactivity/project/" + idProject,
+				body: data,
+				method: "PATCH",
+				credentials: "include",
+			}),
+			invalidatesTags: ["Projects"],
+		}),
 		GetAllActivity: builder.query({
 			query: (idProject) => ({
 				url: "/projectactivity/project/" + idProject,
@@ -105,5 +114,6 @@ export const {
 	useLazyGetOneProjectActivityQuery,
 	useLazyGetSimpleQuery,
 	useCreateOneMutation,
+	usePatchOneMutation,
 	useGetAllActivityQuery,
 } = ProjectActApi;

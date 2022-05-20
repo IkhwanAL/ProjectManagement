@@ -35,11 +35,13 @@ import {
 	useGetAllActivityQuery,
 	useLazyGetOneProjectActivityQuery,
 	useLazyGetSimpleQuery,
+	usePatchOneMutation,
 } from "../../redux/projectActivity/projectActivityApi";
 import { GetOneProjectActivity } from "../../interface/proyek.interface";
 import {
 	projectactivity,
 	projectactivity_position,
+	subdetailprojectactivity,
 } from "../../types/database.types";
 
 // interface ProjectActivityStateForm extends GetOneProjectActivity {
@@ -90,6 +92,7 @@ export const FormKegiatan = ({
 	const [openListTeam, setOpenListTeam] = useState(false);
 
 	const [Create] = useCreateOneMutation();
+	const [Patch] = usePatchOneMutation();
 
 	React.useEffect(() => {
 		if (idProjectActivity) {
@@ -125,6 +128,30 @@ export const FormKegiatan = ({
 									...prev,
 									status: res["status"] ? "aktif" : "unaktif",
 								}));
+							} else if (key === "subdetailprojectactivity") {
+								const temp: (subdetailprojectactivity & {
+									id: string;
+								})[] = [];
+
+								if (res[key]) {
+									const ProjectActivity = res[key];
+
+									if (ProjectActivity) {
+										for (const iterator of ProjectActivity) {
+											const payload = {
+												id: uuidv4(),
+												...iterator,
+											};
+
+											temp.push(payload);
+										}
+									}
+								}
+
+								setForm((prev) => ({
+									...prev,
+									["subdetailprojectactivity"]: temp,
+								}));
 							} else {
 								setForm((prev) => {
 									return {
@@ -136,6 +163,8 @@ export const FormKegiatan = ({
 								});
 							}
 						}
+
+						console.log(form);
 					}
 				})
 				.catch(console.log);
@@ -194,17 +223,35 @@ export const FormKegiatan = ({
 		RefactorForm.description = form.description;
 		RefactorForm.status = form.status === "aktif" ? true : false;
 		RefactorForm.timeToComplete = parseInt(form.timeToComplete);
+		console.log(form, "Old");
+		console.log(RefactorForm, "Refactor");
 
-		Create({ idProject: idProyek, data: RefactorForm })
-			.unwrap()
-			.then((succ) => {
-				console.log(succ);
-				handleShow(ActivityName);
-				setForm({});
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		return;
+		// if (idProjectActivity) {
+		// 	RefactorForm.projectActivityId = idProjectActivity;
+
+		// 	Patch({ idProject: idProyek, data: RefactorForm })
+		// 		.unwrap()
+		// 		.then((succ) => {
+		// 			console.log(succ);
+		// 			handleShow(ActivityName);
+		// 			setForm({});
+		// 		})
+		// 		.catch(console.log);
+
+		// 	return;
+		// }
+
+		// Create({ idProject: idProyek, data: RefactorForm })
+		// 	.unwrap()
+		// 	.then((succ) => {
+		// 		console.log(succ);
+		// 		handleShow(ActivityName);
+		// 		setForm({});
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log(err);
+		// 	});
 	};
 
 	const OnClose = () => {
@@ -223,6 +270,7 @@ export const FormKegiatan = ({
 	const SaveStateDetailProyekActivity = (ev: string) => {
 		const payload = {
 			id: uuidv4(),
+			subDetailProjectActivityId: "",
 			description: ev,
 			isComplete: false,
 		};
@@ -240,6 +288,28 @@ export const FormKegiatan = ({
 				],
 			}));
 		}
+	};
+
+	const OnCheck = (
+		ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		id: string
+	) => {
+		let ChangedData: subdetailprojectactivity & { id: string } = form[
+			"subdetailprojectactivity"
+		].filter(
+			(x: subdetailprojectactivity & { id: string }) => x.id === id
+		)[0];
+
+		ChangedData.isComplete = !ChangedData.isComplete;
+		console.log(ChangedData);
+		const NotChangedData = form["subdetailprojectactivity"].filter(
+			(x: any) => x.id !== id
+		);
+
+		setForm((prev) => ({
+			...prev,
+			["subdetailprojectactivity"]: [...NotChangedData, ChangedData],
+		}));
 	};
 
 	const RemoveStateDetailProyekAct = (uuid: any) => {
@@ -298,11 +368,13 @@ export const FormKegiatan = ({
 	const deletePrevActivity = (id: any) => {
 		setForm((prev) => ({
 			...prev,
-			["parentArray"]: prev["parent"].filter((x: any) => x !== id),
+			["parentArray"]: prev["parentArray"].filter((x: any) => x !== id),
 			["parentNameActivity"]: prev["parentNameActivity"].filter(
 				(x: Array<any>) => x[0] !== id
 			),
-			["parent"]: prev["parent"].filter((x: any) => x !== id).join(","),
+			["parent"]: prev["parentArray"]
+				.filter((x: any) => x !== id)
+				.join(","),
 		}));
 	};
 
@@ -317,7 +389,7 @@ export const FormKegiatan = ({
 				username: username,
 			},
 		};
-		console.log(form);
+
 		if (event.target.checked) {
 			if (!form["ListAcceptTeam"]) {
 				setForm((prev) => ({
@@ -677,7 +749,20 @@ export const FormKegiatan = ({
 																	tabIndex={
 																		-1
 																	}
-																	disableRipple
+																	disableRipple={
+																		true
+																	}
+																	onClick={(
+																		ev
+																	) =>
+																		OnCheck(
+																			ev,
+																			x.id
+																		)
+																	}
+																	checked={
+																		x.isComplete
+																	}
 																/>
 															</ListItemIcon>
 															<ListItemText
