@@ -1,9 +1,8 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-useless-computed-key */
-import { PencilIcon, PlusIcon } from "@heroicons/react/solid";
 
-import React, { Fragment, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/outline";
+import React, { useState } from "react";
+import { Dialog } from "@headlessui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import { ProyekKegiatanProps } from "../../Props/Modal.property";
@@ -103,7 +102,7 @@ export const FormKegiatan = ({
 					const { data } = x;
 					if (data) {
 						const res = data;
-
+						console.log(res);
 						for (const key in res) {
 							if (key === "usertaskfromassignee") {
 								setForm((prev) => {
@@ -201,6 +200,9 @@ export const FormKegiatan = ({
 						x?.subDetailProjectActivityId ?? "",
 					description: x?.description ?? "",
 					isComplete: x?.isComplete ?? "",
+					detailProyekId: x.detailProyekId
+						? x.detailProyekId
+						: idProjectActivity,
 				}));
 		}
 
@@ -223,24 +225,22 @@ export const FormKegiatan = ({
 		RefactorForm.description = form.description;
 		RefactorForm.status = form.status === "aktif" ? true : false;
 		RefactorForm.timeToComplete = parseInt(form.timeToComplete);
-		console.log(form, "Old");
-		console.log(RefactorForm, "Refactor");
 
-		return;
-		// if (idProjectActivity) {
-		// 	RefactorForm.projectActivityId = idProjectActivity;
+		// return;
+		if (idProjectActivity) {
+			RefactorForm.projectActivityId = idProjectActivity;
+			console.log(RefactorForm);
+			Patch({ idProject: idProyek, data: RefactorForm })
+				.unwrap()
+				.then((succ) => {
+					console.log(succ);
+					handleShow(ActivityName);
+					setForm({});
+				})
+				.catch(console.log);
 
-		// 	Patch({ idProject: idProyek, data: RefactorForm })
-		// 		.unwrap()
-		// 		.then((succ) => {
-		// 			console.log(succ);
-		// 			handleShow(ActivityName);
-		// 			setForm({});
-		// 		})
-		// 		.catch(console.log);
-
-		// 	return;
-		// }
+			return;
+		}
 
 		// Create({ idProject: idProyek, data: RefactorForm })
 		// 	.unwrap()
@@ -366,16 +366,22 @@ export const FormKegiatan = ({
 	};
 
 	const deletePrevActivity = (id: any) => {
+		console.log(form["parent"], "Parent");
+		console.log(form["parentNameActivity"], "Parent Name Acivity");
+		console.log(form["parentArray"], "Parent Array");
+		console.log(id, "ID");
 		setForm((prev) => ({
 			...prev,
-			["parentArray"]: prev["parentArray"].filter((x: any) => x !== id),
+			["parentArray"]: prev["parentArray"].filter((x: any) => x != id),
 			["parentNameActivity"]: prev["parentNameActivity"].filter(
-				(x: Array<any>) => x[0] !== id
+				(x: Array<any>) => x[0] != id
 			),
 			["parent"]: prev["parentArray"]
-				.filter((x: any) => x !== id)
+				.filter((x: any) => x != id)
 				.join(","),
 		}));
+
+		console.log(form, "Res");
 	};
 
 	const SaveListTeam = (
