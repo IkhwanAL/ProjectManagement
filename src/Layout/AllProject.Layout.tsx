@@ -27,6 +27,7 @@ const ProjectPage = () => {
 									user={{ username: x.user.username }}
 									key={"" + x.projectId}
 									projectId={x.projectId}
+									startDate={x.startDate}
 									projectDescription={x.projectDescription}
 									deadline={x.deadline}
 									projectName={x.projectName}

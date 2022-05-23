@@ -14,6 +14,7 @@ export type project = {
 	projectId: number;
 	projectName: string;
 	projectDescription: string;
+	startDate: Date | number | null;
 	deadline: Date | null;
 	deadlineInString: string | null;
 	userOwner: number;
@@ -25,6 +26,7 @@ export type PReturn = {
 	projectId: number;
 	projectName: string;
 	projectDescription: string;
+	startDate: Date | number | null;
 	deadline: Date | null;
 	deadlineInString: string | null;
 	user: {
@@ -41,6 +43,7 @@ export type projectactivity = {
 	position: projectactivity_position;
 	timeToComplete: number;
 	status: number | boolean;
+	startDate: Date | null;
 	description: string;
 	parent?: string | null;
 	child?: string | null;

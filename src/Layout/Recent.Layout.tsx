@@ -28,6 +28,7 @@ const RecentPage = () => {
 								<CardProject
 									user={{ username: x?.user?.username }}
 									key={"" + x?.projectId}
+									startDate={x?.startDate}
 									projectId={x?.projectId}
 									projectDescription={x?.projectDescription}
 									deadline={x?.deadline}

@@ -17,6 +17,7 @@ export interface GetProjectReturn {
 	projectId: number;
 	projectName: string;
 	deadline: Date;
+	startDate: Date | null;
 	projectDescription: string;
 	deadlineInString: string;
 	userteam: {
@@ -30,6 +31,7 @@ export interface GetProjectSmall {
 	projectId?: number;
 	projectName?: string;
 	projectDescription?: string;
+	startDate?: Date;
 }
 
 export type GetAllProjectReturn = GetProjectReturn[];

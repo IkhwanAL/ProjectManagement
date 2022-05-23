@@ -20,7 +20,7 @@ import {
 	usePatchProjectMutation,
 	useLazyGetOneProjectNoCalcQuery,
 } from "../../redux/project/projectApi";
-import { SetIdProyek } from "../../redux/project/projectSlice";
+import { proyekSelector, SetIdProyek } from "../../redux/project/projectSlice";
 import AnyModal from "../Modal/Any.Component";
 
 export default function ProyekForm({
@@ -33,12 +33,13 @@ export default function ProyekForm({
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 
-	const [triggerGetProyek] = useLazyGetOneProjectNoCalcQuery();
+	const [triggerGetProyek, HooksGet] = useLazyGetOneProjectNoCalcQuery();
 
 	const initial: Partial<QueryArgProject & { projectId: number | null }> = {
 		projectId: projectId ? projectId : null,
 		projectName: "",
 		projectDescription: "",
+		startDate: "",
 	};
 
 	const dispatch = useDispatch();
@@ -125,31 +126,82 @@ export default function ProyekForm({
 	}, [CreateHooks.isError, PatchHooks.isError]);
 
 	const onHandleSubmit = () => {
+		if (!proyek.projectName) {
+			setErrorState({
+				error: true,
+				head: "Data Kosong",
+				msg: "Nama Proyek Kosong",
+			});
+
+			return;
+		}
+
+		if (!proyek.projectDescription) {
+			setErrorState({
+				error: true,
+				head: "Data Kosong",
+				msg: "Deskripsi Proyek Kosong",
+			});
+
+			return;
+		}
+
+		if (!proyek.startDate) {
+			setErrorState({
+				error: true,
+				head: "Data Kosong",
+				msg: "Waktu Mulai Pengerjaan Kosong",
+			});
+
+			return;
+		}
+
+		console.log(new Date(proyek.startDate));
+
 		if (proyek.projectId) {
+			console.log(proyek);
 			PatchProject({
 				projectId: proyek.projectId,
 				projectName: proyek.projectName,
 				projectDescription: proyek.projectDescription,
+				startDate: new Date(proyek.startDate),
 			});
 		} else {
 			const { projectId, ...rest } = proyek;
-			CreateProject(rest);
+			const payload = {
+				projectName: rest.projectName,
+				projectDescription: rest.projectDescription,
+				startDate: new Date(proyek.startDate),
+			};
+			CreateProject(payload);
 		}
 	};
-
 	React.useEffect(() => {
+		// if (HooksGet.isFetching && HooksGet.isSuccess) {
 		if (projectId) {
 			triggerGetProyek(projectId, false)
 				.unwrap()
 				.then((res) => {
+					let date = "";
+					if (res.data?.startDate) {
+						const time = res.data.startDate;
+						date = `${new Date(time).getFullYear()}-${
+							new Date(time).getMonth() + 1 < 10
+								? "0" + (new Date(time).getMonth() + 1)
+								: new Date(time).getMonth() + 1
+						}-${new Date(time).getDate()}`;
+					}
+
 					setProyek({
 						projectId: res.data?.projectId,
 						projectName: res.data?.projectName,
 						projectDescription: res.data?.projectDescription,
+						startDate: date,
 					});
 				})
 				.catch(console.warn);
 		}
+		// }
 	}, []);
 
 	const OnCloseErrorModal = () => {
@@ -228,6 +280,20 @@ export default function ProyekForm({
 							}}
 							multiline
 							rows={3}
+						/>
+					</FormControl>
+					<FormControl>
+						<TextField
+							label="Waktu Mulai"
+							margin="normal"
+							name="startDate"
+							onChange={OnChangeTextField}
+							value={proyek.startDate}
+							id="startDate"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							type="date"
 						/>
 					</FormControl>
 				</Stack>

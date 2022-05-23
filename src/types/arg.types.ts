@@ -12,4 +12,5 @@ export type QueryArgRegister = {
 export type QueryArgProject = {
 	projectName: string;
 	projectDescription: string;
+	startDate: string | Date;
 };

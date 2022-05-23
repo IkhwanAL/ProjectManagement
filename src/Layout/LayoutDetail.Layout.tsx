@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { OneProject } from "./OneProject.Layout";
 import { TabContext } from "@mui/lab";
+import GanttChart from "./GanttChart.Layout";
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -78,7 +79,7 @@ export default function LayoutDetailProyek() {
 					<OneProject />
 				</TabPanel>
 				<TabPanel value={value} index={1} dir={theme.direction}>
-					Item Two
+					<GanttChart />
 				</TabPanel>
 			</Box>
 			{/* </Tabs> */}

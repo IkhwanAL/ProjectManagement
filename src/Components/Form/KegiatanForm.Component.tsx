@@ -42,6 +42,8 @@ import {
 	projectactivity_position,
 	subdetailprojectactivity,
 } from "../../types/database.types";
+import { useError } from "../../hooks/useError";
+import ModalInfo from "../Modal/ErrorModal.Component";
 
 // interface ProjectActivityStateForm extends GetOneProjectActivity {
 // 	parentArray: Array<any>;
@@ -89,6 +91,7 @@ export const FormKegiatan = ({
 	const [form, setForm] = useState<{ [key: string]: any }>({});
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openListTeam, setOpenListTeam] = useState(false);
+	const { HandleControlStateError, errorState } = useError({ error: false });
 
 	const [Create] = useCreateOneMutation();
 	const [Patch] = usePatchOneMutation();
@@ -221,26 +224,66 @@ export const FormKegiatan = ({
 				break;
 		}
 
+		if (!form.name) {
+			HandleControlStateError("Data Kosong", "Name Aktifitas Kosong");
+			return;
+		}
+
+		if (!form.description) {
+			HandleControlStateError("Data Kosong", "Deskripsi Kosong");
+			return;
+		}
+
+		if (!form.status) {
+			HandleControlStateError("Data Kosong", "Status Kegiatan Kosong");
+			return;
+		}
+
+		if (!form.timeToComplete) {
+			HandleControlStateError(
+				"Data Kosong",
+				"Total Waktu Pengerjaan Kosong"
+			);
+			return;
+		}
+
 		RefactorForm.name = form.name;
 		RefactorForm.description = form.description;
 		RefactorForm.status = form.status === "aktif" ? true : false;
 		RefactorForm.timeToComplete = parseInt(form.timeToComplete);
 
-		// return;
-		if (idProjectActivity) {
-			RefactorForm.projectActivityId = idProjectActivity;
-			console.log(RefactorForm);
-			Patch({ idProject: idProyek, data: RefactorForm })
-				.unwrap()
-				.then((succ) => {
-					console.log(succ);
-					handleShow(ActivityName);
-					setForm({});
-				})
-				.catch(console.log);
-
+		if (form.startDate) {
+			const splitDate = (form.startDate as string).split("-");
+			RefactorForm.startDate = new Date(
+				parseInt(splitDate[0]),
+				parseInt(splitDate[1]),
+				parseInt(splitDate[2])
+			);
+		} else {
+			HandleControlStateError(
+				"Data Kosong",
+				"Waktu Mulai Pengerjaan Kosong"
+			);
 			return;
 		}
+
+		console.log(RefactorForm);
+
+		return;
+		// if (idProjectActivity) {
+		// 	RefactorForm.projectActivityId = idProjectActivity;
+		// 	console.log(RefactorForm);
+		// 	Patch({ idProject: idProyek, data: RefactorForm })
+		// 		.unwrap()
+		// 		.then((succ) => {
+		// 			console.log(succ);
+		// 			handleShow(ActivityName);
+		// 			setForm({});
+		// 		})
+		// 		.catch(console.log);
+
+		// 	return;
+		// }
 
 		// Create({ idProject: idProyek, data: RefactorForm })
 		// 	.unwrap()
@@ -442,6 +485,12 @@ export const FormKegiatan = ({
 								direction={"row"}
 								justifyContent="space-between"
 							>
+								<ModalInfo
+									closeModal={HandleControlStateError}
+									isOpen={errorState.error}
+									head={errorState.head as string}
+									msg={errorState.msg as string}
+								/>
 								<AddProyekDetail
 									closeModal={onOpen}
 									isOpen={openDetail}
@@ -528,6 +577,25 @@ export const FormKegiatan = ({
 									value={form.name ?? ""}
 									onChange={OnChangeInputField}
 									className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+							<div className="mt-3">
+								<label
+									htmlFor="startDate"
+									className="block text-sm text-gray-700"
+								>
+									Waktu Mulai
+								</label>
+								<input
+									type="date"
+									min={`${new Date().getFullYear()}-${
+										new Date().getMonth() + 1
+									}-${new Date().getDate()}`}
+									value={form.startDate ?? ""}
+									id="startDate"
+									name="startDate"
+									onChange={OnChangeInputField}
+									className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
 								/>
 							</div>
 							<div className="mt-3">

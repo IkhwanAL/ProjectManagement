@@ -69,15 +69,33 @@ export const ProjectApi = createApi({
 			},
 			providesTags: ["Projects"],
 		}),
-		GetOneProjectNoCalc: builder.query<ISuccess<GetProjectSmall>, number>({
+		GetOneProjectNoCalc: builder.query<
+			ISuccess<GetProjectSmall>,
+			number | string
+		>({
 			query: (data) => {
 				return {
-					url: `/project/get/data/${data}`,
+					url: `/project/get/${data}`,
 					credentials: "include",
 					method: "GET",
 				};
 			},
-			providesTags: ["DetailProject"],
+			providesTags: ["Projects"],
+		}),
+		GetStartDate: builder.query<Date, string>({
+			query: (data) => ({
+				url: `/project/get/${data}`,
+				credentials: "include",
+				method: "GET",
+			}),
+			transformResponse(
+				baseQueryReturnValue: ISuccess<GetProjectSmall>,
+				_meta,
+				_arg
+			) {
+				return baseQueryReturnValue.data?.startDate as Date;
+			},
+			providesTags: ["Projects"],
 		}),
 		GetUserTeam: builder.query<ISuccess<UserTeamSelect[]>, number>({
 			query: (data) => ({
@@ -126,4 +144,5 @@ export const {
 	useGetLeaderQuery,
 	useChangeOwnerMutation,
 	useDeleteUserTeamMutation,
+	useGetStartDateQuery,
 } = ProjectApi;

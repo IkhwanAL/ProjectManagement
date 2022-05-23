@@ -48,6 +48,7 @@ export const GridPosition = ({
 										position={x.position}
 										timeToComplete={x.timeToComplete}
 										status={x.status}
+										startDate={x.startDate}
 										description={x.description}
 										progress={x.progress}
 										f={x.f}
