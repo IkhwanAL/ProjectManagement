@@ -252,49 +252,31 @@ export const FormKegiatan = ({
 		RefactorForm.status = form.status === "aktif" ? true : false;
 		RefactorForm.timeToComplete = parseInt(form.timeToComplete);
 
-		if (form.startDate) {
-			const splitDate = (form.startDate as string).split("-");
-			RefactorForm.startDate = new Date(
-				parseInt(splitDate[0]),
-				parseInt(splitDate[1]),
-				parseInt(splitDate[2])
-			);
-		} else {
-			HandleControlStateError(
-				"Data Kosong",
-				"Waktu Mulai Pengerjaan Kosong"
-			);
+		if (idProjectActivity) {
+			RefactorForm.projectActivityId = idProjectActivity;
+			console.log(RefactorForm);
+			Patch({ idProject: idProyek, data: RefactorForm })
+				.unwrap()
+				.then((succ) => {
+					console.log(succ);
+					handleShow(ActivityName);
+					setForm({});
+				})
+				.catch(console.log);
+
 			return;
 		}
 
-		console.log(RefactorForm);
-
-		return;
-		// if (idProjectActivity) {
-		// 	RefactorForm.projectActivityId = idProjectActivity;
-		// 	console.log(RefactorForm);
-		// 	Patch({ idProject: idProyek, data: RefactorForm })
-		// 		.unwrap()
-		// 		.then((succ) => {
-		// 			console.log(succ);
-		// 			handleShow(ActivityName);
-		// 			setForm({});
-		// 		})
-		// 		.catch(console.log);
-
-		// 	return;
-		// }
-
-		// Create({ idProject: idProyek, data: RefactorForm })
-		// 	.unwrap()
-		// 	.then((succ) => {
-		// 		console.log(succ);
-		// 		handleShow(ActivityName);
-		// 		setForm({});
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log(err);
-		// 	});
+		Create({ idProject: idProyek, data: RefactorForm })
+			.unwrap()
+			.then((succ) => {
+				console.log(succ);
+				handleShow(ActivityName);
+				setForm({});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	const OnClose = () => {
@@ -577,25 +559,6 @@ export const FormKegiatan = ({
 									value={form.name ?? ""}
 									onChange={OnChangeInputField}
 									className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
-								/>
-							</div>
-							<div className="mt-3">
-								<label
-									htmlFor="startDate"
-									className="block text-sm text-gray-700"
-								>
-									Waktu Mulai
-								</label>
-								<input
-									type="date"
-									min={`${new Date().getFullYear()}-${
-										new Date().getMonth() + 1
-									}-${new Date().getDate()}`}
-									value={form.startDate ?? ""}
-									id="startDate"
-									name="startDate"
-									onChange={OnChangeInputField}
-									className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
 								/>
 							</div>
 							<div className="mt-3">

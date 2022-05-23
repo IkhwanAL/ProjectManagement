@@ -1,4 +1,10 @@
-import { LinearProgress, Stack, Typography } from "@mui/material";
+import {
+	LinearProgress,
+	MenuItem,
+	Select,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { Draggable } from "react-beautiful-dnd";
 import { ActProject } from "../types/project.types";
@@ -12,7 +18,8 @@ export const CardActivities = ({
 	description,
 	projectActivityId,
 	ActivtyName,
-}: ActProject & { ActivtyName: string }) => {
+	OnDelete,
+}: ActProject & { ActivtyName: string; OnDelete: (arg?: any) => void }) => {
 	return (
 		<>
 			<Draggable
@@ -34,18 +41,28 @@ export const CardActivities = ({
 							>
 								{name}
 							</Typography>
-							<button
-								onClick={() => {
-									if (handleShow) {
-										handleShow(
-											ActivtyName,
-											projectActivityId
-										);
-									}
-								}}
-							>
-								Edit
-							</button>
+							<Stack direction={"row"}>
+								<button
+									onClick={() => {
+										if (handleShow) {
+											handleShow(
+												ActivtyName,
+												projectActivityId
+											);
+										}
+									}}
+								>
+									Edit
+								</button>
+								<button
+									onClick={() => {
+										OnDelete(projectActivityId);
+									}}
+									className="mx-3 text-red-500"
+								>
+									Delete
+								</button>
+							</Stack>
 						</div>
 						{/* <span className="text-gray-600 "> */}
 						<Typography noWrap color="gray">

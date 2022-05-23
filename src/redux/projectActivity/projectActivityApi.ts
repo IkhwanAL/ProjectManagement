@@ -104,6 +104,15 @@ export const ProjectActApi = createApi({
 				method: "GET",
 				credentials: "include",
 			}),
+			providesTags: ["Projects"],
+		}),
+		DeleteProjectActivity: builder.mutation({
+			query: (idProjectActivity) => ({
+				url: "/projectActivity/" + idProjectActivity,
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: ["Projects"],
 		}),
 	}),
 });
@@ -116,4 +125,5 @@ export const {
 	useCreateOneMutation,
 	usePatchOneMutation,
 	useGetAllActivityQuery,
+	useDeleteProjectActivityMutation,
 } = ProjectActApi;

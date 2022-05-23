@@ -4,16 +4,22 @@ import { useParams } from "react-router-dom";
 import { ProjectActApi } from "../redux/projectActivity/projectActivityApi";
 import { useGetStartDateQuery } from "../redux/project/projectApi";
 import { ReformatDataForGoogleCharts } from "../Util/ReformatDataToRowsOfGoogleChart";
+import { useTheme } from "@mui/system";
+import { Box, Stack, Typography } from "@mui/material";
 
 interface GanttOptions {
 	height: number;
 	gantt: {
+		arrow?: {
+			color: string;
+		};
 		defaultStartDate: number;
 	};
 }
 
 export default function GanttChart() {
 	const { idProject } = useParams();
+	const theme = useTheme();
 
 	const GetStartDate = useGetStartDateQuery(idProject as string, {
 		refetchOnMountOrArgChange: true,
@@ -26,6 +32,9 @@ export default function GanttChart() {
 	const [options, setOptions] = React.useState<GanttOptions>({
 		height: 400,
 		gantt: {
+			arrow: {
+				color: theme.palette.primary.main,
+			},
 			defaultStartDate: new Date().getTime(),
 		},
 	});
@@ -82,71 +91,6 @@ export default function GanttChart() {
 		return () => {};
 	}, [GetStartDate.isSuccess, GetStartDate.isFetching]);
 
-	const rows = [
-		[
-			"toTrain",
-			"Walk to train stop",
-			"walk",
-			null,
-			null,
-			daysToMilliseconds(5),
-			100,
-			null,
-		],
-		[
-			"music",
-			"Listen to music",
-			"music",
-			null,
-			null,
-			daysToMilliseconds(70),
-			100,
-			null,
-		],
-		[
-			"wait",
-			"Wait for train",
-			"wait",
-			null,
-			null,
-			daysToMilliseconds(10),
-			100,
-			"toTrain",
-		],
-		[
-			"train",
-			"Train ride",
-			"train",
-			null,
-			null,
-			daysToMilliseconds(45),
-			75,
-			"wait",
-		],
-		[
-			"toWork",
-			"Walk to work",
-			"walk",
-			null,
-			null,
-			daysToMilliseconds(10),
-			0,
-			"train",
-		],
-		[
-			"work",
-			"Sit down at desk",
-			null,
-			null,
-			null,
-			daysToMilliseconds(2),
-			0,
-			"toWork",
-		],
-	];
-
-	const datas = [columns, ...rows];
-
 	return (
 		<>
 			{showsData && showsData?.length !== 0 ? (
@@ -157,7 +101,16 @@ export default function GanttChart() {
 					options={options}
 				/>
 			) : (
-				<></>
+				<>
+					<Box>
+						<Stack direction={"row"} justifyContent="center">
+							<Typography>
+								Tidak Ada Gantt Chart, Mohon Untuk Mengisi
+								Kegiatan Aktifitas
+							</Typography>
+						</Stack>
+					</Box>
+				</>
 			)}
 		</>
 	);

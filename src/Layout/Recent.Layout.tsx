@@ -1,19 +1,36 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import CardProject from "../Components/Card.Component";
+import { ISuccess } from "../interface/return.interface";
 import { useGetAllProjectQuery } from "../redux/project/projectApi";
 import { ResetIdProyek } from "../redux/project/projectSlice";
+import { GetAllProjectReturn } from "../types/return.types";
 
 const MAX_NUMBER = 4;
 const RecentPage = () => {
-	const { data, isLoading, isFetching } = useGetAllProjectQuery(null, {
-		pollingInterval: 100 * 60,
-	});
+	const { data, isLoading, isFetching, isSuccess } = useGetAllProjectQuery(
+		null,
+		{
+			pollingInterval: 100 * 60,
+		}
+	);
+
+	const [showsData, setShowsData] =
+		React.useState<ISuccess<GetAllProjectReturn>>();
+
 	const dispatch = useDispatch();
 
 	React.useEffect(() => {
 		dispatch(ResetIdProyek());
 	}, [dispatch]);
+
+	React.useEffect(() => {
+		if (isSuccess || !isFetching) {
+			if (data) {
+				setShowsData(data);
+			}
+		}
+	}, [isSuccess, isFetching]);
 
 	return (
 		<>
@@ -23,7 +40,7 @@ const RecentPage = () => {
 						PROYEK TERKINI
 					</p>
 					<div className="flex content-start flex-wrap items-center justify-center">
-						{data?.data?.map((x) => {
+						{showsData?.data?.map((x) => {
 							return (
 								<CardProject
 									user={{ username: x?.user?.username }}

@@ -5,6 +5,7 @@ import { CardActivities } from "./CardActivity.Component";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 import { useSelector } from "react-redux";
 import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
+import { useDeleteProjectActivityMutation } from "../redux/projectActivity/projectActivityApi";
 
 interface GridPositionProps {
 	handleShow: (arg?: any) => any; // untuk Form
@@ -19,6 +20,17 @@ export const GridPosition = ({
 	positionData,
 	positionName,
 }: GridPositionProps) => {
+	const [DeleteProjectActivity] = useDeleteProjectActivityMutation();
+
+	const OnDelete = (idProjectActivity: number | string) => {
+		DeleteProjectActivity(idProjectActivity)
+			.unwrap()
+			.then((fulfilled) => {
+				console.log(fulfilled);
+			})
+			.catch(console.warn);
+	};
+
 	return (
 		<>
 			<Droppable droppableId={positionName}>
@@ -48,7 +60,6 @@ export const GridPosition = ({
 										position={x.position}
 										timeToComplete={x.timeToComplete}
 										status={x.status}
-										startDate={x.startDate}
 										description={x.description}
 										progress={x.progress}
 										f={x.f}
@@ -56,6 +67,7 @@ export const GridPosition = ({
 											x.subdetailprojectactivity
 										}
 										key={"" + x.projectActivityId}
+										OnDelete={OnDelete}
 									/>
 								))
 							) : (

@@ -43,7 +43,6 @@ export type projectactivity = {
 	position: projectactivity_position;
 	timeToComplete: number;
 	status: number | boolean;
-	startDate: Date | null;
 	description: string;
 	parent?: string | null;
 	child?: string | null;
