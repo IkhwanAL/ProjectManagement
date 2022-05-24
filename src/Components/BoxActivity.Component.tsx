@@ -1,6 +1,20 @@
 import { Box, Stack, Typography } from "@mui/material";
+import moment from "moment";
 
-export default function BoxActivity() {
+interface BoxActivityProps {
+	id?: number | string;
+	activity: string;
+	createdAt: Date;
+	user: {
+		username: string;
+	};
+}
+
+export default function BoxActivity({
+	activity,
+	createdAt,
+	user: { username },
+}: BoxActivityProps) {
 	return (
 		<Box
 			border={1}
@@ -12,14 +26,14 @@ export default function BoxActivity() {
 		>
 			<Stack direction={"row"} justifyContent="space-between">
 				<Typography mt={1} mb={1} ml={1}>
-					Tim1
+					{username}
 				</Typography>
 				<Typography mt={1} mb={1} mr={1}>
-					25-02-2022 10:00:00
+					{moment(createdAt).format("LL")}
 				</Typography>
 			</Stack>
 			<Typography mt={3} mb={1} ml={1}>
-				Description Activity
+				{activity}
 			</Typography>
 		</Box>
 	);

@@ -3,8 +3,6 @@ import { useTheme } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { OneProject } from "./OneProject.Layout";
 import GanttChart from "./GanttChart.Layout";
@@ -46,6 +44,7 @@ function a11yProps(index: number) {
 export default function LayoutDetailProyek() {
 	const { idProject } = useParams();
 	const theme = useTheme();
+
 	const [value, setValue] = React.useState(0);
 
 	const [openDrawer, setOpenDrawer] = React.useState(false);
@@ -123,10 +122,10 @@ export default function LayoutDetailProyek() {
 					marginTop: -8,
 				}}
 			>
-				<TabPanel value={value} index={0} dir={theme.direction}>
+				<TabPanel value={value} index={0} dir={"ltr"}>
 					<OneProject />
 				</TabPanel>
-				<TabPanel value={value} index={1} dir={theme.direction}>
+				<TabPanel value={value} index={1} dir={"ltr"}>
 					<GanttChart />
 				</TabPanel>
 			</Box>

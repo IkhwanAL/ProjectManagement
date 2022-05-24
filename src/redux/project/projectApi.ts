@@ -10,11 +10,12 @@ import {
 	LeaderInterface,
 	UserTeamSelect,
 } from "../../types/return.types";
+import { activity } from "../../interface/database.interface";
 
 const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects", "Teams", "DetailProject", "Leader"],
+	tagTypes: ["Projects", "Teams", "DetailProject", "Leader", "ActivityUser"],
 	// keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
@@ -43,7 +44,7 @@ export const ProjectApi = createApi({
 					method: "POST",
 				};
 			},
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 		PatchProject: builder.mutation<
 			ISuccess<project>,
@@ -57,7 +58,7 @@ export const ProjectApi = createApi({
 					method: "PATCH",
 				};
 			},
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 		GetAllProject: builder.query<ISuccess<GetAllProjectReturn>, null>({
 			query: () => {
@@ -119,7 +120,7 @@ export const ProjectApi = createApi({
 				method: "POST",
 				credentials: "include",
 			}),
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 		DeleteUserTeam: builder.mutation({
 			query: ({ Data, idProject }) => ({
@@ -130,7 +131,7 @@ export const ProjectApi = createApi({
 				method: "DELETE",
 				credentials: "include",
 			}),
-			invalidatesTags: ["Teams"],
+			invalidatesTags: ["Teams", "ActivityUser"],
 		}),
 	}),
 });

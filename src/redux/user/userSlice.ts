@@ -8,6 +8,7 @@ const InitialState: IUser = {
 		email: "",
 		token: "",
 		isLogin: false,
+		user: "",
 	},
 };
 
@@ -33,6 +34,12 @@ export const UserSlice = createSlice({
 		ResetIdUser: (state, action) => {
 			state.values.id = InitialState.values.id;
 		},
+		SetUsername: (state, action) => {
+			state.values.user = action.payload;
+		},
+		ResetUsername: (state, action) => {
+			state.values.user = InitialState.values.user;
+		},
 	},
 });
 
@@ -42,6 +49,8 @@ export const {
 	ResetUser,
 	SetIdUser,
 	SetLogin,
+	SetUsername,
+	ResetUsername,
 } = UserSlice.actions;
 
 export default UserSlice.reducer;

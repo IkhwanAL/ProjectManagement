@@ -4,6 +4,7 @@ export interface IUser {
 		email: string;
 		token: string;
 		isLogin: boolean;
+		user: string;
 	};
 }
 

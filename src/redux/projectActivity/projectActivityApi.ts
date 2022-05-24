@@ -14,7 +14,7 @@ import { projectactivity_position } from "../../types/database.types";
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects", "ProjectActivity"],
+	tagTypes: ["Projects", "ProjectActivity", "ActivityUser"],
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -87,7 +87,7 @@ export const ProjectActApi = createApi({
 				method: "POST",
 				credentials: "include",
 			}),
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 		PatchOne: builder.mutation({
 			query: ({ idProject, data }) => ({
@@ -96,7 +96,7 @@ export const ProjectActApi = createApi({
 				method: "PATCH",
 				credentials: "include",
 			}),
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 		GetAllActivity: builder.query({
 			query: (idProject) => ({
@@ -112,7 +112,7 @@ export const ProjectActApi = createApi({
 				method: "DELETE",
 				credentials: "include",
 			}),
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
 	}),
 });

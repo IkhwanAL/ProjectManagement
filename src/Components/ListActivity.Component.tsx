@@ -1,39 +1,29 @@
 import { InboxIcon, MailIcon } from "@heroicons/react/outline";
-import {
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-} from "@mui/material";
+import { List, ListItem } from "@mui/material";
+import { activity } from "../interface/database.interface";
 import BoxActivity from "./BoxActivity.Component";
 
-interface ListActivtyProps {}
+interface ListActivtyProps {
+	Activity: (activity & {
+		user: {
+			username: string;
+		};
+	})[];
+}
 
-export default function ListActivity() {
+export default function ListActivity({ Activity }: ListActivtyProps) {
 	return (
 		<List>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
-			<ListItem>
-				<BoxActivity />
-			</ListItem>
+			{Activity.map((x) => (
+				<ListItem key={x.id + ""}>
+					<BoxActivity
+						id={x.id + ""}
+						activity={x.activity}
+						createdAt={x.createdAt}
+						user={{ username: x.user.username }}
+					/>
+				</ListItem>
+			))}
 		</List>
 	);
 }

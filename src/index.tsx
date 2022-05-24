@@ -34,6 +34,7 @@ export const theme = createTheme({
 			main: "#ec6830",
 		},
 	},
+	direction: "ltr",
 });
 
 const Persistor = persistStore(store);

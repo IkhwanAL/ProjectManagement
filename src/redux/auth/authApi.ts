@@ -2,7 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ISuccess, LoginSuksesData } from "../../interface/return.interface";
 import { QueryArgLogin } from "../../types/arg.types";
 import { Environtment } from "..";
-import { SetIdUser, SetLogin, SetTokenParams } from "../user/userSlice";
+import {
+	SetIdUser,
+	SetLogin,
+	SetTokenParams,
+	SetUsername,
+} from "../user/userSlice";
 import { setSessionStorage } from "../../Util/SessionStorage";
 
 const REDUCER_API_PATH_NAME = "Auth";
@@ -33,6 +38,7 @@ export const AuthApi = createApi({
 					arg.dispatch(SetTokenParams(data?.data?.token));
 					arg.dispatch(SetIdUser(data?.data?.id));
 					arg.dispatch(SetLogin(true));
+					arg.dispatch(SetUsername(data?.data?.user));
 				} catch (error) {
 					arg.dispatch(SetLogin(false));
 				}
