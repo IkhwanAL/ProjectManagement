@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/system";
+import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
 	palette: {
@@ -13,9 +13,6 @@ export const theme = createTheme({
 			light: "#badbff",
 			dark: "#7693b2",
 		},
-		text: "#333",
-		error: "#ff3333",
-		action: "#FFF",
 	},
 	typography: {
 		fontFamily: [

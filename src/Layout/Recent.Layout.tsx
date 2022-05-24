@@ -8,12 +8,8 @@ import { GetAllProjectReturn } from "../types/return.types";
 
 const MAX_NUMBER = 4;
 const RecentPage = () => {
-	const { data, isLoading, isFetching, isSuccess } = useGetAllProjectQuery(
-		null,
-		{
-			pollingInterval: 100 * 60,
-		}
-	);
+	const { data, isLoading, isFetching, isSuccess } =
+		useGetAllProjectQuery(null);
 
 	const [showsData, setShowsData] =
 		React.useState<ISuccess<GetAllProjectReturn>>();

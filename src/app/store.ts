@@ -8,6 +8,17 @@ import proyekActivitiesReducer from "../redux/projectActivity/projectActivitySli
 import { UserApi } from "../redux/user/userApi";
 import { ProjectApi } from "../redux/project/projectApi";
 import { ProjectActApi } from "../redux/projectActivity/projectActivityApi";
+import {
+	persistStore,
+	persistReducer,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 const rootReducer = combineReducers({
 	User: userReducer,
@@ -19,11 +30,33 @@ const rootReducer = combineReducers({
 	[ProjectActApi.reducerPath]: ProjectActApi.reducer,
 });
 
+const PersistConfig = {
+	key: "root",
+	storage,
+	whitelist: [],
+	blacklist: [
+		AuthApi.reducerPath,
+		UserApi.reducerPath,
+		ProjectApi.reducerPath,
+		ProjectActApi.reducerPath,
+	],
+};
+
+const PersistReducer = persistReducer(PersistConfig, rootReducer);
+
 export const store = configureStore({
-	reducer: rootReducer,
+	reducer: PersistReducer,
 	middleware: (getDefaultMiddelware) =>
 		getDefaultMiddelware({
 			serializableCheck: {
+				ignoredActions: [
+					FLUSH,
+					REHYDRATE,
+					PAUSE,
+					PERSIST,
+					PURGE,
+					REGISTER,
+				],
 				warnAfter: 128,
 			},
 		})
@@ -35,6 +68,8 @@ export const store = configureStore({
 });
 
 setupListeners(store.dispatch);
+
+// export type PersistorType = typeof persistor;
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

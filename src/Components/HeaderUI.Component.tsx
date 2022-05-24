@@ -5,7 +5,7 @@ import React, { Fragment, useState } from "react";
 import Logo from "../assets/Logo500X500.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { ResetUser } from "../redux/user/userSlice";
+import { ResetUser, userSelector } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 import AddIcon from "@mui/icons-material/Add";
 import ChangePassword from "./Modal/Password.Component";
@@ -44,6 +44,7 @@ export default function HeaderUI() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const idProject = useSelector(proyekSelector);
+	const User = useSelector(userSelector);
 
 	const [modal, setModal] = useState<boolean>(false);
 	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
@@ -296,7 +297,7 @@ export default function HeaderUI() {
 												</span>
 												<img
 													className="h-8 w-8 rounded-full"
-													src={`https://ui-avatars.com/api/?name=😂`}
+													src={`https://ui-avatars.com/api/?name=${User.user}`}
 													alt=""
 												/>
 											</Menu.Button>

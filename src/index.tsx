@@ -1,7 +1,6 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import React from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { PersistGate } from "redux-persist/integration/react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
@@ -9,6 +8,7 @@ import App from "./App";
 import { store } from "./app/store";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import { persistStore } from "redux-persist";
 
 export const theme = createTheme({
 	palette: {
@@ -34,18 +34,23 @@ export const theme = createTheme({
 			main: "#ec6830",
 		},
 	},
+	direction: "ltr",
 });
+
+const Persistor = persistStore(store);
 
 ReactDOM.render(
 	<Provider store={store}>
 		<BrowserRouter>
-			<React.StrictMode>
-				<ThemeProvider theme={theme}>
-					{/* <DndProvider backend={HTML5Backend}> */}
-					<App />
-					{/* </DndProvider> */}
-				</ThemeProvider>
-			</React.StrictMode>
+			<PersistGate persistor={Persistor} loading={null}>
+				<React.StrictMode>
+					<ThemeProvider theme={theme}>
+						{/* <DndProvider backend={HTML5Backend}> */}
+						<App />
+						{/* </DndProvider> */}
+					</ThemeProvider>
+				</React.StrictMode>
+			</PersistGate>
 		</BrowserRouter>
 	</Provider>,
 	document.getElementById("root")

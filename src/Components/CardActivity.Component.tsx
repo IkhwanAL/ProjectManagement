@@ -5,7 +5,7 @@ import {
 	Stack,
 	Typography,
 } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box } from "@mui/material";
 import { Draggable } from "react-beautiful-dnd";
 import { ActProject } from "../types/project.types";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";

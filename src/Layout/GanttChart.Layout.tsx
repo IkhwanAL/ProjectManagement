@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { ProjectActApi } from "../redux/projectActivity/projectActivityApi";
 import { useGetStartDateQuery } from "../redux/project/projectApi";
 import { ReformatDataForGoogleCharts } from "../Util/ReformatDataToRowsOfGoogleChart";
-import { useTheme } from "@mui/system";
+import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography } from "@mui/material";
 
 interface GanttOptions {

@@ -16,4 +16,5 @@ export interface ISuccess<T = {}> {
 export interface LoginSuksesData {
 	token: string;
 	id: number;
+	user: string;
 }
