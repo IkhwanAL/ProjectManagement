@@ -23,6 +23,9 @@ import { ErrorMsg } from "../../Props/Error.property";
 import { useSuccess } from "../../hooks/useSuccess";
 import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
 import { LoadingButton } from "@mui/lab";
+import { useSelector } from "react-redux";
+import { proyekSelector } from "../../redux/project/projectSlice";
+import { useInviteUserMutation } from "../../redux/project/projectApi";
 
 interface Ps {
 	description: "";
@@ -43,7 +46,26 @@ const style = {
 };
 
 export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
-	const [text, saveText] = React.useState("");
+	const [Invite] = useInviteUserMutation();
+
+	const proyek = useSelector(proyekSelector);
+	const [body, setBody] = React.useState({
+		emailInvited: "",
+		idProject: proyek ?? null,
+	});
+
+	const OnChangeInput = (
+		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
+		setBody((prev) => ({
+			...prev,
+			[ev.target.name]: ev.target.value,
+		}));
+	};
+
+	const OnSubmit = () => {
+		Invite(body).unwrap().then(console.log).catch(console.log);
+	};
 
 	return (
 		<React.Fragment>
@@ -56,7 +78,9 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 							<TextField
 								label="Email User"
 								margin="dense"
-								// onChange={OnChangeText}
+								name="emailInvited"
+								id="emailInvited"
+								onChange={OnChangeInput}
 							/>
 						</FormControl>
 					</Stack>
@@ -71,7 +95,7 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 						<Button
 							color="primary"
 							variant="contained"
-							// onClick={onSubmit}
+							onClick={OnSubmit}
 						>
 							Tambah
 						</Button>

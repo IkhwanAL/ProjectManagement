@@ -132,6 +132,14 @@ export const ProjectApi = createApi({
 			}),
 			invalidatesTags: ["Teams"],
 		}),
+		InviteUser: builder.mutation({
+			query: (data) => ({
+				url: `/invite`,
+				body: data,
+				method: "POST",
+				credentials: "include",
+			}),
+		}),
 	}),
 });
 
@@ -145,4 +153,5 @@ export const {
 	useChangeOwnerMutation,
 	useDeleteUserTeamMutation,
 	useGetStartDateQuery,
+	useInviteUserMutation,
 } = ProjectApi;
