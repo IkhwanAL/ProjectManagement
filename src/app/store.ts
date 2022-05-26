@@ -19,6 +19,13 @@ import {
 	REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
+import autoMergeLevel1 from "redux-persist/es/stateReconciler/autoMergeLevel1";
+
+const PersistUser = {
+	key: "UsersPersist",
+	storage,
+};
 
 const rootReducer = combineReducers({
 	User: userReducer,
@@ -42,7 +49,10 @@ const PersistConfig = {
 	],
 };
 
-const PersistReducer = persistReducer(PersistConfig, rootReducer);
+const PersistReducer = persistReducer(
+	{ ...PersistConfig, version: 1 },
+	rootReducer
+);
 
 export const store = configureStore({
 	reducer: PersistReducer,

@@ -40,19 +40,19 @@ export const theme = createTheme({
 const Persistor = persistStore(store);
 
 ReactDOM.render(
-	<Provider store={store}>
-		<BrowserRouter>
+	<React.StrictMode>
+		<Provider store={store}>
 			<PersistGate persistor={Persistor} loading={null}>
-				<React.StrictMode>
+				<BrowserRouter>
+					{/* <PersistGate persistor={Persistor} loading={null}> */}
 					<ThemeProvider theme={theme}>
-						{/* <DndProvider backend={HTML5Backend}> */}
 						<App />
-						{/* </DndProvider> */}
 					</ThemeProvider>
-				</React.StrictMode>
+					{/* </PersistGate> */}
+				</BrowserRouter>
 			</PersistGate>
-		</BrowserRouter>
-	</Provider>,
+		</Provider>
+	</React.StrictMode>,
 	document.getElementById("root")
 );
 
