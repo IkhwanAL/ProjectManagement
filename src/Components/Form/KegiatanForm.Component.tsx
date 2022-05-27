@@ -12,6 +12,7 @@ import {
 	Button,
 	Checkbox,
 	IconButton,
+	LinearProgress,
 	List,
 	ListItem,
 	ListItemButton,
@@ -87,6 +88,8 @@ export const FormKegiatan = ({
 		refetchOnMountOrArgChange: true,
 		refetchOnFocus: true,
 	});
+	const [load, setLoading] = React.useState(false);
+	const [progress, setProgress] = React.useState(0);
 
 	const [form, setForm] = useState<{ [key: string]: any }>({});
 	const [openDetail, setOpenDetail] = useState(false);
@@ -95,6 +98,18 @@ export const FormKegiatan = ({
 
 	const [Create] = useCreateOneMutation();
 	const [Patch] = usePatchOneMutation();
+
+	const CalcluateProgress = (subdetailprojectactivity: any) => {
+		const FindTotalSubDetail = subdetailprojectactivity.length;
+
+		const TotalCompleted = subdetailprojectactivity.filter(
+			(x: any) => x.isComplete === true
+		).length;
+
+		const Percentage = (TotalCompleted / FindTotalSubDetail) * 100;
+
+		setProgress(Percentage);
+	};
 
 	React.useEffect(() => {
 		if (idProjectActivity) {
@@ -154,6 +169,8 @@ export const FormKegiatan = ({
 									...prev,
 									["subdetailprojectactivity"]: temp,
 								}));
+
+								CalcluateProgress(temp);
 							} else {
 								setForm((prev) => {
 									return {
@@ -178,6 +195,7 @@ export const FormKegiatan = ({
 	}, [idProjectActivity, triggerFetching]);
 
 	const OnSubmit = () => {
+		setLoading(true);
 		const RefactorForm = {} as projectactivity & { [key: string]: any };
 
 		if (form["ListAcceptTeam"]) {
@@ -258,7 +276,7 @@ export const FormKegiatan = ({
 			Patch({ idProject: idProyek, data: RefactorForm })
 				.unwrap()
 				.then((succ) => {
-					console.log(succ);
+					setLoading(false);
 					handleShow(ActivityName);
 					setForm({});
 				})
@@ -270,7 +288,7 @@ export const FormKegiatan = ({
 		Create({ idProject: idProyek, data: RefactorForm })
 			.unwrap()
 			.then((succ) => {
-				console.log(succ);
+				setLoading(false);
 				handleShow(ActivityName);
 				setForm({});
 			})
@@ -304,6 +322,7 @@ export const FormKegiatan = ({
 				...prev,
 				["subdetailprojectactivity"]: [payload],
 			}));
+			CalcluateProgress([payload]);
 		} else {
 			setForm((prev) => ({
 				...prev,
@@ -312,6 +331,7 @@ export const FormKegiatan = ({
 					payload,
 				],
 			}));
+			CalcluateProgress([...form["subdetailprojectactivity"], payload]);
 		}
 	};
 
@@ -326,7 +346,7 @@ export const FormKegiatan = ({
 		)[0];
 
 		ChangedData.isComplete = !ChangedData.isComplete;
-		console.log(ChangedData);
+
 		const NotChangedData = form["subdetailprojectactivity"].filter(
 			(x: any) => x.id !== id
 		);
@@ -335,6 +355,8 @@ export const FormKegiatan = ({
 			...prev,
 			["subdetailprojectactivity"]: [...NotChangedData, ChangedData],
 		}));
+
+		CalcluateProgress([...NotChangedData, ChangedData]);
 	};
 
 	const RemoveStateDetailProyekAct = (uuid: any) => {
@@ -344,6 +366,10 @@ export const FormKegiatan = ({
 				"subdetailprojectactivity"
 			].filter((x: any) => x.id !== uuid),
 		}));
+
+		CalcluateProgress(
+			form["subdetailprojectactivity"].filter((x: any) => x.id !== uuid)
+		);
 	};
 
 	const OnChangeInputField = (
@@ -538,12 +564,15 @@ export const FormKegiatan = ({
 							</Stack>
 
 							<div className="mt-3">
-								<label className="block text-sm  text-gray-700">
-									Progress
-								</label>
-								<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-									<div className="bg-blue-600 h-2.5 rounded-full w-1/2"></div>
-								</div>
+								<LinearProgress
+									sx={{
+										borderRadius: 10,
+										height: 10,
+										width: "100%",
+									}}
+									variant="determinate"
+									value={progress}
+								/>
 							</div>
 							<div className="mt-10">
 								<label
@@ -837,6 +866,7 @@ export const FormKegiatan = ({
 							<LoadingButton
 								variant="contained"
 								onClick={OnSubmit}
+								loading={load}
 							>
 								Simpan
 							</LoadingButton>

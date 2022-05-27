@@ -141,6 +141,14 @@ export const ProjectApi = createApi({
 				credentials: "include",
 			}),
 		}),
+		DeleteProject: builder.mutation({
+			query: (idProyek) => ({
+				url: `/project/` + idProyek,
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: ["Projects"],
+		}),
 	}),
 });
 
@@ -155,4 +163,5 @@ export const {
 	useDeleteUserTeamMutation,
 	useGetStartDateQuery,
 	useInviteUserMutation,
+	useDeleteProjectMutation,
 } = ProjectApi;

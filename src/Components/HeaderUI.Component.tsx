@@ -21,6 +21,8 @@ import ProyekModal from "./Modal/ProyekModal.Component";
 import { proyekSelector, ResetIdProyek } from "../redux/project/projectSlice";
 import { MainListTeam } from "./Modal/ListTeamModal.Component";
 import { ChangeOwnerForm } from "./Form/ChangeOwnership.Component";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useDeleteProjectMutation } from "../redux/project/projectApi";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -39,6 +41,7 @@ function classNames(...classes: any[]) {
 export default function HeaderUI() {
 	const [triggerDeleteUser] = useLazyDeleteUserQuery();
 	const [triggerLogout] = useLazyLogoutQuery();
+	const [DeleteProject] = useDeleteProjectMutation();
 	const [load, setLoad] = React.useState(false);
 
 	const dispatch = useDispatch();
@@ -51,6 +54,7 @@ export default function HeaderUI() {
 	const [modalProyek, setModalProyek] = useState<boolean>(false);
 	const [modalListTeam, setModalListTeam] = useState<boolean>(false);
 	const [modalChangeOwner, setChangeOWner] = useState<boolean>(false);
+	const [modalDelete, setModalDelete] = useState<boolean>(false);
 
 	const [activated, setActive] = useState<string>("Home");
 	const { confirm, setConfirm, onHandle } = useConfirm(false);
@@ -121,6 +125,21 @@ export default function HeaderUI() {
 		setModalListTeam((prev) => !prev);
 	};
 
+	const DeleteForever = () => {
+		setLoad(true);
+		DeleteProject(idProject)
+			.then(() => {
+				setLoad(false);
+				setModalDelete((prev) => !prev);
+				navigate("/main/dashboard", { replace: true });
+			})
+			.catch(console.log);
+	};
+
+	const OpenModalDelete = () => {
+		setModalDelete((prev) => !prev);
+	};
+
 	return (
 		<>
 			<InfoModal
@@ -140,6 +159,14 @@ export default function HeaderUI() {
 				closeModal={OnHandleChangeOwnerModal}
 				isOpen={modalChangeOwner}
 				idProyek={idProject ?? undefined}
+			/>
+			<InfoModal
+				closeModal={OpenModalDelete}
+				head={"Menghapus Proyek"}
+				msg={"Apakah Anda Yakin Menghapus Proyek Ini?"}
+				isOpen={modalDelete}
+				onAccept={DeleteForever}
+				loading={load}
 			/>
 			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
@@ -258,6 +285,19 @@ export default function HeaderUI() {
 													onClick={
 														OnHandleChangeOwnerModal
 													}
+												/>
+											</button>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Hapus Selamanya
+												</span>
+												<DeleteForeverIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={OpenModalDelete}
 												/>
 											</button>
 										</>
