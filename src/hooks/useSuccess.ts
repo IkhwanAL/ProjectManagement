@@ -28,7 +28,9 @@ export function useSuccess(successMsg: Msg) {
 		}));
 
 		if (action) {
-			action();
+			if (typeof action === "function") {
+				action();
+			}
 		}
 	};
 
