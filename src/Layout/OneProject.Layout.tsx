@@ -141,25 +141,40 @@ export const OneProject = () => {
 			position: destination.droppableId,
 		} as MoveStateReturn;
 
+		setPositionData((prev) => ({
+			...prev,
+			[destination.droppableId]: [
+				...prev[destination.droppableId],
+				sourceData,
+			],
+		}));
+
+		setPositionData((prev) => ({
+			...prev,
+			[source.droppableId]: prev[source.droppableId].filter(
+				(x) => x.projectActivityId !== source.index
+			),
+		}));
+
 		Move(payload)
 			.unwrap()
-			.then(() => {
+			.then(() => {})
+			.catch(() => {
 				setPositionData((prev) => ({
 					...prev,
-					[destination.droppableId]: [
-						...prev[destination.droppableId],
+					[source.droppableId]: [
+						...prev[source.droppableId],
 						sourceData,
 					],
 				}));
 
 				setPositionData((prev) => ({
 					...prev,
-					[source.droppableId]: prev[source.droppableId].filter(
-						(x) => x.projectActivityId !== source.index
-					),
+					[destination.droppableId]: prev[
+						destination.droppableId
+					].filter((x) => x.projectActivityId !== destination.index),
 				}));
-			})
-			.catch(console.error);
+			});
 	};
 
 	return (
