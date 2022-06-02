@@ -41,6 +41,7 @@ export const ProjectActApi = createApi({
 					credentials: "include",
 				};
 			},
+			keepUnusedDataFor: 0,
 			providesTags: ["Projects"],
 		}),
 		MoveActivityPosition: builder.mutation<
@@ -103,6 +104,7 @@ export const ProjectActApi = createApi({
 				method: "GET",
 				credentials: "include",
 			}),
+			keepUnusedDataFor: 0,
 			providesTags: ["Projects"],
 		}),
 		DeleteProjectActivity: builder.mutation({
