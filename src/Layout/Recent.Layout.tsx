@@ -36,7 +36,7 @@ const RecentPage = () => {
 						PROYEK TERKINI
 					</p>
 					<div className="flex content-start flex-wrap items-center justify-center">
-						{showsData?.data?.map((x) => {
+						{showsData?.data?.slice(0, MAX_NUMBER).map((x) => {
 							return (
 								<CardProject
 									user={{ username: x?.user?.username }}

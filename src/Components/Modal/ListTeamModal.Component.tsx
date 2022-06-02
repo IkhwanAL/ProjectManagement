@@ -58,11 +58,11 @@ export const MainListTeam = ({
 }: AnyModalProps) => {
 	const User = useSelector(userSelector);
 	const Proyek = useSelector(proyekSelector);
+
 	const { data, isSuccess, isFetching, refetch } = useGetUserTeamQuery(
 		idProyek as number,
 		{
 			refetchOnMountOrArgChange: true,
-			refetchOnFocus: true,
 		}
 	);
 
@@ -132,13 +132,14 @@ export const MainListTeam = ({
 
 	const OnSubmitRemove = () => {
 		const findIndex = removeUser.findIndex((x) => x === User?.id);
-
+		// console.log(removeUser);
 		if (findIndex === -1) {
 			// return;
 			DeleteUser({ Data: removeUser, idProject: Proyek })
 				.unwrap()
 				.then((payload: ISuccess) => {
 					if (payload.data) {
+						setRemoveUser([]);
 						HandleControlStateSuccess(
 							"Success",
 							"Berhasil Manghapus",
@@ -159,7 +160,7 @@ export const MainListTeam = ({
 				});
 			return;
 		}
-
+		setRemoveUser([]);
 		HandleControlStateError("Gagal!", "Tidak Bisa Menghapus Diri Sendiri");
 	};
 
