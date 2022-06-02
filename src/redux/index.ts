@@ -1,3 +1,3 @@
 export const Environtment = {
-	Url_Api: "http://localhost:3001",
+	Url_Api: "https://pma-app-be.herokuapp.com",
 };
