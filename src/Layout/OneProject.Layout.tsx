@@ -69,27 +69,33 @@ export const OneProject = () => {
 	};
 
 	React.useEffect(() => {
+		let skip = false;
+		if (MoveHooks.isSuccess) {
+			skip = true;
+		}
 		if (isSuccess || !isFetching) {
-			const d =
-				currentData?.data?.projectactivity ||
-				data?.data?.projectactivity;
+			if (!skip) {
+				const d =
+					currentData?.data?.projectactivity ||
+					data?.data?.projectactivity;
 
-			let payload: StateActivityProject = {
-				To_Do: [],
-				Doing: [],
-				Review: [],
-				Done: [],
-			};
+				let payload: StateActivityProject = {
+					To_Do: [],
+					Doing: [],
+					Review: [],
+					Done: [],
+				};
 
-			if (d) {
-				for (const iterator of d) {
-					payload[iterator.position].push(iterator);
+				if (d) {
+					for (const iterator of d) {
+						payload[iterator.position].push(iterator);
+					}
+
+					setPositionData(payload);
 				}
-
-				setPositionData(payload);
 			}
 		}
-	}, [isSuccess, isFetching]);
+	}, [isSuccess, isFetching, MoveHooks.isSuccess]);
 
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
@@ -167,7 +173,22 @@ export const OneProject = () => {
 
 		Move(payload)
 			.unwrap()
-			.then(() => {})
+			.then(() => {
+				setPositionData((prev) => ({
+					...prev,
+					[destination.droppableId]: [
+						...prev[destination.droppableId],
+						sourceData,
+					],
+				}));
+
+				setPositionData((prev) => ({
+					...prev,
+					[source.droppableId]: prev[source.droppableId].filter(
+						(x) => x.projectActivityId !== source.index
+					),
+				}));
+			})
 			.catch(() => {
 				setPositionData((prev) => ({
 					...prev,
