@@ -55,7 +55,6 @@ export const ProjectActApi = createApi({
 					method: "PATCH",
 				};
 			},
-			invalidatesTags: ["Projects"],
 		}),
 		GetOneProjectActivity: builder.query<
 			ISuccess<GetOneProjectActivity>,
