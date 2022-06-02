@@ -23,14 +23,21 @@ export const OneProject = () => {
 	const { idProject } = useParams();
 	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
-	const { data, isFetching, isSuccess, isError, error, refetch } =
-		useGetOneProjectActQuery(
-			{ idProject: parseInt(idProject as string) },
-			{
-				refetchOnMountOrArgChange: true,
-				refetchOnFocus: true,
-			}
-		);
+	const {
+		data,
+		isFetching,
+		isSuccess,
+		isError,
+		error,
+		refetch,
+		currentData,
+	} = useGetOneProjectActQuery(
+		{ idProject: parseInt(idProject as string) },
+		{
+			refetchOnMountOrArgChange: true,
+			refetchOnFocus: true,
+		}
+	);
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 	const [Move, MoveHooks] = useMoveActivityPositionMutation();
@@ -63,7 +70,9 @@ export const OneProject = () => {
 
 	React.useEffect(() => {
 		if (isSuccess || !isFetching) {
-			const d = data?.data?.projectactivity;
+			const d =
+				currentData?.data?.projectactivity ||
+				data?.data?.projectactivity;
 
 			let payload: StateActivityProject = {
 				To_Do: [],

@@ -14,7 +14,7 @@ import { projectactivity_position } from "../../types/database.types";
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects", "ProjectActivity", "ActivityUser"],
+	tagTypes: ["Projects", "ProjectActivity", "ActivityUser", "ProjectAct"],
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -98,6 +98,7 @@ export const ProjectActApi = createApi({
 			}),
 			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
+		// Untuk Option Kegiatan Sebelumnya
 		GetAllActivity: builder.query({
 			query: (idProject) => ({
 				url: "/projectactivity/project/" + idProject,
