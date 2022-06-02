@@ -151,31 +151,9 @@ export const OneProject = () => {
 			position: destination.droppableId,
 		} as MoveStateReturn;
 
-		setPositionData((prev) => ({
-			...prev,
-			[destination.droppableId]: [
-				...prev[destination.droppableId],
-				sourceData,
-			],
-		}));
-
-		setPositionData((prev) => ({
-			...prev,
-			[source.droppableId]: prev[source.droppableId].filter(
-				(x) => x.projectActivityId !== source.index
-			),
-		}));
-
 		Move(payload)
 			.unwrap()
 			.then(() => {
-				setPositionData((prev) => ({
-					...prev,
-					[destination.droppableId]: prev[
-						destination.droppableId
-					].filter((x) => x.projectActivityId !== destination.index),
-				}));
-
 				setPositionData((prev) => ({
 					...prev,
 					[destination.droppableId]: [
