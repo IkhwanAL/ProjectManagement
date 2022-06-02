@@ -15,6 +15,7 @@ import { MoveStateReturn } from "../interface/proyek.interface";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
 import { useSelector } from "react-redux";
+import { QueryStatus } from "@reduxjs/toolkit/dist/query";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 }
@@ -69,33 +70,27 @@ export const OneProject = () => {
 	};
 
 	React.useEffect(() => {
-		let skip = false;
-		if (MoveHooks.isSuccess) {
-			skip = true;
-		}
 		if (isSuccess || !isFetching) {
-			if (!skip) {
-				const d =
-					currentData?.data?.projectactivity ||
-					data?.data?.projectactivity;
+			const d =
+				currentData?.data?.projectactivity ||
+				data?.data?.projectactivity;
 
-				let payload: StateActivityProject = {
-					To_Do: [],
-					Doing: [],
-					Review: [],
-					Done: [],
-				};
+			let payload: StateActivityProject = {
+				To_Do: [],
+				Doing: [],
+				Review: [],
+				Done: [],
+			};
 
-				if (d) {
-					for (const iterator of d) {
-						payload[iterator.position].push(iterator);
-					}
-
-					setPositionData(payload);
+			if (d) {
+				for (const iterator of d) {
+					payload[iterator.position].push(iterator);
 				}
+
+				setPositionData(payload);
 			}
 		}
-	}, [isSuccess, isFetching, MoveHooks.isSuccess]);
+	}, [isSuccess, isFetching]);
 
 	React.useEffect(() => {
 		const err = error as { [key: string]: any };
@@ -173,7 +168,29 @@ export const OneProject = () => {
 
 		Move(payload)
 			.unwrap()
-			.then(() => {})
+			.then(() => {
+				setPositionData((prev) => ({
+					...prev,
+					[destination.droppableId]: prev[
+						destination.droppableId
+					].filter((x) => x.projectActivityId !== destination.index),
+				}));
+
+				setPositionData((prev) => ({
+					...prev,
+					[destination.droppableId]: [
+						...prev[destination.droppableId],
+						sourceData,
+					],
+				}));
+
+				setPositionData((prev) => ({
+					...prev,
+					[source.droppableId]: prev[source.droppableId].filter(
+						(x) => x.projectActivityId !== source.index
+					),
+				}));
+			})
 			.catch(() => {
 				setPositionData((prev) => ({
 					...prev,
