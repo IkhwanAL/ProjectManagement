@@ -1,11 +1,28 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
+import Logo from "../assets/Logo500X500.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { resetUser, statusUser } from "../redux/user/userSlice";
+import { ResetUser, userSelector } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
+import AddIcon from "@mui/icons-material/Add";
+import ChangePassword from "./Modal/Password.Component";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import InfoModal from "./Modal/Info.Component";
+import { useConfirm } from "../hooks/useConfirm";
+import {
+	useLazyDeleteUserQuery,
+	useLazyLogoutQuery,
+} from "../redux/user/userApi";
+import PeopleIcon from "@mui/icons-material/People";
+import ProyekModal from "./Modal/ProyekModal.Component";
+import { proyekSelector, ResetIdProyek } from "../redux/project/projectSlice";
+import { MainListTeam } from "./Modal/ListTeamModal.Component";
+import { ChangeOwnerForm } from "./Form/ChangeOwnership.Component";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useDeleteProjectMutation } from "../redux/project/projectApi";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -22,28 +39,45 @@ function classNames(...classes: any[]) {
 }
 
 export default function HeaderUI() {
+	const [triggerDeleteUser] = useLazyDeleteUserQuery();
+	const [triggerLogout] = useLazyLogoutQuery();
+	const [DeleteProject] = useDeleteProjectMutation();
+	const [load, setLoad] = React.useState(false);
+
 	const dispatch = useDispatch();
-	const status = useSelector(statusUser);
 	const navigate = useNavigate();
+	const idProject = useSelector(proyekSelector);
+	const User = useSelector(userSelector);
+
 	const [modal, setModal] = useState<boolean>(false);
+	const [modalChangeps, setModalChangePs] = useState<boolean>(false);
+	const [modalProyek, setModalProyek] = useState<boolean>(false);
+	const [modalListTeam, setModalListTeam] = useState<boolean>(false);
+	const [modalChangeOwner, setChangeOWner] = useState<boolean>(false);
+	const [modalDelete, setModalDelete] = useState<boolean>(false);
 
 	const [activated, setActive] = useState<string>("Home");
-
-	useEffect(() => {
-		if (status === "idle") {
-			navigate("/", { replace: true });
-		}
-
-		return () => {};
-	}, [status, navigate]);
+	const { confirm, setConfirm, onHandle } = useConfirm(false);
 
 	const onClickUserModal = (
 		ev:
 			| React.MouseEvent<HTMLDivElement, MouseEvent>
 			| React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {
-		ev.preventDefault();
-		setModal(!modal);
+		// ev.preventDefault();
+		setModal((prevState) => !prevState);
+	};
+
+	const OnHandleMOdalChangePass = () => {
+		setModalChangePs((prev) => !prev);
+	};
+
+	const OnHandleModalProyek = () => {
+		setModalProyek((prev) => !prev);
+	};
+
+	const OnHandleChangeOwnerModal = () => {
+		setChangeOWner((prev) => !prev);
 	};
 
 	const onClickLink = (
@@ -57,17 +91,84 @@ export default function HeaderUI() {
 		if (value) {
 			navigate(value.href);
 		}
-		return;
+
+		dispatch(ResetIdProyek());
+		return 0;
 	};
 
 	const Reset = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-		dispatch(resetUser());
-		navigate("/", { replace: true });
+		triggerLogout(null, false)
+			.unwrap()
+			.then(() => {
+				dispatch(ResetUser());
+				navigate("/", { replace: true });
+			})
+			.catch();
+	};
+
+	const handleAccept = () => {
+		setLoad(true);
+		triggerDeleteUser(null, true)
+			.unwrap()
+			.then(() => {
+				setLoad(false);
+				setConfirm(false);
+				dispatch(ResetUser());
+				navigate("/", { replace: true });
+			})
+			.catch((e) => {
+				setLoad(false);
+			});
+	};
+
+	const handleModalListTeam = () => {
+		setModalListTeam((prev) => !prev);
+	};
+
+	const DeleteForever = () => {
+		setLoad(true);
+		DeleteProject(idProject)
+			.then(() => {
+				setLoad(false);
+				setModalDelete((prev) => !prev);
+				navigate("/main/dashboard", { replace: true });
+			})
+			.catch(console.log);
+	};
+
+	const OpenModalDelete = () => {
+		setModalDelete((prev) => !prev);
 	};
 
 	return (
 		<>
-			<Disclosure as="nav" className="bg-gray-800" key={"1"}>
+			<InfoModal
+				closeModal={onHandle}
+				head="Menghapus User"
+				msg="Apakah Anda Yakin Untuk Menghapus User?"
+				isOpen={confirm}
+				onAccept={handleAccept}
+				loading={load}
+			/>
+			<MainListTeam
+				closeModal={handleModalListTeam}
+				isOpen={modalListTeam}
+				idProyek={idProject ?? undefined}
+			/>
+			<ChangeOwnerForm
+				closeModal={OnHandleChangeOwnerModal}
+				isOpen={modalChangeOwner}
+				idProyek={idProject ?? undefined}
+			/>
+			<InfoModal
+				closeModal={OpenModalDelete}
+				head={"Menghapus Proyek"}
+				msg={"Apakah Anda Yakin Menghapus Proyek Ini?"}
+				isOpen={modalDelete}
+				onAccept={DeleteForever}
+				loading={load}
+			/>
+			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
 					<>
 						<div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -94,13 +195,13 @@ export default function HeaderUI() {
 								<div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
 									<div className="flex-shrink-0 flex items-center">
 										<img
-											className="block lg:hidden h-8 w-auto"
-											src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+											className="block lg:hidden h-10 w-auto"
+											src={Logo}
 											alt="Workflow"
 										/>
 										<img
-											className="hidden lg:block h-8 w-auto"
-											src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+											className="hidden lg:block h-10 w-auto"
+											src={Logo}
 											alt="Workflow"
 										/>
 									</div>
@@ -153,10 +254,59 @@ export default function HeaderUI() {
 										</div>
 									</div>
 								</div>
-								<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+								<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 justify-around">
+									{idProject ? (
+										<>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Team List
+												</span>
+												<PeopleIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={
+														handleModalListTeam
+													}
+												/>
+											</button>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Pindah Kepemilikan
+												</span>
+												<ChangeCircleIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={
+														OnHandleChangeOwnerModal
+													}
+												/>
+											</button>
+											<button
+												type="button"
+												className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-1"
+											>
+												<span className="sr-only">
+													Hapus Selamanya
+												</span>
+												<DeleteForeverIcon
+													className="h-6 w-6"
+													aria-hidden="true"
+													onClick={OpenModalDelete}
+												/>
+											</button>
+										</>
+									) : (
+										<></>
+									)}
 									<button
 										type="button"
-										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-4"
 									>
 										<span className="sr-only">
 											View notifications
@@ -165,6 +315,17 @@ export default function HeaderUI() {
 											className="h-6 w-6"
 											aria-hidden="true"
 										/>
+									</button>
+
+									<button
+										type="button"
+										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white ml-3"
+										onClick={OnHandleModalProyek}
+									>
+										<span className="sr-only">
+											Add Proyek
+										</span>
+										<AddIcon className="h-6 w-6" />
 									</button>
 
 									{/* Profile dropdown */}
@@ -176,7 +337,7 @@ export default function HeaderUI() {
 												</span>
 												<img
 													className="h-8 w-8 rounded-full"
-													src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+													src={`https://ui-avatars.com/api/?name=${User.user}`}
 													alt=""
 												/>
 											</Menu.Button>
@@ -190,7 +351,7 @@ export default function HeaderUI() {
 											leaveFrom="transform opacity-100 scale-100"
 											leaveTo="transform opacity-0 scale-95"
 										>
-											<Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+											<Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
 												<Menu.Item>
 													{({ active }: any) => (
 														<div
@@ -223,6 +384,42 @@ export default function HeaderUI() {
 														>
 															<p className="pointer-events-none">
 																Sign Out
+															</p>
+														</div>
+													)}
+												</Menu.Item>
+												<Menu.Item>
+													{({ active }: any) => (
+														<div
+															className={classNames(
+																active
+																	? "bg-gray-100 cursor-pointer"
+																	: "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+															onClick={
+																OnHandleMOdalChangePass
+															}
+														>
+															<p className="pointer-events-none">
+																Change Password
+															</p>
+														</div>
+													)}
+												</Menu.Item>
+												<Menu.Item>
+													{({ active }: any) => (
+														<div
+															className={classNames(
+																active
+																	? "bg-gray-100 cursor-pointer"
+																	: "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+															onClick={onHandle}
+														>
+															<p className="pointer-events-none">
+																Delete User
 															</p>
 														</div>
 													)}
@@ -260,6 +457,15 @@ export default function HeaderUI() {
 				)}
 			</Disclosure>
 			<InfoUserUI setModal={onClickUserModal} modal={modal} />
+			<ChangePassword
+				closeModal={OnHandleMOdalChangePass}
+				isOpen={modalChangeps}
+			/>
+			<ProyekModal
+				setModal={OnHandleModalProyek}
+				modal={modalProyek}
+				projectId={idProject ?? undefined}
+			/>
 		</>
 	);
 }

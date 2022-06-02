@@ -1,22 +1,36 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { QueryArgRegister } from "../../types/arg.types";
+import { useError } from "../../hooks/useError";
 import { UserRegister } from "../../Props/User.property";
+import { useRegisterMutation } from "../../redux/auth/authApi";
 import classes from "../../Styles/Triangle.module.scss";
 import { ErrorComp } from "../Error.Component";
+import AnyModal from "../Modal/Any.Component";
+import { LoadingButton } from "@mui/lab";
+import { Typography } from "@mui/material";
+import { useSuccess } from "../../hooks/useSuccess";
 
 export const FormRegister = () => {
-	const navigate = useNavigate();
+	const InitialState: QueryArgRegister & { confirmPassword: string } = {
+		email: "",
+		password: "",
+		username: "",
+		confirmPassword: "",
+	};
+
 	const [userRegister, setUserRegister] = useState<
-		{ [key: string]: string } | UserRegister
-	>();
+		QueryArgRegister & { confirmPassword: string }
+	>(InitialState);
 
-	const [useError, setErrorState] = useState<{
-		error: boolean;
-		msg?: string | null;
-	}>();
+	const { errorState, setErrorState } = useError({ error: false });
+	const { successState, HandleControlStateSuccess, setSuccessState } =
+		useSuccess({
+			error: true,
+		});
+	const [Register, { isLoading }] = useRegisterMutation();
 
-	const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
-		ev.preventDefault();
+	const onSubmit = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		if (!userRegister) {
 			setErrorState({ error: true, msg: "Kolom Kosong" });
 			return;
@@ -52,8 +66,31 @@ export const FormRegister = () => {
 			});
 			return;
 		}
+		const { confirmPassword, ...rest } = userRegister;
 
-		navigate("/main/dashboard", { replace: true });
+		Register(rest)
+			.unwrap()
+			.then((_fullfilled: any) => {
+				setSuccessState({
+					error: !successState.error,
+					head: "Success",
+					msg: "Berhasil Register Cek Email Untuk Verifikasi",
+				});
+			})
+			.catch((_err) => {
+				setErrorState({
+					error: true,
+					msg: "Gagal Register",
+				});
+			});
+	};
+
+	const CloseModal = () => {
+		setSuccessState({
+			error: !successState.error,
+			head: "",
+			msg: "",
+		});
 	};
 
 	const onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,10 +99,25 @@ export const FormRegister = () => {
 		setUserRegister({ ...userRegister, [name]: value });
 	};
 
+	const onCloseModal = () => {
+		setErrorState({ ...errorState, error: false });
+	};
+
 	return (
 		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">
-			<ErrorComp error={useError?.error} msg={useError?.msg} />
-			<form className="z-40 w-fit shadow-lg" onSubmit={onSubmit}>
+			<AnyModal
+				isOpen={errorState.error}
+				head={errorState?.head as string}
+				msg={errorState?.msg as string}
+				closeModal={onCloseModal}
+			/>
+			<AnyModal
+				isOpen={!successState.error}
+				head={successState?.head as string}
+				msg={successState?.msg as string}
+				closeModal={CloseModal}
+			/>
+			<form className="z-40 w-fit shadow-lg">
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
 					<div className="space-y-4">
 						<h1 className="text-center text-2xl font-semibold text-gray-600">
@@ -116,9 +168,20 @@ export const FormRegister = () => {
 							/>
 						</div>
 					</div>
-					<button className="mt-4 w-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide">
+					<LoadingButton
+						className="mt-4 w-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide"
+						loading={isLoading}
+						sx={{
+							marginTop: 4,
+							color: "#FFF",
+						}}
+						onClick={onSubmit}
+					>
 						Sign Up
-					</button>
+					</LoadingButton>
+					{/* <button className="mt-4 w-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide">
+						Sign Up
+					</button> */}
 					<p className="items-center mt-4 mb-4 text-center">
 						Already Have An Account
 					</p>

@@ -1,255 +1,232 @@
-import { useParams } from "react-router-dom";
-import { Connected, socket } from "../app/socket";
-import { PencilIcon, PlusIcon } from "@heroicons/react/solid";
+import { useNavigate, useParams } from "react-router-dom";
+import { useLazyRefreshTokenQuery } from "../redux/auth/authApi";
+import React, { useState } from "react";
+import {
+	useGetOneProjectActQuery,
+	useMoveActivityPositionMutation,
+} from "../redux/projectActivity/projectActivityApi";
+import { projectactivity_position } from "../types/database.types";
+import { ProjectActicityForState } from "../types/project.types";
+import { GridPosition } from "../Components/PositionGrid.Component";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { useSuccess } from "../hooks/useSuccess";
+import { useError } from "../hooks/useError";
+import { MoveStateReturn } from "../interface/proyek.interface";
+import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
+import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
+import { useSelector } from "react-redux";
+export interface StateActivityProject {
+	[key: string]: Array<ProjectActicityForState>;
+}
 
-import { Fragment, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon } from "@heroicons/react/outline";
+export const OneProject = () => {
+	const { idProject } = useParams();
+	const proyekactivity = useSelector(proyekActSelector);
+	const navigate = useNavigate();
+	const { data, isFetching, isSuccess, isError, error, refetch } =
+		useGetOneProjectActQuery(
+			{ idProject: parseInt(idProject as string) },
+			{
+				refetchOnMountOrArgChange: true,
+				refetchOnFocus: true,
+			}
+		);
 
-const OneProject = () => {
-  const { idProject } = useParams();
-  const [open, setOpen] = useState(false);
+	const [triggerRefresh] = useLazyRefreshTokenQuery();
+	const [Move, MoveHooks] = useMoveActivityPositionMutation();
+	const [open, setOpen] = useState(false);
+	const { errorState, setErrorState } = useError({ error: false });
+	const { successState, setSuccessState } = useSuccess({ error: true });
+	const ActivityName = React.useRef("");
+	const [IdProjectAct, setIdProjectAct] = React.useState<
+		number | undefined
+	>();
 
-  const cancelButtonRef = useRef(null);
+	const intialState: StateActivityProject = {
+		To_Do: [],
+		Doing: [],
+		Review: [],
+		Done: [],
+	};
 
-  Connected();
+	const [positionData, setPositionData] = React.useState(intialState);
 
-  socket.on("init", ({ data }) => {
-    alert(data);
-  });
-  return (
-    <>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as="div"
-          className="fixed z-10 inset-0 overflow-y-auto"
-          initialFocus={cancelButtonRef}
-          onClose={setOpen}
-        >
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-            </Transition.Child>
+	const handleShow = (name: string, idProjectActivityId?: number) => {
+		ActivityName.current = name;
+		if (idProjectActivityId) {
+			setIdProjectAct(idProjectActivityId);
+		} else {
+			setIdProjectAct(undefined);
+		}
+		setOpen((prev) => !prev);
+	};
 
-            {/* This element is to trick the browser into centering the modal contents. */}
-            <span
-              className="hidden sm:inline-block sm:align-middle sm:h-screen"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900 text-center"
-                    >
-                      Kegiatan To Do
-                    </Dialog.Title>
-                    <div className="mt-3">
-                      <label className="block text-sm  text-gray-700">
-                        Progress
-                      </label>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div className="bg-blue-600 h-2.5 rounded-full w-1/2"></div>
-                      </div>
-                    </div>
-                    <div className="mt-10">
-                      <label
-                        htmlFor="email-address"
-                        className="block text-sm  text-gray-700"
-                      >
-                        Email address
-                      </label>
-                      <input
-                        type="text"
-                        name="email-address"
-                        id="email-address"
-                        autoComplete="email"
-                        className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <label
-                        htmlFor="waktu"
-                        className="block text-sm  text-gray-700"
-                      >
-                        Waktu
-                      </label>
-                      <input
-                        type="text"
-                        name="waktu"
-                        id="waktu"
-                        placeholder="Waktu untuk selesai, cth 5"
-                        className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <div className="mt-3">
-                      <label
-                        htmlFor="deksripsi"
-                        className="block text-sm  text-gray-700"
-                      >
-                        Deskripsi
-                      </label>
-                      <textarea
-                        className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Deksripsi"
-                      ></textarea>
-                    </div>
-                    <div className="mt-3">
-                      <label
-                        htmlFor="deksripsi"
-                        className="block text-sm  text-gray-700"
-                      >
-                        Kegiatan Sebelumnya
-                      </label>
-                      <select
-                        name=""
-                        id=""
-                        className="mt-1 p-2 block w-full border-1 shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      >
-                        <option selected>-Pilih Kegiatan Sebelumnya-</option>
-                        <option value="">Kegiatan A</option>
-                        <option value="">Kegiatan B</option>
-                        <option value="">Kegiatan C</option>
-                      </select>
-                    </div>
-                    <div className="mt-3">
-                      <label
-                        htmlFor="deksripsi"
-                        className="block text-sm  text-gray-700"
-                      >
-                        Status
-                      </label>
+	React.useEffect(() => {
+		if (isSuccess || !isFetching) {
+			const d = data?.data?.projectactivity;
 
-                      <div className="flex items-center">
-                        <input
-                          id="aktif"
-                          name="status"
-                          type="radio"
-                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                        />
-                        <label
-                          htmlFor="aktif"
-                          className="ml-3 block text-sm font-medium text-gray-700"
-                        >
-                          Aktif
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          id="unaktif"
-                          name="status"
-                          type="radio"
-                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                        />
-                        <label
-                          htmlFor="unaktif"
-                          className="ml-3 block text-sm font-medium text-gray-700"
-                        >
-                          Tidak Aktif
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="button"
-                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => setOpen(false)}
-                  >
-                    Simpan
-                  </button>
-                </div>
-              </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition.Root>
-      <div className="w-full h-screen max-w-7xl mx-auto">
-        <div className="grid grid-cols-4">
-          <div>
-            <div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-              <div className="flex justify-between items-center">
-                <div></div>
-                <h3 className="text-center font-bold">To Do</h3>
-                <button onClick={() => setOpen(true)}>
-                  <PlusIcon width={20} />
-                </button>
-              </div>
+			let payload: StateActivityProject = {
+				To_Do: [],
+				Doing: [],
+				Review: [],
+				Done: [],
+			};
 
-              <div className="bg-white p-3 mt-5 rounded-xl">
-                <div className="flex justify-between">
-                  <h4 className="font-bold">Create UI/UX</h4>
-                  <button onClick={() => setOpen(true)}>Edit</button>
-                </div>
-                <p className="text-gray-600">Dekripsi Singkat</p>
+			if (d) {
+				for (const iterator of d) {
+					payload[iterator.position].push(iterator);
+				}
 
-                <div className="mt-3">
-                  <p className="text-gray-600 mb-2">Progress</p>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                    <div className="bg-blue-600 h-2.5 rounded-full w-1/2"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-              <div className="flex justify-between items-center">
-                <div></div>
-                <h3 className="text-center font-bold">Doing</h3>
-                <button onClick={() => setOpen(true)}>
-                  <PlusIcon width={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-              <div className="flex justify-between items-center">
-                <div></div>
-                <h3 className="text-center font-bold">Review</h3>
-                <button onClick={() => setOpen(true)}>
-                  <PlusIcon width={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
-              <div className="flex justify-between items-center">
-                <div></div>
-                <h3 className="text-center font-bold">Done</h3>
-                <button onClick={() => setOpen(true)}>
-                  <PlusIcon width={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+				setPositionData(payload);
+			}
+		}
+	}, [isSuccess, isFetching]);
+
+	React.useEffect(() => {
+		const err = error as { [key: string]: any };
+		if (isError) {
+			if (err?.status === "FETCH_ERROR") {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: "Terjadi Kesalahan Pada jaringan",
+				});
+			} else if (err?.data?.data?.name === "TokenExpire") {
+				triggerRefresh(null, true)
+					.unwrap()
+					.then(() => {
+						refetch();
+					})
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+							action: () => navigate("/", { replace: true }),
+						});
+					});
+			} else {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal Membuat Proyek baru",
+					msg: err.data.message ?? "Terjadi Kesalahan Pada Server",
+				});
+			}
+		}
+	}, [isError]);
+
+	const onDragEnd = (result: DropResult) => {
+		const { destination, source } = result;
+
+		if (!destination) {
+			return;
+		}
+
+		if (
+			destination.droppableId === source.droppableId &&
+			destination.index === source.index
+		) {
+			return;
+		}
+
+		// Cari Data
+		const sourceData = positionData[source.droppableId].filter(
+			(x) => x.projectActivityId === source.index
+		)[0];
+
+		const payload = {
+			projectActivityId: sourceData.projectActivityId,
+			position: destination.droppableId,
+		} as MoveStateReturn;
+
+		setPositionData((prev) => ({
+			...prev,
+			[destination.droppableId]: [
+				...prev[destination.droppableId],
+				sourceData,
+			],
+		}));
+
+		setPositionData((prev) => ({
+			...prev,
+			[source.droppableId]: prev[source.droppableId].filter(
+				(x) => x.projectActivityId !== source.index
+			),
+		}));
+
+		Move(payload)
+			.unwrap()
+			.then(() => {})
+			.catch(() => {
+				setPositionData((prev) => ({
+					...prev,
+					[source.droppableId]: [
+						...prev[source.droppableId],
+						sourceData,
+					],
+				}));
+
+				setPositionData((prev) => ({
+					...prev,
+					[destination.droppableId]: prev[
+						destination.droppableId
+					].filter((x) => x.projectActivityId !== destination.index),
+				}));
+			});
+	};
+
+	return (
+		<>
+			<FormKegiatan
+				idProjectActivity={IdProjectAct}
+				handleShow={handleShow}
+				ActivityName={ActivityName.current}
+				isOpen={open}
+			/>
+			<DragDropContext onDragEnd={onDragEnd}>
+				<div className="w-full h-screen max-w-7xl mx-auto">
+					<div className="grid grid-cols-4">
+						{/* Start To Do */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.To_Do}
+							positionDesc="To Do"
+							positionData={positionData.To_Do}
+							key={"" + "A"}
+						/>
+						{/* End Todo */}
+						{/* Start Doing */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Doing}
+							positionDesc={"Doing"}
+							positionData={positionData.Doing}
+							key={"" + "B"}
+						/>
+						{/* End Doing */}
+						{/* Start Review */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Review}
+							positionDesc={"Review"}
+							positionData={positionData.Review}
+							key={"" + "C"}
+						/>
+						{/* End Review */}
+						{/* Start Done */}
+						<GridPosition
+							handleShow={handleShow}
+							positionName={projectactivity_position.Done}
+							positionDesc={"Done	"}
+							positionData={positionData.Done}
+							key={"" + "D"}
+						/>
+						{/* End Done */}
+					</div>
+				</div>
+			</DragDropContext>
+		</>
+	);
 };
-
-export default OneProject;

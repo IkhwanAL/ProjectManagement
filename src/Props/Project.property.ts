@@ -9,7 +9,7 @@ export interface ProjectData {
 	id: number;
 	owner: string;
 	description: string;
-	dueDate?: string;
+	dueDate?: Date;
 	projectName: string;
 	recent?: boolean;
 }

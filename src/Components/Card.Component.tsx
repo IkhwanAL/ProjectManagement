@@ -1,41 +1,100 @@
-import { Link } from "react-router-dom";
-import { emitInitializeInput } from "../app/socket";
-import { ProjectData } from "../Props/Project.property";
+import React from "react";
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, Modal, Stack, Typography } from "@mui/material";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { SetIdProyek } from "../redux/project/projectSlice";
+import { PReturn } from "../types/database.types";
+import { useDeleteProjectMutation } from "../redux/project/projectApi";
 
-const CardProject = (project: ProjectData) => {
+const style = {
+	position: "absolute" as "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: 400,
+	bgcolor: "background.paper",
+	borderRadius: 5,
+	boxShadow: 24,
+	pt: 2,
+	px: 4,
+	pb: 3,
+};
+
+const CardProject = (project: PReturn & { recent: boolean }) => {
 	const link = project.recent
-		? `project/detail/${project.id}`
-		: `detail/${project.id}`;
+		? `project/detail/${project.projectId}`
+		: `detail/${project.projectId}`;
+
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const [open, setOpen] = React.useState(false);
+	// const [idProyek, setIdProyek] = React.useState<number>();
+
+	const OnHandleProyek = (id: number) => {
+		dispatch(SetIdProyek(id));
+		navigate(link, { replace: false });
+	};
+
+	const OpeningModal = (idProyek?: number) => {
+		setOpen((prev) => !prev);
+		// setIdProyek(idProyek);
+	};
 
 	return (
-		<div className="text-gray-700 max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-gray-100 p-4 py-5 px-5 rounded-xl hover:shadow-md hover:shadow-slate-300">
-			<Link to={link} onClick={emitInitializeInput}>
+		<div className="text-black max-w-md w-80 my-auto mx-auto ml-5 mr-5 mt-5 mb-5 bg-white p-4 py-5 px-5 rounded-xl shadow-md hover:shadow-lg hover:shadow-gray-400 ">
+			<button
+				onClick={() => OnHandleProyek(project.projectId)}
+				className="w-full"
+			>
 				<div className="flex justify-between">
 					<div>
 						<h2 className="text-lg"> {project.projectName} </h2>
 					</div>
 					<div className="flex items-center ">
-						<div className="p-5 bg-gray-800 bg-opacity-40 rounded-full"></div>
-						<div className="p-5 bg-gray-700 bg-opacity-30 rounded-full -ml-8"></div>
-						<div className="p-5 bg-gray-600 bg-opacity-30 rounded-full -ml-7"></div>
+						<div className="pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-10">
+							<img
+								src="https://ui-avatars.com/api/?name=Ikhwan"
+								className="w-full h-full rounded-full border-1 border-primary"
+								alt="User"
+							/>
+						</div>
+						<div className="pb-5 pl-5 bg-opacity-30 rounded-full w-14 h-14 -ml-9 ">
+							<img
+								src="https://ui-avatars.com/api/?name=Ananda"
+								className="w-full h-full rounded-full border-1 border-primary"
+								alt="User"
+							/>
+						</div>
+						<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -ml-8 ">
+							<img
+								src="https://ui-avatars.com/api/?name=Abi"
+								className="w-full h-full rounded-full border-1 border-primary"
+								alt="User"
+							/>
+						</div>
 					</div>
 				</div>
 				<div className="mt-5 flex justify-between items-center w-52">
-					<span>{project.description}</span>
+					<span>{project.projectDescription}</span>
 				</div>
-				<div className="flex justify-between mt-5 w-48 ">
+				<div className="flex justify-between mt-5 w-full">
 					<div>
 						<h3 className="text-xs"> Owner </h3>
-						<p className="font-bold"> {project.owner} </p>
+						<p className="font-bold"> {project.user.username} </p>
 					</div>
 					<div>
-						<h3 className="text-xs"> Due Date </h3>
+						<h3 className="text-xs mr-auto"> Due Date </h3>
 						<p className="font-bold">
-							{project.dueDate ? project.dueDate : " "}
+							{project.deadline
+								? moment(project.deadline).format("LL")
+								: " "}
 						</p>
 					</div>
 				</div>
-			</Link>
+			</button>
 		</div>
 	);
 };

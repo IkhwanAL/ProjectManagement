@@ -1,126 +1,271 @@
-import { useDispatch, useSelector } from "react-redux";
+import { LoadingButton } from "@mui/lab";
+import {
+	Box,
+	Button,
+	FormControl,
+	Grid,
+	InputLabel,
+	InputLabelProps,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material";
+import React from "react";
+import { useSelector } from "react-redux";
+import { user } from "../../types/database.types";
+import { useError } from "../../hooks/useError";
+import { useSuccess } from "../../hooks/useSuccess";
 import { ModalPropsUI } from "../../Props/Modal.property";
+import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
+import {
+	useGetUserByIdQuery,
+	usePatchUserMutation,
+} from "../../redux/user/userApi";
 import { userSelector } from "../../redux/user/userSlice";
+import { Colors } from "../../Styles/Colors";
+import AnyModal from "../Modal/Any.Component";
 
 export default function FormUserUI({ setModal }: ModalPropsUI) {
-	const user = useSelector(userSelector);
+	const { data, isSuccess, isError, error, refetch } = useGetUserByIdQuery(
+		null,
+		{
+			refetchOnReconnect: true,
+		}
+	);
+
+	const [triggerRefreshToken] = useLazyRefreshTokenQuery();
+	const [PatchUser, PathUserHooks] = usePatchUserMutation();
+
+	const [user, setUser] = React.useState<Partial<user>>();
+
+	const { errorState, setErrorState } = useError({ error: false });
+	const { successState, setSuccessState } = useSuccess({ error: true });
+
+	React.useLayoutEffect(() => {
+		if (isSuccess) {
+			setUser({
+				phoneNumber: data.data?.phoneNumber,
+				firstName: data.data?.firstName,
+				lastName: data.data?.lastName,
+				username: data.data?.username,
+				email: data.data?.email,
+				id: data.data?.id,
+			});
+		}
+	}, [isSuccess]);
+
+	React.useEffect(() => {
+		const err = error as { [key: string]: any };
+
+		if (isError) {
+			if (err.data.data.name === "TokenExpire") {
+				triggerRefreshToken(null, true)
+					.unwrap()
+					.then(() => {
+						refetch();
+					})
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
+			}
+		}
+	}, [isError]);
+
+	const OnChangeTextField = (
+		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
+		setUser((prevState) => ({
+			...prevState,
+			[ev.target.name]: ev.target.value,
+		}));
+	};
+
+	const OnSave = () => {
+		if (user?.id) {
+			const { id, ...rest } = user;
+			PatchUser(rest).unwrap();
+		} else {
+			PatchUser(user).unwrap();
+		}
+	};
+
+	React.useEffect(() => {
+		if (PathUserHooks.isSuccess) {
+			setSuccessState({
+				error: false,
+				head: "Success",
+				msg: "Sukses Memperbarui Data",
+			});
+
+			refetch();
+		}
+	}, [PathUserHooks.isSuccess]);
+
+	React.useEffect(() => {
+		const err = error as { [key: string]: any };
+
+		if (PathUserHooks.isError) {
+			if (err?.status === "FETCH_ERROR") {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal login!",
+					msg: "Terjadi Kesalahan Pada Server",
+				});
+			} else if (err.data.data.name === "TokenExpire") {
+				triggerRefreshToken(null, true)
+					.unwrap()
+					.then(() => {
+						if (user?.id) {
+							const { id, ...rest } = user;
+							PatchUser(rest).unwrap();
+						} else {
+							PatchUser(user).unwrap();
+						}
+					})
+					.catch(() => {
+						setErrorState({
+							error: true,
+							head: "Gagal Memperbarui Data",
+							msg: "Terjadi Kesalahan Pada Server",
+						});
+					});
+			} else {
+				setErrorState({
+					...errorState,
+					error: true,
+					head: "Gagal login!",
+					msg: err.data.message ?? "Terjadi Kesalahan Pada Server",
+				});
+			}
+		}
+	}, [PathUserHooks.isError]);
+
+	const OnCloseModalError = () => {
+		setErrorState({ ...errorState, error: false });
+	};
+
+	const OnCloseModalSuccess = () => {
+		setSuccessState({ ...errorState, error: true });
+	};
 
 	return (
 		<>
-			<div className="m-10">
-				<div className="border-y-1 border-black"></div>
-				<div className="grid grid-cols-6 gap-6 mt-5 mb-5">
-					<div className="col-span-6 sm:col-span-3">
-						<label
-							htmlFor="first-name"
-							className="block text-md font-medium text-gray-700"
-						>
-							First name
-						</label>
-						<input
-							type="text"
-							name="first-name"
-							id="first-name"
-							value={user.firstName}
-							// autoComplete="given-name"
-							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-						/>
-					</div>
-					<div className="col-span-6 sm:col-span-3">
-						<label
-							htmlFor="last-name"
-							className="block text-md font-medium text-gray-700"
-						>
-							Last name
-						</label>
-						<input
-							type="text"
-							name="last-name"
-							id="last-name"
-							autoComplete="family-name"
-							className="mt-1 p-2 focus:ring-indigo-500 border-1 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-							value={user.lastname}
-						/>
-					</div>
-				</div>
-				<div className="grid grid-cols-6 gap-6 mt-5 mb-5">
-					<div className="col-span-4 sm:col-span-2">
-						<label
-							htmlFor="username"
-							className="block text-md font-medium text-gray-700"
-						>
-							Username
-						</label>
-						<input
-							type="text"
+			<AnyModal
+				closeModal={OnCloseModalError}
+				isOpen={errorState.error}
+				head={errorState.head as string}
+				msg={errorState.msg as string}
+			/>
+			<AnyModal
+				closeModal={OnCloseModalSuccess}
+				isOpen={!successState.error}
+				head={successState.head as string}
+				msg={successState.msg as string}
+			/>
+			<Box display="flex" justifyContent="center" alignItems="center">
+				<Typography variant="h4">Edit Profile</Typography>
+			</Box>
+			<Box
+				component={"form"}
+				autoComplete={"off"}
+				margin={10}
+				mt="0"
+				noValidate
+			>
+				<Stack>
+					<Grid container spacing={2}>
+						<Grid item xs={6}>
+							<FormControl margin="normal" fullWidth>
+								<TextField
+									label="Firstname"
+									onChange={OnChangeTextField}
+									name="firstName"
+									value={user?.firstName}
+									id="firstName"
+									InputLabelProps={{
+										shrink: true,
+									}}
+								/>
+							</FormControl>
+						</Grid>
+						<Grid item xs={6}>
+							<FormControl margin="normal" fullWidth>
+								<TextField
+									label="Lastname"
+									onChange={OnChangeTextField}
+									name="lastName"
+									value={user?.lastName}
+									id="lastName"
+									InputLabelProps={{
+										shrink: true,
+									}}
+								/>
+							</FormControl>
+						</Grid>
+					</Grid>
+					<FormControl>
+						<TextField
+							label="Username"
+							margin="normal"
 							name="username"
-							id="usernameId"
-							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
-							value={user.username}
+							onChange={OnChangeTextField}
+							value={user?.username}
+							id="username"
+							InputLabelProps={{
+								shrink: true,
+							}}
 						/>
-					</div>
-					<div className="col-span-4 sm:col-span-2">
-						<label
-							htmlFor="username"
-							className="block text-md font-medium text-gray-700"
-						>
-							Phone Number
-						</label>
-						<input
-							type="text"
-							name="username"
-							id="usernameId"
-							value={user.phoneNumber}
-							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
-						/>
-					</div>
-					<div className="col-span-4 sm:col-span-2">
-						<label
-							htmlFor="username"
-							className="block text-md font-medium text-gray-700"
-						>
-							Email
-						</label>
-						<input
-							type="email"
+					</FormControl>
+					<FormControl>
+						<TextField
+							label="Email"
+							margin="normal"
 							name="email"
+							disabled
+							onChange={OnChangeTextField}
+							value={user?.email}
 							id="email"
-							value={user.email}
-							className="mt-1 p-2 block w-full shadow-sm sm:text-sm border-1 border-gray-300 rounded-md focus:ring-indigo-500"
+							InputLabelProps={{
+								shrink: true,
+							}}
 						/>
-					</div>
-				</div>
-				<div className="border-y-1 border-gray-500"></div>
-
-				<div className="grid grid-cols-6 mt-5 mb-5 gap-6">
-					<button className="col-span-1 inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md bg-opacity-80 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-						Change Password
-					</button>
-					<button className="col-span-1 inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-						Delete User
-					</button>
-				</div>
-
-				<div className="flex justify-between">
-					<div className="bg-gray-50 text-right mt-5">
-						<button
-							onClick={setModal}
-							type="button"
-							className="inline-flex justify-center px-4 py-2 border-1 border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-500 bg-opacity-80 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-						>
-							Close
-						</button>
-					</div>
-					<div className="bg-gray-50 text-right mt-5">
-						<button
-							type="submit"
-							className="inline-flex justify-center px-4 py-2 border-1 border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						>
-							Save
-						</button>
-					</div>
-				</div>
-			</div>
+					</FormControl>
+					<FormControl>
+						<TextField
+							label="Phone Number"
+							margin="normal"
+							name="phoneNumber"
+							onChange={OnChangeTextField}
+							value={user?.phoneNumber}
+							id="phoneNumber"
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+					</FormControl>
+				</Stack>
+				<Stack direction={"row"} justifyContent="space-between" mt={3}>
+					<Button
+						variant="contained"
+						onClick={setModal}
+						color="secondary"
+					>
+						Cancel
+					</Button>
+					<LoadingButton
+						variant="contained"
+						onClick={OnSave}
+						loading={PathUserHooks.isLoading}
+					>
+						Save
+					</LoadingButton>
+				</Stack>
+			</Box>
 		</>
 	);
 }
