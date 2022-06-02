@@ -173,22 +173,7 @@ export const OneProject = () => {
 
 		Move(payload)
 			.unwrap()
-			.then(() => {
-				setPositionData((prev) => ({
-					...prev,
-					[destination.droppableId]: [
-						...prev[destination.droppableId],
-						sourceData,
-					],
-				}));
-
-				setPositionData((prev) => ({
-					...prev,
-					[source.droppableId]: prev[source.droppableId].filter(
-						(x) => x.projectActivityId !== source.index
-					),
-				}));
-			})
+			.then(() => {})
 			.catch(() => {
 				setPositionData((prev) => ({
 					...prev,
