@@ -185,11 +185,16 @@ export default function ProyekForm({
 					let date = "";
 					if (res.data?.startDate) {
 						const time = res.data.startDate;
+
 						date = `${new Date(time).getFullYear()}-${
 							new Date(time).getMonth() + 1 < 10
 								? "0" + (new Date(time).getMonth() + 1)
 								: new Date(time).getMonth() + 1
-						}-${new Date(time).getDate()}`;
+						}-${
+							new Date(time).getDate() < 10
+								? "0" + new Date(time).getDate()
+								: new Date(time).getDate()
+						}`;
 					}
 
 					setProyek({

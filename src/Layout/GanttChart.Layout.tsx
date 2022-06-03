@@ -5,7 +5,7 @@ import { ProjectActApi } from "../redux/projectActivity/projectActivityApi";
 import { useGetStartDateQuery } from "../redux/project/projectApi";
 import { ReformatDataForGoogleCharts } from "../Util/ReformatDataToRowsOfGoogleChart";
 import { useTheme } from "@mui/material/styles";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 
 interface GanttOptions {
 	height: number;
@@ -93,6 +93,17 @@ export default function GanttChart() {
 
 	return (
 		<>
+			{isFetching ? (
+				<Box
+					sx={{
+						marginTop: -2,
+					}}
+				>
+					<LinearProgress />
+				</Box>
+			) : (
+				<></>
+			)}
 			{showsData && showsData?.length !== 0 ? (
 				<Chart
 					chartType="Gantt"

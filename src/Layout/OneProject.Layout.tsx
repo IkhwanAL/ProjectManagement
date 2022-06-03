@@ -16,6 +16,7 @@ import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
 import { useSelector } from "react-redux";
 import { QueryStatus } from "@reduxjs/toolkit/dist/query";
+import { Box, LinearProgress } from "@mui/material";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 }
@@ -195,6 +196,17 @@ export const OneProject = () => {
 				isOpen={open}
 			/>
 			<DragDropContext onDragEnd={onDragEnd}>
+				{isFetching ? (
+					<Box
+						sx={{
+							marginTop: -2,
+						}}
+					>
+						<LinearProgress />
+					</Box>
+				) : (
+					<></>
+				)}
 				<div className="w-full h-screen max-w-7xl mx-auto">
 					<div className="grid grid-cols-4">
 						{/* Start To Do */}

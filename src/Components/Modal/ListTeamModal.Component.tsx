@@ -27,6 +27,7 @@ import ModalInfo from "./ErrorModal.Component";
 import { ISuccess } from "../../interface/return.interface";
 import { useSuccess } from "../../hooks/useSuccess";
 import { proyekSelector } from "../../redux/project/projectSlice";
+import { LoadingButton } from "@mui/lab";
 
 interface UserTeamChecked extends UserTeamSelect {
 	isChecked: boolean;
@@ -63,10 +64,12 @@ export const MainListTeam = ({
 		idProyek as number,
 		{
 			refetchOnMountOrArgChange: true,
+			refetchOnFocus: true,
+			pollingInterval: 1000 * 60 * 2,
 		}
 	);
 
-	const [DeleteUser] = useDeleteUserTeamMutation();
+	const [DeleteUser, DeleteUserHooks] = useDeleteUserTeamMutation();
 
 	const { errorState, HandleControlStateError } = useError({
 		error: false,
@@ -229,13 +232,24 @@ export const MainListTeam = ({
 						<Button color="primary" onClick={closeModal}>
 							Tutup
 						</Button>
-						<Button
+						<LoadingButton
+							loading={isFetching}
+							color="secondary"
+							variant="contained"
+							onClick={() => {
+								refetch();
+							}}
+						>
+							Reload
+						</LoadingButton>
+						<LoadingButton
+							loading={DeleteUserHooks.isLoading}
 							color="error"
 							variant="contained"
 							onClick={OnSubmitRemove}
 						>
 							Hapus
-						</Button>
+						</LoadingButton>
 					</Stack>
 
 					<FormAddTeam

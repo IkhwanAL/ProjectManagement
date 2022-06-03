@@ -26,6 +26,7 @@ import { LoadingButton } from "@mui/lab";
 import { useSelector } from "react-redux";
 import { proyekSelector } from "../../redux/project/projectSlice";
 import { useInviteUserMutation } from "../../redux/project/projectApi";
+import ModalInfo from "../Modal/ErrorModal.Component";
 
 interface Ps {
 	description: "";
@@ -46,13 +47,18 @@ const style = {
 };
 
 export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
-	const [Invite] = useInviteUserMutation();
+	const [Invite, { isLoading }] = useInviteUserMutation();
 
 	const proyek = useSelector(proyekSelector);
 	const [body, setBody] = React.useState({
 		emailInvited: "",
 		idProject: proyek ?? null,
 	});
+
+	const { successState, HandleControlStateSuccess } = useSuccess({
+		error: true,
+	});
+	const { errorState, HandleControlStateError } = useError({ error: false });
 
 	const OnChangeInput = (
 		ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -64,7 +70,17 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 	};
 
 	const OnSubmit = () => {
-		Invite(body).unwrap().then(console.log).catch(console.log);
+		Invite(body)
+			.unwrap()
+			.then(() => {
+				HandleControlStateSuccess(
+					"Berhasil",
+					"Berhasil mengundang User"
+				);
+			})
+			.catch(() => {
+				HandleControlStateError("Gagal", "Gagal Mengundang User");
+			});
 	};
 
 	return (
@@ -72,7 +88,18 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 			<Modal open={isOpen} onClose={closeModal}>
 				<Box sx={{ ...style, width: 400 }}>
 					<Typography component={"h2"}>Menambah Tim</Typography>
-
+					<ModalInfo
+						isOpen={!successState.error}
+						head={successState.head as string}
+						msg={successState.msg as string}
+						closeModal={HandleControlStateSuccess}
+					/>
+					<ModalInfo
+						isOpen={errorState.error}
+						head={errorState.head as string}
+						msg={errorState.msg as string}
+						closeModal={HandleControlStateError}
+					/>
 					<Stack direction={"column"}>
 						<FormControl>
 							<TextField
@@ -92,13 +119,14 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 						<Button color="error" onClick={closeModal}>
 							Tutup
 						</Button>
-						<Button
+						<LoadingButton
 							color="primary"
 							variant="contained"
 							onClick={OnSubmit}
+							loading={isLoading}
 						>
 							Tambah
-						</Button>
+						</LoadingButton>
 					</Stack>
 				</Box>
 			</Modal>
