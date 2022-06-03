@@ -14,7 +14,7 @@ import { projectactivity_position } from "../../types/database.types";
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
-	tagTypes: ["Projects", "ProjectActivity", "ActivityUser"],
+	tagTypes: ["Projects", "ProjectActivity", "ActivityUser", "ProjectAct"],
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -41,6 +41,7 @@ export const ProjectActApi = createApi({
 					credentials: "include",
 				};
 			},
+			keepUnusedDataFor: 0,
 			providesTags: ["Projects"],
 		}),
 		MoveActivityPosition: builder.mutation<
@@ -55,7 +56,7 @@ export const ProjectActApi = createApi({
 					method: "PATCH",
 				};
 			},
-			invalidatesTags: ["Projects"],
+			invalidatesTags: ["Projects", "ProjectActivity"],
 		}),
 		GetOneProjectActivity: builder.query<
 			ISuccess<GetOneProjectActivity>,
@@ -98,12 +99,14 @@ export const ProjectActApi = createApi({
 			}),
 			invalidatesTags: ["Projects", "ActivityUser"],
 		}),
+		// Untuk Option Kegiatan Sebelumnya
 		GetAllActivity: builder.query({
 			query: (idProject) => ({
 				url: "/projectactivity/project/" + idProject,
 				method: "GET",
 				credentials: "include",
 			}),
+			keepUnusedDataFor: 0,
 			providesTags: ["Projects"],
 		}),
 		DeleteProjectActivity: builder.mutation({

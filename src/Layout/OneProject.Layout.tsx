@@ -15,6 +15,7 @@ import { MoveStateReturn } from "../interface/proyek.interface";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
 import { useSelector } from "react-redux";
+import { QueryStatus } from "@reduxjs/toolkit/dist/query";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 }
@@ -23,13 +24,20 @@ export const OneProject = () => {
 	const { idProject } = useParams();
 	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
-	const { data, isFetching, isSuccess, isError, error, refetch } =
-		useGetOneProjectActQuery(
-			{ idProject: parseInt(idProject as string) },
-			{
-				refetchOnMountOrArgChange: true,
-			}
-		);
+	const {
+		data,
+		isFetching,
+		isSuccess,
+		isError,
+		error,
+		refetch,
+		currentData,
+	} = useGetOneProjectActQuery(
+		{ idProject: parseInt(idProject as string) },
+		{
+			refetchOnMountOrArgChange: true,
+		}
+	);
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 	const [Move, MoveHooks] = useMoveActivityPositionMutation();
@@ -62,7 +70,9 @@ export const OneProject = () => {
 
 	React.useEffect(() => {
 		if (isSuccess || !isFetching) {
-			const d = data?.data?.projectactivity;
+			const d =
+				currentData?.data?.projectactivity ||
+				data?.data?.projectactivity;
 
 			let payload: StateActivityProject = {
 				To_Do: [],
