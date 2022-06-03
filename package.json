@@ -88,7 +88,6 @@
   "repository": "https://github.com/IkhwanAL/ProjectManagement.git",
   "author": "IkhwanAl <ikhwanal235@gmail.com>",
   "license": "MIT",
-  "proxy": "http://localhost:3001",
   "resolutions": {
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2"

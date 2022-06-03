@@ -1,3 +1,4 @@
+import { Box, LinearProgress } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 import CardProject from "../Components/Card.Component";
@@ -8,8 +9,12 @@ import { GetAllProjectReturn } from "../types/return.types";
 
 const MAX_NUMBER = 4;
 const RecentPage = () => {
-	const { data, isLoading, isFetching, isSuccess } =
-		useGetAllProjectQuery(null);
+	const { data, isLoading, isFetching, isSuccess } = useGetAllProjectQuery(
+		null,
+		{
+			refetchOnFocus: true,
+		}
+	);
 
 	const [showsData, setShowsData] =
 		React.useState<ISuccess<GetAllProjectReturn>>();
@@ -27,7 +32,7 @@ const RecentPage = () => {
 			}
 		}
 	}, [isSuccess, isFetching]);
-
+	console.log(isFetching);
 	return (
 		<>
 			<div className={`flex-col`}>
@@ -35,6 +40,17 @@ const RecentPage = () => {
 					<p className="text-center text-2xl font-semibold text-blackCustom pb-10">
 						PROYEK TERKINI
 					</p>
+					{isFetching ? (
+						<Box
+							sx={{
+								width: "100%",
+							}}
+						>
+							<LinearProgress />
+						</Box>
+					) : (
+						<></>
+					)}
 					<div className="flex content-start flex-wrap items-center justify-center">
 						{showsData?.data?.slice(0, MAX_NUMBER).map((x) => {
 							return (

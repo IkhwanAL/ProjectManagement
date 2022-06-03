@@ -82,6 +82,11 @@ export const ChangeOwnerForm = ({
 			}
 			setList(payload);
 		}
+
+		return () => {
+			setLeader(undefined);
+			setList([]);
+		};
 	}, [ListTeamHooks.isSuccess]);
 
 	const onChangeLeader = useCallback(
