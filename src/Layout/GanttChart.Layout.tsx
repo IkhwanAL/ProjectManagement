@@ -106,6 +106,7 @@ export default function GanttChart() {
 					width="100%"
 					data={[columns, ...showsData]}
 					options={options}
+					chartLanguage="id"
 				/>
 			) : (
 				<>

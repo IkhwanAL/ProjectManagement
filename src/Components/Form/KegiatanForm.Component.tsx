@@ -236,16 +236,19 @@ export const FormKegiatan = ({
 
 		if (!form.name) {
 			HandleControlStateError("Data Kosong", "Name Aktifitas Kosong");
+			setLoading(false);
 			return;
 		}
 
 		if (!form.description) {
 			HandleControlStateError("Data Kosong", "Deskripsi Kosong");
+			setLoading(false);
 			return;
 		}
 
 		if (!form.status) {
 			HandleControlStateError("Data Kosong", "Status Kegiatan Kosong");
+			setLoading(false);
 			return;
 		}
 
@@ -254,6 +257,7 @@ export const FormKegiatan = ({
 				"Data Kosong",
 				"Total Waktu Pengerjaan Kosong"
 			);
+			setLoading(false);
 			return;
 		}
 
@@ -570,6 +574,7 @@ export const FormKegiatan = ({
 									type="text"
 									name="name"
 									id="name"
+									placeholder="Nama Kegiatan"
 									value={form.name ?? ""}
 									onChange={OnChangeInputField}
 									className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
@@ -583,6 +588,11 @@ export const FormKegiatan = ({
 									Waktu
 								</label>
 								<input
+									onKeyPress={(event) => {
+										if (!/[0-9]/.test(event.key)) {
+											event.preventDefault();
+										}
+									}}
 									type="text"
 									name="timeToComplete"
 									id="timeToComplete"
