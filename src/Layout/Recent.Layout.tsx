@@ -32,7 +32,6 @@ const RecentPage = () => {
 			}
 		}
 	}, [isSuccess, isFetching]);
-	console.log(isFetching);
 	return (
 		<>
 			<div className={`flex-col`}>

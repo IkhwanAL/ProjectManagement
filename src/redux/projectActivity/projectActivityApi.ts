@@ -3,13 +3,10 @@ import { ISuccess } from "../../interface/return.interface";
 import { Environtment } from "..";
 import { RootState } from "../../app/store";
 import { ProjecType } from "../../types/project.types";
-import { QueryArgProject } from "../../types/arg.types";
-import { GetAllProjectReturn, GetProjectSmall } from "../../types/return.types";
 import {
 	GetOneProjectActivity,
 	MoveStateReturn,
 } from "../../interface/proyek.interface";
-import { projectactivity_position } from "../../types/database.types";
 
 const REDUCER_API_PATH_NAME = "ProjectsActivities";
 export const ProjectActApi = createApi({

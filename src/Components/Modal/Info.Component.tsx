@@ -1,5 +1,4 @@
 import React from "react";
-import { Colors } from "../../Styles/Colors";
 import { Dialog, Transition } from "@headlessui/react";
 import { InfoModalProps } from "../../Props/Modal.property";
 import { Button, Stack } from "@mui/material";

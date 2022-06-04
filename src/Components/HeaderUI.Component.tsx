@@ -133,7 +133,7 @@ export default function HeaderUI() {
 				setModalDelete((prev) => !prev);
 				navigate("/main/dashboard", { replace: true });
 			})
-			.catch(console.log);
+			.catch();
 	};
 
 	const OpenModalDelete = () => {

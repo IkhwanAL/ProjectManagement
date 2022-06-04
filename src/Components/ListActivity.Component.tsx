@@ -1,4 +1,3 @@
-import { InboxIcon, MailIcon } from "@heroicons/react/outline";
 import { List, ListItem } from "@mui/material";
 import { activity } from "../interface/database.interface";
 import BoxActivity from "./BoxActivity.Component";

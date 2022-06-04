@@ -20,7 +20,7 @@ import {
 	usePatchProjectMutation,
 	useLazyGetOneProjectNoCalcQuery,
 } from "../../redux/project/projectApi";
-import { proyekSelector, SetIdProyek } from "../../redux/project/projectSlice";
+import { SetIdProyek } from "../../redux/project/projectSlice";
 import AnyModal from "../Modal/Any.Component";
 
 export default function ProyekForm({
@@ -33,7 +33,7 @@ export default function ProyekForm({
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
 
-	const [triggerGetProyek, HooksGet] = useLazyGetOneProjectNoCalcQuery();
+	const [triggerGetProyek] = useLazyGetOneProjectNoCalcQuery();
 
 	const initial: Partial<QueryArgProject & { projectId: number | null }> = {
 		projectId: projectId ? projectId : null,
@@ -156,10 +156,7 @@ export default function ProyekForm({
 			return;
 		}
 
-		console.log(new Date(proyek.startDate));
-
 		if (proyek.projectId) {
-			console.log(proyek);
 			PatchProject({
 				projectId: proyek.projectId,
 				projectName: proyek.projectName,

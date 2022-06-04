@@ -1,32 +1,14 @@
-import React, { useRef } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React from "react";
 import { AnyModalProps } from "../../Props/Modal.property";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
-	Alert,
-	Backdrop,
 	Box,
 	Button,
 	FormControl,
-	IconButton,
-	InputAdornment,
 	Modal,
-	Snackbar,
 	Stack,
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useChangePasswordMutation } from "../../redux/user/userApi";
-import { useError } from "../../hooks/useError";
-import { ErrorMsg } from "../../Props/Error.property";
-import { useSuccess } from "../../hooks/useSuccess";
-import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
-import { LoadingButton } from "@mui/lab";
-
-interface Ps {
-	description: "";
-}
 
 const style = {
 	position: "absolute" as "absolute",

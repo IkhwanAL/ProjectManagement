@@ -8,8 +8,7 @@ import { ResetIdProyek } from "../redux/project/projectSlice";
 import { GetAllProjectReturn } from "../types/return.types";
 
 const ProjectPage = () => {
-	const { data, isLoading, isFetching, isSuccess } =
-		useGetAllProjectQuery(null);
+	const { data, isFetching, isSuccess } = useGetAllProjectQuery(null);
 
 	const [showsData, setShowsData] =
 		React.useState<ISuccess<GetAllProjectReturn>>();

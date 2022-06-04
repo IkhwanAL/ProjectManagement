@@ -6,6 +6,9 @@ import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 import { useSelector } from "react-redux";
 import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
 import { useDeleteProjectActivityMutation } from "../redux/projectActivity/projectActivityApi";
+import { useSuccess } from "../hooks/useSuccess";
+import ModalInfo from "./Modal/ErrorModal.Component";
+import { useError } from "../hooks/useError";
 
 interface GridPositionProps {
 	handleShow: (arg?: any) => any; // untuk Form
@@ -21,14 +24,24 @@ export const GridPosition = ({
 	positionName,
 }: GridPositionProps) => {
 	const [DeleteProjectActivity] = useDeleteProjectActivityMutation();
+	const { successState, HandleControlStateSuccess } = useSuccess({
+		error: true,
+	});
+
+	const { errorState, HandleControlStateError } = useError({ error: false });
 
 	const OnDelete = (idProjectActivity: number | string) => {
 		DeleteProjectActivity(idProjectActivity)
 			.unwrap()
-			.then((fulfilled) => {
-				console.log(fulfilled);
+			.then(() => {
+				HandleControlStateSuccess(
+					"Sukses",
+					"Sukses Menghapus Aktifitas"
+				);
 			})
-			.catch(console.warn);
+			.catch(() => {
+				HandleControlStateError("Gagal", "Gagal Menghapus Aktifitas");
+			});
 	};
 
 	return (
@@ -36,9 +49,20 @@ export const GridPosition = ({
 			<Droppable droppableId={positionName}>
 				{(provided, snapshot) => (
 					<div ref={provided.innerRef} {...provided.droppableProps}>
+						<ModalInfo
+							closeModal={HandleControlStateSuccess}
+							isOpen={!successState.error}
+							head={successState.head as string}
+							msg={successState.msg as string}
+						/>
+						<ModalInfo
+							closeModal={HandleControlStateError}
+							isOpen={errorState.error}
+							head={errorState.head as string}
+							msg={errorState.msg as string}
+						/>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
-								<div></div>
 								<h3 className="text-center font-bold">
 									{positionDesc}
 								</h3>

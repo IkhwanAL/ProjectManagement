@@ -14,7 +14,6 @@ import {
 import React from "react";
 import { AnyModalProps } from "../../Props/Modal.property";
 import {
-	ProjectApi,
 	useDeleteUserTeamMutation,
 	useGetUserTeamQuery,
 } from "../../redux/project/projectApi";
@@ -135,7 +134,7 @@ export const MainListTeam = ({
 
 	const OnSubmitRemove = () => {
 		const findIndex = removeUser.findIndex((x) => x === User?.id);
-		// console.log(removeUser);
+		//  (removeUser);
 		if (findIndex === -1) {
 			// return;
 			DeleteUser({ Data: removeUser, idProject: Proyek })

@@ -50,10 +50,6 @@ export default function GanttChart() {
 		}
 	}, [isSuccess, isFetching]);
 
-	function daysToMilliseconds(days: number) {
-		return days * 24 * 60 * 60 * 1000;
-	}
-
 	const columns: Array<{ type: string; label: string }> = [
 		{ type: "string", label: "Task ID" },
 		{ type: "string", label: "Task Name" },

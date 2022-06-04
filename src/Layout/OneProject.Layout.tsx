@@ -9,13 +9,9 @@ import { projectactivity_position } from "../types/database.types";
 import { ProjectActicityForState } from "../types/project.types";
 import { GridPosition } from "../Components/PositionGrid.Component";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { useSuccess } from "../hooks/useSuccess";
 import { useError } from "../hooks/useError";
 import { MoveStateReturn } from "../interface/proyek.interface";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
-import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
-import { useSelector } from "react-redux";
-import { QueryStatus } from "@reduxjs/toolkit/dist/query";
 import { Box, LinearProgress } from "@mui/material";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
@@ -23,7 +19,6 @@ export interface StateActivityProject {
 
 export const OneProject = () => {
 	const { idProject } = useParams();
-	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
 	const {
 		data,
@@ -41,10 +36,9 @@ export const OneProject = () => {
 	);
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
-	const [Move, MoveHooks] = useMoveActivityPositionMutation();
+	const [Move] = useMoveActivityPositionMutation();
 	const [open, setOpen] = useState(false);
 	const { errorState, setErrorState } = useError({ error: false });
-	const { successState, setSuccessState } = useSuccess({ error: true });
 	const ActivityName = React.useRef("");
 	const [IdProjectAct, setIdProjectAct] = React.useState<
 		number | undefined
@@ -215,7 +209,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.To_Do}
 							positionDesc="To Do"
 							positionData={positionData.To_Do}
-							key={"" + "A"}
+							key={"A"}
 						/>
 						{/* End Todo */}
 						{/* Start Doing */}
@@ -224,7 +218,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Doing}
 							positionDesc={"Doing"}
 							positionData={positionData.Doing}
-							key={"" + "B"}
+							key={"B"}
 						/>
 						{/* End Doing */}
 						{/* Start Review */}
@@ -233,7 +227,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Review}
 							positionDesc={"Review"}
 							positionData={positionData.Review}
-							key={"" + "C"}
+							key={"C"}
 						/>
 						{/* End Review */}
 						{/* Start Done */}
@@ -242,7 +236,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Done}
 							positionDesc={"Done	"}
 							positionData={positionData.Done}
-							key={"" + "D"}
+							key={"D"}
 						/>
 						{/* End Done */}
 					</div>

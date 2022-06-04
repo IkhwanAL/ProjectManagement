@@ -54,10 +54,6 @@ export default function LayoutDetailProyek() {
 		event.stopPropagation();
 	};
 
-	const handleChangeIndex = (index: number) => {
-		setValue(index);
-	};
-
 	const toggleDrawer =
 		(open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
 			if (

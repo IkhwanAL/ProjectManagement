@@ -1,7 +1,6 @@
 import React from "react";
 import {
 	Box,
-	Button,
 	Drawer,
 	IconButton,
 	Stack,
@@ -33,7 +32,6 @@ export default function DrawerActivity({
 
 	React.useEffect(() => {
 		refetch();
-		console.log("called");
 
 		return () => {};
 	}, [refetch]);
