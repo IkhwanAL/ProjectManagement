@@ -294,7 +294,6 @@ export const FormKegiatan = ({
 
 	const OnClose = () => {
 		handleShow(ActivityName);
-		setForm({});
 	};
 
 	const onOpen = () => {

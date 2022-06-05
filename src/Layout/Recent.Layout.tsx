@@ -13,6 +13,7 @@ const RecentPage = () => {
 		null,
 		{
 			refetchOnFocus: true,
+			pollingInterval: 1000 * 60 * 3,
 		}
 	);
 

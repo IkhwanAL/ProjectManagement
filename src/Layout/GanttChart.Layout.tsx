@@ -6,6 +6,7 @@ import { useGetStartDateQuery } from "../redux/project/projectApi";
 import { ReformatDataForGoogleCharts } from "../Util/ReformatDataToRowsOfGoogleChart";
 import { useTheme } from "@mui/material/styles";
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import moment from "moment";
 
 interface GanttOptions {
 	height: number;
@@ -13,7 +14,7 @@ interface GanttOptions {
 		arrow?: {
 			color: string;
 		};
-		defaultStartDate: number;
+		defaultStartDate: number | Date;
 	};
 }
 
@@ -71,14 +72,17 @@ export default function GanttChart() {
 					time.getDate(),
 				];
 
+				console.log(moment(GetStartDate.data).toDate());
+
 				setOptions((prev) => ({
 					...prev,
 					gantt: {
-						defaultStartDate: new Date(
-							StartDate[0],
-							StartDate[1],
-							StartDate[2]
-						).getTime(),
+						// defaultStartDate: new Date(
+						// 	StartDate[0],
+						// 	StartDate[1],
+						// 	StartDate[2]
+						// ).getTime(),
+						defaultStartDate: moment(GetStartDate.data).toDate(),
 					},
 				}));
 			}
