@@ -6,20 +6,24 @@ import { useGetStartDateQuery } from "../redux/project/projectApi";
 import { ReformatDataForGoogleCharts } from "../Util/ReformatDataToRowsOfGoogleChart";
 import { useTheme } from "@mui/material/styles";
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
+import moment from "moment";
 
 interface GanttOptions {
-	height: number;
-	gantt: {
+	height?: number;
+	gantt?: {
 		arrow?: {
 			color: string;
 		};
-		defaultStartDate: number;
+		defaultStartDate: number | Date;
+		trackHeight?: number;
+		labelMaxWidth?: number;
 	};
 }
 
 export default function GanttChart() {
 	const { idProject } = useParams();
 	const theme = useTheme();
+	const trackHeight = 50;
 
 	const GetStartDate = useGetStartDateQuery(idProject as string, {
 		refetchOnMountOrArgChange: true,
@@ -30,12 +34,13 @@ export default function GanttChart() {
 		});
 
 	const [options, setOptions] = React.useState<GanttOptions>({
-		height: 400,
+		height: 1000 * trackHeight,
 		gantt: {
 			arrow: {
 				color: theme.palette.primary.main,
 			},
 			defaultStartDate: new Date().getTime(),
+			trackHeight: trackHeight,
 		},
 	});
 
@@ -78,12 +83,10 @@ export default function GanttChart() {
 				setOptions((prev) => ({
 					...prev,
 					gantt: {
-						defaultStartDate: new Date(
-							StartDate[0],
-							StartDate[1],
-							StartDate[2]
-						).getTime(),
+						defaultStartDate: moment(GetStartDate.data).toDate(),
+						trackHeight: trackHeight,
 					},
+					height: (showsData?.length ?? 15) * trackHeight,
 				}));
 			}
 		}

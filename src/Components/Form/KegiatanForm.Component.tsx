@@ -244,16 +244,19 @@ export const FormKegiatan = ({
 
 		if (!form.name) {
 			HandleControlStateError("Data Kosong", "Name Aktifitas Kosong");
+			setLoading(false);
 			return;
 		}
 
 		if (!form.description) {
 			HandleControlStateError("Data Kosong", "Deskripsi Kosong");
+			setLoading(false);
 			return;
 		}
 
 		if (!form.status) {
 			HandleControlStateError("Data Kosong", "Status Kegiatan Kosong");
+			setLoading(false);
 			return;
 		}
 
@@ -262,6 +265,7 @@ export const FormKegiatan = ({
 				"Data Kosong",
 				"Total Waktu Pengerjaan Kosong"
 			);
+			setLoading(false);
 			return;
 		}
 
