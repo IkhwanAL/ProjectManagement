@@ -72,9 +72,10 @@ export default function GanttChart() {
 					...prev,
 					gantt: {
 						...prev.gantt,
-						defaultStartDate: +moment(GetStartDate.data).format(
-							"x"
-						),
+						// defaultStartDate: +moment(GetStartDate.data).format(
+						// 	"x"
+						// ),
+						defaultStartDate: moment(GetStartDate.data).toDate(),
 						trackHeight: trackHeight,
 					},
 					height: (showsData?.length ?? 15) * trackHeight,

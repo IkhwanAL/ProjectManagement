@@ -275,7 +275,10 @@ export const FormKegiatan = ({
 					handleShow(ActivityName);
 					setForm({});
 				})
-				.catch();
+				.catch(() => {
+					HandleControlStateError("Gagal", "Gagal Update Aktifitas");
+					setLoading(false);
+				});
 
 			return;
 		}
@@ -289,6 +292,7 @@ export const FormKegiatan = ({
 			})
 			.catch((err) => {
 				HandleControlStateError("Gagal", "Gagal Membuat Aktifitas");
+				setLoading(false);
 			});
 	};
 
