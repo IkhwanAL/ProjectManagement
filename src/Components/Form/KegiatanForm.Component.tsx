@@ -2,7 +2,6 @@
 /* eslint-disable no-useless-computed-key */
 
 import React, { useState } from "react";
-import { Dialog } from "@headlessui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import { ProyekKegiatanProps } from "../../Props/Modal.property";
@@ -29,12 +28,10 @@ import { ListTeam } from "./ListTeam.Component";
 import { useGetUserTeamQuery } from "../../redux/project/projectApi";
 import { useSelector } from "react-redux";
 import { proyekSelector } from "../../redux/project/projectSlice";
-import { UserTeamSelect } from "../../types/return.types";
 import {
 	useCreateOneMutation,
 	useGetAllActivityQuery,
 	useLazyGetOneProjectActivityQuery,
-	useLazyGetSimpleQuery,
 	usePatchOneMutation,
 } from "../../redux/projectActivity/projectActivityApi";
 import { GetOneProjectActivity } from "../../interface/proyek.interface";
@@ -52,8 +49,6 @@ import ModalInfo from "../Modal/ErrorModal.Component";
 // 	subdetailprojectactivity: Array<{ [key: string]: any }>;
 // 	ListAcceptTeam: [{}];
 // }
-
-interface SubmitForm extends Partial<projectactivity> {}
 
 const style = {
 	position: "absolute" as "absolute",
@@ -83,7 +78,6 @@ export const FormKegiatan = ({
 	const idProyek = useSelector(proyekSelector);
 	const TeamList = useGetUserTeamQuery(idProyek as number);
 	const [triggerFetching] = useLazyGetOneProjectActivityQuery();
-	const [trg] = useLazyGetSimpleQuery();
 	const Activity = useGetAllActivityQuery(idProyek, {
 		refetchOnMountOrArgChange: true,
 		refetchOnFocus: true,
@@ -120,7 +114,7 @@ export const FormKegiatan = ({
 					const { data } = x;
 					if (data) {
 						const res = data;
-						console.log(res);
+
 						for (const key in res) {
 							if (key === "usertaskfromassignee") {
 								setForm((prev) => {
@@ -182,11 +176,9 @@ export const FormKegiatan = ({
 								});
 							}
 						}
-
-						console.log(form);
 					}
 				})
-				.catch(console.log);
+				.catch();
 		}
 
 		return () => {
@@ -276,7 +268,6 @@ export const FormKegiatan = ({
 
 		if (idProjectActivity) {
 			RefactorForm.projectActivityId = idProjectActivity;
-			console.log(RefactorForm);
 			Patch({ idProject: idProyek, data: RefactorForm })
 				.unwrap()
 				.then((succ) => {
@@ -284,7 +275,7 @@ export const FormKegiatan = ({
 					handleShow(ActivityName);
 					setForm({});
 				})
-				.catch(console.log);
+				.catch();
 
 			return;
 		}
@@ -297,13 +288,12 @@ export const FormKegiatan = ({
 				setForm({});
 			})
 			.catch((err) => {
-				console.log(err);
+				HandleControlStateError("Gagal", "Gagal Membuat Aktifitas");
 			});
 	};
 
 	const OnClose = () => {
 		handleShow(ActivityName);
-		setForm({});
 	};
 
 	const onOpen = () => {
@@ -421,10 +411,6 @@ export const FormKegiatan = ({
 	};
 
 	const deletePrevActivity = (id: any) => {
-		console.log(form["parent"], "Parent");
-		console.log(form["parentNameActivity"], "Parent Name Acivity");
-		console.log(form["parentArray"], "Parent Array");
-		console.log(id, "ID");
 		setForm((prev) => ({
 			...prev,
 			["parentArray"]: prev["parentArray"].filter((x: any) => x != id),
@@ -435,8 +421,6 @@ export const FormKegiatan = ({
 				.filter((x: any) => x != id)
 				.join(","),
 		}));
-
-		console.log(form, "Res");
 	};
 
 	const SaveListTeam = (
@@ -589,6 +573,7 @@ export const FormKegiatan = ({
 									type="text"
 									name="name"
 									id="name"
+									placeholder="Nama Kegiatan"
 									value={form.name ?? ""}
 									onChange={OnChangeInputField}
 									className="mt-1 p-2 block w-full border-1  shadow-sm sm:text-sm border-gray-300 rounded-md"
@@ -602,6 +587,11 @@ export const FormKegiatan = ({
 									Waktu
 								</label>
 								<input
+									onKeyPress={(event) => {
+										if (!/[0-9]/.test(event.key)) {
+											event.preventDefault();
+										}
+									}}
 									type="text"
 									name="timeToComplete"
 									id="timeToComplete"

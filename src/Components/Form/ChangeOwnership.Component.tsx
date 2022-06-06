@@ -165,7 +165,7 @@ export const ChangeOwnerForm = ({
 													key={x.teamId + ""}
 												/>
 											}
-											key={"" + x.teamId}
+											key={x.teamId + ""}
 											label={x.user.username}
 											value={x.userId}
 										/>

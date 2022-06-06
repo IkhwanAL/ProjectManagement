@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { useChangePasswordMutation } from "../../redux/user/userApi";
 import { useError } from "../../hooks/useError";
-import { ErrorMsg } from "../../Props/Error.property";
 import { useSuccess } from "../../hooks/useSuccess";
 import { useLazyRefreshTokenQuery } from "../../redux/auth/authApi";
 import { LoadingButton } from "@mui/lab";

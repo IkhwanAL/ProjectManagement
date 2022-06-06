@@ -55,10 +55,6 @@ export default function GanttChart() {
 		}
 	}, [isSuccess, isFetching]);
 
-	function daysToMilliseconds(days: number) {
-		return days * 24 * 60 * 60 * 1000;
-	}
-
 	const columns: Array<{ type: string; label: string }> = [
 		{ type: "string", label: "Task ID" },
 		{ type: "string", label: "Task Name" },
@@ -70,20 +66,15 @@ export default function GanttChart() {
 	];
 
 	React.useEffect(() => {
-		if (GetStartDate.isSuccess || !GetStartDate.isFetching) {
+		if (GetStartDate.isSuccess && !GetStartDate.isFetching) {
 			if (GetStartDate.data) {
-				const time = new Date(GetStartDate.data);
-
-				const StartDate = [
-					time.getFullYear(),
-					time.getMonth() + 1,
-					time.getDate(),
-				];
-
 				setOptions((prev) => ({
 					...prev,
 					gantt: {
-						defaultStartDate: moment(GetStartDate.data).toDate(),
+						...prev.gantt,
+						defaultStartDate: +moment(GetStartDate.data).format(
+							"x"
+						),
 						trackHeight: trackHeight,
 					},
 					height: (showsData?.length ?? 15) * trackHeight,
@@ -113,6 +104,7 @@ export default function GanttChart() {
 					width="100%"
 					data={[columns, ...showsData]}
 					options={options}
+					chartLanguage="id"
 				/>
 			) : (
 				<>

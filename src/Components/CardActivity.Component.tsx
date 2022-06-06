@@ -1,14 +1,7 @@
-import {
-	LinearProgress,
-	MenuItem,
-	Select,
-	Stack,
-	Typography,
-} from "@mui/material";
+import { LinearProgress, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/material";
 import { Draggable } from "react-beautiful-dnd";
 import { ActProject } from "../types/project.types";
-import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
 
 export const CardActivities = ({
 	isOpen,

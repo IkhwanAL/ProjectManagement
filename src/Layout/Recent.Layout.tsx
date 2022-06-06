@@ -13,6 +13,7 @@ const RecentPage = () => {
 		null,
 		{
 			refetchOnFocus: true,
+			pollingInterval: 1000 * 60 * 3,
 		}
 	);
 
@@ -32,7 +33,6 @@ const RecentPage = () => {
 			}
 		}
 	}, [isSuccess, isFetching]);
-	console.log(isFetching);
 	return (
 		<>
 			<div className={`flex-col`}>

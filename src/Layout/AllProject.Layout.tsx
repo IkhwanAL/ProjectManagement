@@ -8,8 +8,10 @@ import { ResetIdProyek } from "../redux/project/projectSlice";
 import { GetAllProjectReturn } from "../types/return.types";
 
 const ProjectPage = () => {
-	const { data, isLoading, isFetching, isSuccess } =
-		useGetAllProjectQuery(null);
+	const { data, isFetching, isSuccess } = useGetAllProjectQuery(null, {
+		refetchOnFocus: true,
+		pollingInterval: 1000 * 60 * 3,
+	});
 
 	const [showsData, setShowsData] =
 		React.useState<ISuccess<GetAllProjectReturn>>();
