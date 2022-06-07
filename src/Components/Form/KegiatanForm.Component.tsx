@@ -77,7 +77,8 @@ export const FormKegiatan = ({
 }: ProyekKegiatanProps) => {
 	const idProyek = useSelector(proyekSelector);
 	const TeamList = useGetUserTeamQuery(idProyek as number);
-	const [triggerFetching] = useLazyGetOneProjectActivityQuery();
+	const [triggerFetching, HooksFetching] =
+		useLazyGetOneProjectActivityQuery();
 	const Activity = useGetAllActivityQuery(idProyek, {
 		refetchOnMountOrArgChange: true,
 		refetchOnFocus: true,
@@ -511,6 +512,7 @@ export const FormKegiatan = ({
 								>
 									Kegiatan {ActivityName}
 								</Typography>
+
 								<Box>
 									<Stack direction={"row-reverse"}>
 										{typeof form.ListAcceptTeam !==
@@ -554,6 +556,17 @@ export const FormKegiatan = ({
 									</Stack>
 								</Box>
 							</Stack>
+							{HooksFetching.isFetching ? (
+								<Box
+									sx={{
+										width: "100%",
+									}}
+								>
+									<LinearProgress role="loading" />
+								</Box>
+							) : (
+								<></>
+							)}
 
 							<div className="mt-3">
 								<LinearProgress

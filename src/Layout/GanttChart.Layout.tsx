@@ -12,11 +12,21 @@ interface GanttOptions {
 	height?: number;
 	gantt?: {
 		arrow?: {
+			angle?: number;
 			color: string;
+			length?: number;
 		};
-		defaultStartDate: number | Date;
+		defaultStartDate?: number | Date;
 		trackHeight?: number;
 		labelMaxWidth?: number;
+		criticalPathEnabled?: boolean;
+		criticalPathStyle?: {
+			stroke?: string;
+			strokeWidth?: number;
+		};
+		labelStyle?: { [key: string]: string | number };
+		barCornerRadius?: number;
+		barHeight?: number;
 	};
 }
 
@@ -34,13 +44,21 @@ export default function GanttChart() {
 		});
 
 	const [options, setOptions] = React.useState<GanttOptions>({
-		height: 1000 * trackHeight,
+		// height: 300 * trackHeight,
 		gantt: {
 			arrow: {
+				angle: 20,
 				color: theme.palette.primary.main,
+				length: 8,
 			},
-			defaultStartDate: new Date().getTime(),
-			trackHeight: trackHeight,
+			criticalPathEnabled: true,
+			criticalPathStyle: {
+				strokeWidth: 1.4,
+			},
+			barCornerRadius: 10,
+			labelStyle: {
+				marginTop: 10,
+			},
 		},
 	});
 
@@ -67,25 +85,23 @@ export default function GanttChart() {
 
 	React.useEffect(() => {
 		if (GetStartDate.isSuccess && !GetStartDate.isFetching) {
-			if (GetStartDate.data) {
-				setOptions((prev) => ({
-					...prev,
-					gantt: {
-						...prev.gantt,
-						// defaultStartDate: +moment(GetStartDate.data).format(
-						// 	"x"
-						// ),
-						defaultStartDate: moment(GetStartDate.data).toDate(),
-						trackHeight: trackHeight,
-					},
-					height: (showsData?.length ?? 15) * trackHeight,
-				}));
-			}
+			// if (GetStartDate.data) {
+			setOptions((prev) => ({
+				...prev,
+				gantt: {
+					...prev.gantt,
+					defaultStartDate: +moment(GetStartDate.data).format("x"),
+					// defaultStartDate: moment(GetStartDate.data).toDate(),
+					trackHeight: trackHeight,
+				},
+				height: (showsData?.length ?? 15) * trackHeight,
+			}));
+			// }
 		}
 
 		return () => {};
 	}, [GetStartDate.isSuccess, GetStartDate.isFetching]);
-
+	console.log(options);
 	return (
 		<>
 			{isFetching ? (
@@ -104,7 +120,14 @@ export default function GanttChart() {
 					chartType="Gantt"
 					width="100%"
 					data={[columns, ...showsData]}
-					options={options}
+					options={{
+						...options,
+						legend: { position: "bottom" },
+						title: "Gantt Chart",
+					}}
+					style={{
+						marginTop: 20,
+					}}
 					chartLanguage="id"
 				/>
 			) : (
