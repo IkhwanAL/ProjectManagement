@@ -47,6 +47,7 @@ const style = {
 };
 
 export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
+	const ProjectId = useSelector(proyekSelector);
 	const [Invite, { isLoading }] = useInviteUserMutation();
 
 	const proyek = useSelector(proyekSelector);
@@ -70,7 +71,11 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 	};
 
 	const OnSubmit = () => {
-		Invite(body)
+		const payload = {
+			...body,
+			ProjectId: ProjectId,
+		};
+		Invite(payload)
 			.unwrap()
 			.then(() => {
 				HandleControlStateSuccess(
@@ -78,8 +83,15 @@ export default function FormAddTeam({ isOpen, closeModal }: AnyModalProps) {
 					"Berhasil mengundang User"
 				);
 			})
-			.catch(() => {
-				HandleControlStateError("Gagal", "Gagal Mengundang User");
+			.catch((err) => {
+				if (err.status === 401) {
+					HandleControlStateError(
+						"Gagal",
+						err.data.message ?? "Terjadi Kesalahan Pada Server"
+					);
+				} else {
+					HandleControlStateError("Gagal", "Gagal Mengundang User");
+				}
 			});
 	};
 

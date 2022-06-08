@@ -106,8 +106,8 @@ export const ProjectActApi = createApi({
 			providesTags: ["Projects"],
 		}),
 		DeleteProjectActivity: builder.mutation({
-			query: (idProjectActivity) => ({
-				url: "/projectActivity/" + idProjectActivity,
+			query: ({ idProjectActivity, ProjectId }) => ({
+				url: "/projectActivity/" + ProjectId + "/" + idProjectActivity,
 				method: "DELETE",
 				credentials: "include",
 			}),
