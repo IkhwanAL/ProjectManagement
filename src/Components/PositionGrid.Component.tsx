@@ -9,6 +9,7 @@ import { useDeleteProjectActivityMutation } from "../redux/projectActivity/proje
 import { useSuccess } from "../hooks/useSuccess";
 import ModalInfo from "./Modal/ErrorModal.Component";
 import { useError } from "../hooks/useError";
+import { proyekSelector } from "../redux/project/projectSlice";
 
 interface GridPositionProps {
 	handleShow: (arg?: any) => any; // untuk Form
@@ -23,6 +24,7 @@ export const GridPosition = ({
 	positionData,
 	positionName,
 }: GridPositionProps) => {
+	const ProjectId = useSelector(proyekSelector);
 	const [DeleteProjectActivity] = useDeleteProjectActivityMutation();
 	const { successState, HandleControlStateSuccess } = useSuccess({
 		error: true,
@@ -31,7 +33,11 @@ export const GridPosition = ({
 	const { errorState, HandleControlStateError } = useError({ error: false });
 
 	const OnDelete = (idProjectActivity: number | string) => {
-		DeleteProjectActivity(idProjectActivity)
+		const payload = {
+			idProjectActivity: idProjectActivity,
+			ProjectId: ProjectId,
+		};
+		DeleteProjectActivity(payload)
 			.unwrap()
 			.then(() => {
 				HandleControlStateSuccess(
@@ -39,7 +45,7 @@ export const GridPosition = ({
 					"Sukses Menghapus Aktifitas"
 				);
 			})
-			.catch(() => {
+			.catch((err) => {
 				HandleControlStateError("Gagal", "Gagal Menghapus Aktifitas");
 			});
 	};

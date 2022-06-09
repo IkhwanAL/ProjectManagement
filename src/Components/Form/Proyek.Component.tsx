@@ -1,5 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import {
+	Alert,
 	Box,
 	Button,
 	FormControl,
@@ -22,6 +23,7 @@ import {
 } from "../../redux/project/projectApi";
 import { SetIdProyek } from "../../redux/project/projectSlice";
 import AnyModal from "../Modal/Any.Component";
+import ModalInfo from "../Modal/ErrorModal.Component";
 
 export default function ProyekForm({
 	setModal,
@@ -45,8 +47,11 @@ export default function ProyekForm({
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const { setErrorState, errorState } = useError({ error: false });
-	const { successState, setSuccessState } = useSuccess({ error: true });
+	const { setErrorState, errorState, HandleControlStateError } = useError({
+		error: false,
+	});
+	const { successState, setSuccessState, HandleControlStateSuccess } =
+		useSuccess({ error: true });
 
 	const [proyek, setProyek] =
 		React.useState<Partial<QueryArgProject & { projectId: number | null }>>(
@@ -79,10 +84,11 @@ export default function ProyekForm({
 			});
 			dispatch(SetIdProyek(PatchHooks.data.data?.projectId));
 		}
-	}, [CreateHooks.isSuccess, PatchHooks.isSuccess]);
+	}, [CreateHooks.isSuccess]);
 
 	React.useEffect(() => {
 		const err = CreateHooks.error as { [key: string]: any };
+
 		if (CreateHooks.isError) {
 			if (err?.status === "FETCH_ERROR") {
 				setErrorState({
@@ -162,7 +168,12 @@ export default function ProyekForm({
 				projectName: proyek.projectName,
 				projectDescription: proyek.projectDescription,
 				startDate: new Date(proyek.startDate),
-			});
+			})
+				.unwrap()
+				.catch((er) => {
+					console.log(er);
+					HandleControlStateError("Err", er.data.message);
+				});
 		} else {
 			const { projectId, ...rest } = proyek;
 			const payload = {
@@ -221,22 +232,27 @@ export default function ProyekForm({
 			msg: null,
 		});
 	};
-
+	console.log(PatchHooks.isLoading, CreateHooks.isLoading);
 	return (
 		<>
-			<AnyModal
-				isOpen={errorState.error}
-				closeModal={OnCloseErrorModal}
-				head={errorState.head as string}
-				msg={errorState.msg as string}
-			/>
-
-			<AnyModal
-				isOpen={!successState.error}
-				closeModal={OnCloseSuccessErrorModal}
-				head={successState.head as string}
-				msg={successState.msg as string}
-			/>
+			{errorState.error ? (
+				<Alert severity="error">
+					<Stack justifyContent={"center"} alignItems="center">
+						{errorState.msg}
+					</Stack>
+				</Alert>
+			) : (
+				<></>
+			)}
+			{!successState.error ? (
+				<Alert severity="success">
+					<Stack justifyContent={"center"} alignItems="center">
+						{successState.msg}
+					</Stack>
+				</Alert>
+			) : (
+				<></>
+			)}
 			<Box
 				display="flex"
 				justifyContent="center"
