@@ -70,6 +70,18 @@ export const ProjectApi = createApi({
 			},
 			providesTags: ["Projects"],
 		}),
+		GetAllRecentProject: builder.query<ISuccess<GetAllProjectReturn>, null>(
+			{
+				query: () => {
+					return {
+						url: "/project/recent",
+						credentials: "include",
+						method: "GET",
+					};
+				},
+				providesTags: ["Projects"],
+			}
+		),
 		GetOneProjectNoCalc: builder.query<
 			ISuccess<GetProjectSmall>,
 			number | string
@@ -156,6 +168,7 @@ export const {
 	useCreateProjectMutation,
 	usePatchProjectMutation,
 	useGetAllProjectQuery,
+	useGetAllRecentProjectQuery,
 	useLazyGetOneProjectNoCalcQuery,
 	useGetUserTeamQuery,
 	useGetLeaderQuery,

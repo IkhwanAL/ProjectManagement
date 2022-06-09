@@ -28,19 +28,20 @@ const CardProject = (project: PReturn & { recent: boolean }) => {
 			>
 				<div className="flex justify-between">
 					<div>
-						<h2 className="text-lg"> {project.projectName} </h2>
+						<h2 className="text-lg">{project.projectName} </h2>
 					</div>
 				</div>
-				<div className="mt-5 flex justify-between items-center w-52">
+				<div className="mt-5 flex justify-between items-center flex-col w-52">
+					<p>Deskripsi</p>
 					<span>{project.projectDescription}</span>
 				</div>
 				<div className="flex justify-between mt-5 w-full">
 					<div>
-						<h3 className="text-xs"> Owner </h3>
+						<h3 className="text-xs"> Pemilik </h3>
 						<p className="font-bold"> {project.user.username} </p>
 					</div>
 					<div>
-						<h3 className="text-xs mr-auto"> Due Date </h3>
+						<h3 className="text-xs mr-auto"> Batas Pengerjaan </h3>
 						<p className="font-bold">
 							{project.deadline
 								? moment(project.deadline).format("LL")
