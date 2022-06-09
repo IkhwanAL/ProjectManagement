@@ -59,6 +59,8 @@ export const ChangeOwnerForm = ({
 }: AnyModalProps) => {
 	const ListTeamHooks = useGetUserTeamQuery(idProyek as number, {
 		refetchOnMountOrArgChange: true,
+		pollingInterval: 1000 * 60,
+		refetchOnFocus: true,
 	});
 	const [ChangeOwner, ChangeOwnerHooks] = useChangeOwnerMutation();
 	const refLeader = useRef<number>();
@@ -126,7 +128,6 @@ export const ChangeOwnerForm = ({
 		ChangeOwner(payload)
 			.unwrap()
 			.then((ful) => {
-				console.log(ful);
 				if (ful.sukses) {
 					HandleControlStateSuccess(
 						"Sukses",

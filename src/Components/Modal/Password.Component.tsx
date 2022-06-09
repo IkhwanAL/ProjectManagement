@@ -37,11 +37,11 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 		useChangePasswordMutation();
 	const [triggerRefreshToken] = useLazyRefreshTokenQuery();
 
-	const [seeCurrent, setSeeCurrent] = React.useState(false);
-	const [seeNew, setSeeNew] = React.useState(false);
-	const [seeConfirm, setSeeConfirm] = React.useState(false);
+	const [seeCurrent, setSeeCurrent] = React.useState(true);
+	const [seeNew, setSeeNew] = React.useState(true);
+	const [seeConfirm, setSeeConfirm] = React.useState(true);
 	const [ps, setPs] = React.useState<Ps>(initial);
-
+	console.log(seeConfirm, seeNew, seeCurrent);
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
 
@@ -178,7 +178,7 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 					anchorOrigin={{ vertical: "top", horizontal: "center" }}
 					open={!successState.error}
 					onClose={onCloseSuccessSnackBar}
-					key={"topcenter1"}
+					key={"topcenter"}
 				>
 					<Alert severity="info">{successState.msg}</Alert>
 				</Snackbar>
@@ -258,8 +258,8 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 														}}
 														type={
 															seeCurrent
-																? "text"
-																: "password"
+																? "password"
+																: "text"
 														}
 														name="currentPassword"
 														margin="dense"
@@ -293,8 +293,8 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 														}}
 														type={
 															seeNew
-																? "text"
-																: "password"
+																? "password"
+																: "text"
 														}
 														name="password"
 														margin="dense"
@@ -328,8 +328,8 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 														}}
 														type={
 															seeConfirm
-																? "text"
-																: "password"
+																? "password"
+																: "text"
 														}
 														name="confirmPassword"
 														margin="dense"

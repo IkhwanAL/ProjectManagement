@@ -42,6 +42,7 @@ import {
 } from "../../types/database.types";
 import { useError } from "../../hooks/useError";
 import ModalInfo from "../Modal/ErrorModal.Component";
+import { useSuccess } from "../../hooks/useSuccess";
 
 // interface ProjectActivityStateForm extends GetOneProjectActivity {
 // 	parentArray: Array<any>;
@@ -90,6 +91,9 @@ export const FormKegiatan = ({
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openListTeam, setOpenListTeam] = useState(false);
 	const { HandleControlStateError, errorState } = useError({ error: false });
+	const { HandleControlStateSuccess, successState } = useSuccess({
+		error: true,
+	});
 
 	const [Create] = useCreateOneMutation();
 	const [Patch] = usePatchOneMutation();

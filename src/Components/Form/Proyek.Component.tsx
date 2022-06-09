@@ -73,18 +73,20 @@ export default function ProyekForm({
 				head: "Berhasil",
 				msg: "Berhasil Membuat ",
 			});
+
 			setModal("asd");
 			navigate(`project/detail/${id}`);
 		}
 		if (PatchHooks.isSuccess) {
-			setSuccessState({
-				error: false,
-				head: "Berhasil",
-				msg: "Berhasil Memperbarui",
-			});
+			// setSuccessState({
+			// 	error: false,
+			// 	head: "Berhasil",
+			// 	msg: "Berhasil Memperbarui",
+			// });
+			HandleControlStateSuccess("Berhasil", "Memperbarui");
 			dispatch(SetIdProyek(PatchHooks.data.data?.projectId));
 		}
-	}, [CreateHooks.isSuccess]);
+	}, [CreateHooks.isSuccess, PatchHooks.isSuccess]);
 
 	React.useEffect(() => {
 		const err = CreateHooks.error as { [key: string]: any };
@@ -225,18 +227,15 @@ export default function ProyekForm({
 		});
 	};
 
-	const OnCloseSuccessErrorModal = () => {
-		setSuccessState({
-			error: true,
-			head: null,
-			msg: null,
-		});
-	};
-	console.log(PatchHooks.isLoading, CreateHooks.isLoading);
 	return (
 		<>
 			{errorState.error ? (
-				<Alert severity="error">
+				<Alert
+					severity="error"
+					onClose={() => {
+						OnCloseErrorModal();
+					}}
+				>
 					<Stack justifyContent={"center"} alignItems="center">
 						{errorState.msg}
 					</Stack>
@@ -245,7 +244,12 @@ export default function ProyekForm({
 				<></>
 			)}
 			{!successState.error ? (
-				<Alert severity="success">
+				<Alert
+					severity="success"
+					onClose={() => {
+						HandleControlStateSuccess();
+					}}
+				>
 					<Stack justifyContent={"center"} alignItems="center">
 						{successState.msg}
 					</Stack>

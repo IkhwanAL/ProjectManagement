@@ -31,8 +31,7 @@ const CardProject = (project: PReturn & { recent: boolean }) => {
 						<h2 className="text-lg">{project.projectName} </h2>
 					</div>
 				</div>
-				<div className="mt-5 flex justify-between items-center flex-col w-52">
-					<p>Deskripsi</p>
+				<div className="mt-5 flex justify-between items-center w-52">
 					<span>{project.projectDescription}</span>
 				</div>
 				<div className="flex justify-between mt-5 w-full">
