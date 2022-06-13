@@ -200,7 +200,7 @@ export const FormLogin = React.memo(() => {
 						</h1>
 						<div>
 							<label className="block mb-1 text-gray-600 font-semibold">
-								Username
+								Email
 							</label>
 							<input
 								onChange={onChangeInput}
