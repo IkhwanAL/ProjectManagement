@@ -65,7 +65,7 @@ export default function GanttChart() {
 	const [showsData, setShowsData] =
 		React.useState<Array<Array<string | number>>>();
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (isSuccess && !isFetching) {
 			if (data) {
 				setShowsData(ReformatDataForGoogleCharts(data));
@@ -83,7 +83,7 @@ export default function GanttChart() {
 		{ type: "string", label: "Dependencies" },
 	];
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (GetStartDate.isSuccess && !GetStartDate.isFetching) {
 			// if (GetStartDate.data) {
 			setOptions((prev) => ({
@@ -101,7 +101,9 @@ export default function GanttChart() {
 
 		return () => {};
 	}, [GetStartDate.isSuccess, GetStartDate.isFetching]);
-	console.log(options);
+
+	console.log();
+
 	return (
 		<>
 			{isFetching ? (
@@ -116,6 +118,7 @@ export default function GanttChart() {
 				<></>
 			)}
 			{showsData && showsData?.length !== 0 ? (
+				// <Box>ASD</Box>
 				<Chart
 					chartType="Gantt"
 					width="100%"

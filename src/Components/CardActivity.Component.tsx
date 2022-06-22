@@ -11,6 +11,7 @@ export const CardActivities = ({
 	description,
 	projectActivityId,
 	ActivtyName,
+	critical,
 	OnDelete,
 }: ActProject & { ActivtyName: string; OnDelete: (arg?: any) => void }) => {
 	return (
@@ -21,7 +22,9 @@ export const CardActivities = ({
 			>
 				{(provided, snapshot) => (
 					<div
-						className="bg-white p-3 mt-5 rounded-xl"
+						className={`bg-white p-3 mt-5 rounded-xl border-1 border-solid ${
+							critical ? "border-red-500" : ""
+						}`}
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
