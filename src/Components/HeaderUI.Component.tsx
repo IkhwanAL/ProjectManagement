@@ -133,7 +133,6 @@ export default function HeaderUI() {
 		DeleteProject(idProject)
 			.unwrap()
 			.then((ful) => {
-				console.log(ful);
 				setLoad(false);
 				setModalDelete((prev) => !prev);
 				navigate("/main/dashboard", { replace: true });
