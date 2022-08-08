@@ -26,6 +26,8 @@ export type ProjectActicityForState = projectactivity & {
 	f?: number;
 	critical?: boolean;
 	subdetailprojectactivity?: subdetailprojectactivity[];
+	stats?: string;
+	timeDate?: Date;
 };
 
 export type ProjectActivityType = projectactivity & {

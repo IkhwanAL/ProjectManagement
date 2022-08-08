@@ -130,6 +130,8 @@ export const GridPosition = ({
 										}
 										key={"" + x.projectActivityId}
 										OnDelete={OnDelete}
+										stats={x.stats}
+										timeDate={x.timeDate}
 									/>
 								))
 							) : (
