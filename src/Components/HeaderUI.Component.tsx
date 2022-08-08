@@ -25,6 +25,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useDeleteProjectMutation } from "../redux/project/projectApi";
 import ModalInfo from "./Modal/ErrorModal.Component";
 import { useError } from "../hooks/useError";
+import { Tooltip } from "@mui/material";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -133,7 +134,6 @@ export default function HeaderUI() {
 		DeleteProject(idProject)
 			.unwrap()
 			.then((ful) => {
-				console.log(ful);
 				setLoad(false);
 				setModalDelete((prev) => !prev);
 				navigate("/main/dashboard", { replace: true });
@@ -326,16 +326,18 @@ export default function HeaderUI() {
 										<></>
 									)}
 
-									<button
-										type="button"
-										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white ml-3"
-										onClick={OnHandleModalProyek}
-									>
-										<span className="sr-only">
-											Add Proyek
-										</span>
-										<AddIcon className="h-6 w-6" />
-									</button>
+									<Tooltip title="Tambah / Edit Proyek">
+										<button
+											type="button"
+											className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white ml-3"
+											onClick={OnHandleModalProyek}
+										>
+											<span className="sr-only">
+												Add Proyek
+											</span>
+											<AddIcon className="h-6 w-6" />
+										</button>
+									</Tooltip>
 
 									{/* Profile dropdown */}
 									<Menu as="div" className="ml-3 relative">

@@ -1,3 +1,4 @@
+import { Box, Stack } from "@mui/material";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -20,11 +21,13 @@ const Dashboard = () => {
 
 	return (
 		<>
-			<div className="h-full m-auto p-auto flex-col">
-				<HeaderUI />
+			<HeaderUI />
+			<Box>
 				<Outlet />
+			</Box>
+			<Box my={2}>
 				<Footer />
-			</div>
+			</Box>
 		</>
 	);
 };

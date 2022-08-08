@@ -41,7 +41,7 @@ export default function ChangePassword({ isOpen, closeModal }: AnyModalProps) {
 	const [seeNew, setSeeNew] = React.useState(true);
 	const [seeConfirm, setSeeConfirm] = React.useState(true);
 	const [ps, setPs] = React.useState<Ps>(initial);
-	console.log(seeConfirm, seeNew, seeCurrent);
+
 	const { errorState, setErrorState } = useError({ error: false });
 	const { successState, setSuccessState } = useSuccess({ error: true });
 

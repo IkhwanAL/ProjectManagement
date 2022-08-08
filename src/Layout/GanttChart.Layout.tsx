@@ -102,8 +102,6 @@ export default function GanttChart() {
 		return () => {};
 	}, [GetStartDate.isSuccess, GetStartDate.isFetching]);
 
-	console.log();
-
 	return (
 		<>
 			{isFetching ? (

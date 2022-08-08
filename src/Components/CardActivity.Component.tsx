@@ -22,7 +22,7 @@ export const CardActivities = ({
 			>
 				{(provided, snapshot) => (
 					<div
-						className={`bg-white p-3 mt-5 rounded-xl border-1 border-solid ${
+						className={`bg-white p-3 mt-5 rounded-xl border-2 border-solid ${
 							critical ? "border-red-500" : ""
 						}`}
 						ref={provided.innerRef}
@@ -60,35 +60,32 @@ export const CardActivities = ({
 								</button>
 							</Stack>
 						</div>
-						{/* <span className="text-gray-600 "> */}
 						<Typography noWrap color="gray">
 							{description}
 						</Typography>
-						{/* </span> */}
 
 						<div className="mt-3">
 							<span className="text-gray-600 mb-2">Progress</span>
-							{/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-						<LinearProgress
-							variant="determinate"
-							value={progress}
-						/>
-					</div> */}
 							<Box sx={{ width: "100%" }}>
 								<Stack
 									direction="row"
 									justifyContent="space-between"
+									alignItems={"baseline"}
 								>
 									<LinearProgress
 										sx={{
 											borderRadius: 10,
 											height: 10,
-											width: "86%",
+											width: "80%",
 										}}
 										variant="determinate"
 										value={progress}
 									/>
-									{/* <Typography>{progress ?? 0}</Typography> */}
+									<Typography>
+										{progress
+											? `${Math.floor(progress) + "%"}`
+											: `${0}%`}
+									</Typography>
 								</Stack>
 							</Box>
 						</div>

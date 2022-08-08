@@ -173,7 +173,6 @@ export default function ProyekForm({
 			})
 				.unwrap()
 				.catch((er) => {
-					console.log(er);
 					HandleControlStateError("Err", er.data.message);
 				});
 		} else {

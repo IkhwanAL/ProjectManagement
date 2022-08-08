@@ -1,4 +1,11 @@
-import { Box, LinearProgress } from "@mui/material";
+import {
+	Badge,
+	Box,
+	Chip,
+	LinearProgress,
+	Stack,
+	Typography,
+} from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 import CardProject from "../Components/Card.Component";
@@ -52,6 +59,7 @@ const RecentPage = () => {
 			}
 		}
 	}, [RecentHooks.isSuccess, RecentHooks.isFetching]);
+
 	return (
 		<>
 			<div className={`flex-col`}>
@@ -59,6 +67,34 @@ const RecentPage = () => {
 					<p className="text-center text-2xl font-semibold text-blackCustom pb-10">
 						PROYEK TERKINI
 					</p>
+					<Box mx={31}>
+						<Stack direction={"row"} alignItems={"baseline"}>
+							<Typography component={"p"} fontSize={16}>
+								Label:
+							</Typography>
+							<Chip
+								label="Terlambat"
+								color="error"
+								sx={{
+									marginX: 1,
+								}}
+							/>
+							<Chip
+								label="Complete"
+								color="success"
+								sx={{
+									marginX: 1,
+								}}
+							/>
+							<Chip
+								label="Dalam Perkembangan"
+								sx={{
+									marginX: 1,
+								}}
+							/>
+						</Stack>
+					</Box>
+
 					{isFetching || RecentHooks.isFetching ? (
 						<Box
 							sx={{
@@ -84,6 +120,7 @@ const RecentPage = () => {
 									recent={true}
 									deadlineInString={x?.deadlineInString}
 									userteam={x?.userteam}
+									projectactivity={x.projectactivity}
 								/>
 							);
 						})}
@@ -108,6 +145,7 @@ const RecentPage = () => {
 									recent={true}
 									deadlineInString={x?.deadlineInString}
 									userteam={x?.userteam}
+									projectactivity={x.projectactivity}
 								/>
 							);
 						})}

@@ -1,3 +1,4 @@
+import React from "react";
 import { PlusIcon } from "@heroicons/react/solid";
 import { Droppable } from "react-beautiful-dnd";
 import { ProjectActicityForState } from "../types/project.types";
@@ -10,6 +11,7 @@ import { useSuccess } from "../hooks/useSuccess";
 import ModalInfo from "./Modal/ErrorModal.Component";
 import { useError } from "../hooks/useError";
 import { proyekSelector } from "../redux/project/projectSlice";
+import ConfirmModal from "./Modal/ConfirmModal.Component";
 
 interface GridPositionProps {
 	handleShow: (arg?: any) => any; // untuk Form
@@ -30,9 +32,20 @@ export const GridPosition = ({
 		error: true,
 	});
 
+	const [idProjectActivity, setIdProjectActivity] = React.useState<
+		number | string
+	>("");
+
+	const [openConfirm, setOpenConfirm] = React.useState(false);
+
 	const { errorState, HandleControlStateError } = useError({ error: false });
 
 	const OnDelete = (idProjectActivity: number | string) => {
+		setOpenConfirm((prev) => !prev);
+		setIdProjectActivity(idProjectActivity);
+	};
+
+	const Delete = () => {
 		const payload = {
 			idProjectActivity: idProjectActivity,
 			ProjectId: ProjectId,
@@ -46,27 +59,46 @@ export const GridPosition = ({
 				);
 			})
 			.catch((err) => {
+				if (err.status === 401) {
+					HandleControlStateError(
+						"Gagal",
+						err.data.message + " Untuk Menghapus" ??
+							"Terjadi Kesalahan Pada Server"
+					);
+					return;
+				}
 				HandleControlStateError("Gagal", "Gagal Menghapus Aktifitas");
+			})
+			.finally(() => {
+				setIdProjectActivity("");
+				setOpenConfirm((prev) => !prev);
 			});
 	};
 
 	return (
 		<>
+			<ModalInfo
+				closeModal={HandleControlStateSuccess}
+				isOpen={!successState.error}
+				head={successState.head as string}
+				msg={successState.msg as string}
+			/>
+			<ModalInfo
+				closeModal={HandleControlStateError}
+				isOpen={errorState.error}
+				head={errorState.head as string}
+				msg={errorState.msg as string}
+			/>
+			<ConfirmModal
+				isOpen={openConfirm}
+				cancelAction={OnDelete}
+				confirmAction={Delete}
+				head="Menghapus Aktifitas"
+				msg="Apakah Anda Yakin Menghapus Aktifitas ?"
+			/>
 			<Droppable droppableId={positionName}>
 				{(provided, snapshot) => (
 					<div ref={provided.innerRef} {...provided.droppableProps}>
-						<ModalInfo
-							closeModal={HandleControlStateSuccess}
-							isOpen={!successState.error}
-							head={successState.head as string}
-							msg={successState.msg as string}
-						/>
-						<ModalInfo
-							closeModal={HandleControlStateError}
-							isOpen={errorState.error}
-							head={errorState.head as string}
-							msg={errorState.msg as string}
-						/>
 						<div className="shadow bg-gray-100 p-3 m-4 overflow-auto">
 							<div className="flex justify-between items-center">
 								<h3 className="text-center font-bold">

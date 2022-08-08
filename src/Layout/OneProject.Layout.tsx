@@ -128,8 +128,12 @@ export const OneProject = () => {
 			return;
 		}
 
+		if (!source) {
+			return;
+		}
+
 		if (
-			destination.droppableId === source.droppableId &&
+			destination.droppableId === source.droppableId ||
 			destination.index === source.index
 		) {
 			return;
@@ -148,8 +152,8 @@ export const OneProject = () => {
 		setPositionData((prev) => ({
 			...prev,
 			[destination.droppableId]: [
-				...prev[destination.droppableId],
 				sourceData,
+				...prev[destination.droppableId],
 			],
 		}));
 
@@ -160,25 +164,27 @@ export const OneProject = () => {
 			),
 		}));
 
-		Move(payload)
-			.unwrap()
-			.then(() => {})
-			.catch(() => {
-				setPositionData((prev) => ({
-					...prev,
-					[source.droppableId]: [
-						...prev[source.droppableId],
-						sourceData,
-					],
-				}));
+		if (destination.droppableId !== source.droppableId) {
+			Move(payload)
+				.unwrap()
+				.then(() => {})
+				.catch((err) => {
+					setPositionData((prev) => ({
+						...prev,
+						[source.droppableId]: [
+							...prev[source.droppableId],
+							sourceData,
+						],
+					}));
 
-				setPositionData((prev) => ({
-					...prev,
-					[destination.droppableId]: prev[
-						destination.droppableId
-					].filter((x) => x.projectActivityId !== source.index),
-				}));
-			});
+					setPositionData((prev) => ({
+						...prev,
+						[destination.droppableId]: prev[
+							destination.droppableId
+						].filter((x) => x.projectActivityId !== source.index),
+					}));
+				});
+		}
 	};
 
 	return (
@@ -201,8 +207,8 @@ export const OneProject = () => {
 				) : (
 					<></>
 				)}
-				<div className="w-full h-screen max-w-7xl mx-auto">
-					<div className="grid grid-cols-4">
+				<div className="w-full h-screen mx-auto">
+					<div className="lg:grid lg:grid-cols-4 md:flex md:flex-col sm:flex sm:flex-col">
 						{/* Start To Do */}
 						<GridPosition
 							handleShow={handleShow}
