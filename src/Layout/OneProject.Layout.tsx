@@ -12,7 +12,7 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useError } from "../hooks/useError";
 import { MoveStateReturn } from "../interface/proyek.interface";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
-import { Box, LinearProgress } from "@mui/material";
+import { Box, Chip, LinearProgress, Stack, Typography } from "@mui/material";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 }
@@ -208,6 +208,29 @@ export const OneProject = () => {
 					<></>
 				)}
 				<div className="w-full h-screen mx-auto">
+					<Box
+						sx={{
+							marginX: 2,
+						}}
+					>
+						<Stack direction={"row"} alignItems={"baseline"}>
+							<Typography component={"p"} fontSize={16}>
+								Label:
+							</Typography>
+							<Chip
+								variant="outlined"
+								label="Aktifitas Kritikal"
+								color="error"
+								sx={{
+									marginX: 1,
+									backgroundColor: "#FFF",
+									color: "#000",
+									// borderWidth: 1,
+									// borderColor: "red",
+								}}
+							/>
+						</Stack>
+					</Box>
 					<div className="lg:grid lg:grid-cols-4 md:flex md:flex-col sm:flex sm:flex-col">
 						{/* Start To Do */}
 						<GridPosition

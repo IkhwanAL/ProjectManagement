@@ -121,12 +121,18 @@ export const CardActivities = ({
 							flexWrap={"wrap"}
 						>
 							{activasion.activeStart === true ? (
-								<Chip label="Start" icon={<InfoIcon />} />
+								<Chip
+									label="Aktifitas Pertama"
+									icon={<InfoIcon />}
+								/>
 							) : (
 								<></>
 							)}
 							{activasion.activeEnd === true ? (
-								<Chip label="End" icon={<InfoIcon />} />
+								<Chip
+									label="Aktifitas Terakhir"
+									icon={<InfoIcon />}
+								/>
 							) : (
 								<></>
 							)}
@@ -178,16 +184,18 @@ export const CardActivities = ({
 									justifyContent={"space-between"}
 								>
 									<Typography>Waktu Rentan</Typography>
-									<Typography>Waktu Delay</Typography>
+									<Typography>Slack Time</Typography>
 								</Stack>
 								<Stack
 									direction={"row"}
 									justifyContent={"space-between"}
 								>
 									<Typography>
-										{moment(timeDate).format("LL")}
+										{timeDate
+											? moment(timeDate).format("LL")
+											: "-"}
 									</Typography>
-									<Typography>{f}</Typography>
+									<Typography>{f ?? "-"}</Typography>
 								</Stack>
 							</Box>
 						</div>

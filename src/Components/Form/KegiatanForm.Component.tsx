@@ -528,9 +528,7 @@ export const FormKegiatan = ({
 											).map(
 												(list: any, index: number) => (
 													<div
-														className={`pb-5 pl-5 bg-opacity-40 rounded-full w-14 h-14 -ml-${
-															10 - index
-														}`}
+														className={`bg-opacity-40 rounded-full w-9 h-9 -ml-4`}
 													>
 														<img
 															src={`https://ui-avatars.com/api/?name=${list.user.username}`}
@@ -543,13 +541,7 @@ export const FormKegiatan = ({
 										) : (
 											<></>
 										)}
-										<div className="pb-5 pl-5  bg-opacity-30 rounded-full w-14 h-14 -	ml-8 ">
-											{/* <img
-												src="https://ui-avatars.com/api/?name="
-												className="w-full h-full rounded-full border-1 border-primary"
-												alt="User"
-											/> */}
-
+										<div className="bg-opacity-30 rounded-full w-9 h-9 -ml-8">
 											<IconButton
 												color="primary"
 												onClick={onOpenListTeam}
@@ -658,19 +650,25 @@ export const FormKegiatan = ({
 									{Activity?.data?.data &&
 									Activity?.data?.data.length !== 0 ? (
 										Activity?.data?.data?.map((x: any) => {
-											return (
-												<option
-													value={[
-														x.projectActivityId,
-														x.name,
-													]}
-													key={
-														x.projectActivityId + ""
-													}
-												>
-													{x.name}
-												</option>
-											);
+											if (
+												x.projectActivityId !=
+												idProjectActivity
+											) {
+												return (
+													<option
+														value={[
+															x.projectActivityId,
+															x.name,
+														]}
+														key={
+															x.projectActivityId +
+															""
+														}
+													>
+														{x.name}
+													</option>
+												);
+											}
 										})
 									) : (
 										<></>
