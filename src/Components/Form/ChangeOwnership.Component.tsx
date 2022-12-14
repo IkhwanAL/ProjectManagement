@@ -1,3 +1,4 @@
+import { Fullscreen } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
 	Box,
@@ -15,6 +16,7 @@ import {
 } from "@mui/material";
 import React, { useCallback, useRef } from "react";
 import { useError } from "../../hooks/useError";
+import { useSuccess } from "../../hooks/useSuccess";
 import { AnyModalProps } from "../../Props/Modal.property";
 import {
 	useChangeOwnerMutation,
@@ -24,6 +26,7 @@ import {
 import { userteam_role } from "../../types/database.types";
 import { UserTeamSelect } from "../../types/return.types";
 import AnyModal from "../Modal/Any.Component";
+import ModalInfo from "../Modal/ErrorModal.Component";
 
 const style = {
 	position: "absolute" as "absolute",
@@ -56,12 +59,17 @@ export const ChangeOwnerForm = ({
 }: AnyModalProps) => {
 	const ListTeamHooks = useGetUserTeamQuery(idProyek as number, {
 		refetchOnMountOrArgChange: true,
+		pollingInterval: 1000 * 60,
+		refetchOnFocus: true,
 	});
 	const [ChangeOwner, ChangeOwnerHooks] = useChangeOwnerMutation();
 	const refLeader = useRef<number>();
 	const [list, setList] = React.useState<UserTeamSelected[]>([]);
 	const [leader, setLeader] = React.useState<number>();
 	const { errorState, setErrorState } = useError({ error: false });
+	const { successState, HandleControlStateSuccess } = useSuccess({
+		error: true,
+	});
 
 	React.useEffect(() => {
 		if (ListTeamHooks.isSuccess) {
@@ -82,6 +90,11 @@ export const ChangeOwnerForm = ({
 			}
 			setList(payload);
 		}
+
+		return () => {
+			setLeader(undefined);
+			setList([]);
+		};
 	}, [ListTeamHooks.isSuccess]);
 
 	const onChangeLeader = useCallback(
@@ -114,15 +127,30 @@ export const ChangeOwnerForm = ({
 
 		ChangeOwner(payload)
 			.unwrap()
-			.then(() => {
+			.then((ful) => {
+				if (ful.sukses) {
+					HandleControlStateSuccess(
+						"Sukses",
+						"Sukses Memberi Notif Ke User Di Tunjuk"
+					);
+				}
 				closeModal();
 			})
-			.catch(() => {
-				setErrorState({
-					error: true,
-					head: "Gagal Menganti Kepemilikan",
-					msg: "Terjadi Kesalahan Pada Server",
-				});
+			.catch((err) => {
+				if (err.status === 401) {
+					setErrorState({
+						error: true,
+						head: "Gagal Menganti Kepemilikan",
+						msg:
+							err.data.message ?? "Terjadi Kesalahan Pada Server",
+					});
+				} else {
+					setErrorState({
+						error: true,
+						head: "Gagal Menganti Kepemilikan",
+						msg: "Terjadi Kesalahan Pada Server",
+					});
+				}
 			});
 	};
 
@@ -136,11 +164,17 @@ export const ChangeOwnerForm = ({
 
 	return (
 		<React.Fragment>
-			<AnyModal
+			<ModalInfo
 				closeModal={OnErrorCloseModal}
 				isOpen={errorState.error}
 				head={errorState.head as string}
 				msg={errorState.msg as string}
+			/>
+			<ModalInfo
+				closeModal={HandleControlStateSuccess}
+				isOpen={!successState.error}
+				head={successState.head as string}
+				msg={successState.msg as string}
 			/>
 			<Modal open={isOpen} onClose={closeModal}>
 				<Box sx={{ ...style, width: 400 }}>
@@ -160,7 +194,7 @@ export const ChangeOwnerForm = ({
 													key={x.teamId + ""}
 												/>
 											}
-											key={"" + x.teamId}
+											key={x.teamId + ""}
 											label={x.user.username}
 											value={x.userId}
 										/>

@@ -29,6 +29,9 @@ export type PReturn = {
 	startDate: Date | number | null;
 	deadline: Date | null;
 	deadlineInString: string | null;
+	projectactivity: {
+		progress: number;
+	}[];
 	user: {
 		username: string;
 	};

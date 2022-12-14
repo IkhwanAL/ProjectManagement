@@ -23,6 +23,8 @@ import { MainListTeam } from "./Modal/ListTeamModal.Component";
 import { ChangeOwnerForm } from "./Form/ChangeOwnership.Component";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useDeleteProjectMutation } from "../redux/project/projectApi";
+import ModalInfo from "./Modal/ErrorModal.Component";
+import { useError } from "../hooks/useError";
 
 const navigation = [
 	{ name: "Home", href: "/main/dashboard", current: true },
@@ -55,6 +57,7 @@ export default function HeaderUI() {
 	const [modalListTeam, setModalListTeam] = useState<boolean>(false);
 	const [modalChangeOwner, setChangeOWner] = useState<boolean>(false);
 	const [modalDelete, setModalDelete] = useState<boolean>(false);
+	const { errorState, HandleControlStateError } = useError({ error: false });
 
 	const [activated, setActive] = useState<string>("Home");
 	const { confirm, setConfirm, onHandle } = useConfirm(false);
@@ -128,12 +131,23 @@ export default function HeaderUI() {
 	const DeleteForever = () => {
 		setLoad(true);
 		DeleteProject(idProject)
-			.then(() => {
+			.unwrap()
+			.then((ful) => {
 				setLoad(false);
 				setModalDelete((prev) => !prev);
 				navigate("/main/dashboard", { replace: true });
 			})
-			.catch(console.log);
+			.catch((err) => {
+				if (err.data.status === 401) {
+					setLoad(false);
+					setModalDelete((prev) => !prev);
+					HandleControlStateError("Gagal", "Tidak Memiliki Akses");
+				} else {
+					setLoad(false);
+					setModalDelete((prev) => !prev);
+					HandleControlStateError("Gagal", "Gagal Menghapus");
+				}
+			});
 	};
 
 	const OpenModalDelete = () => {
@@ -167,6 +181,12 @@ export default function HeaderUI() {
 				isOpen={modalDelete}
 				onAccept={DeleteForever}
 				loading={load}
+			/>
+			<ModalInfo
+				closeModal={HandleControlStateError}
+				head={errorState.head as string}
+				msg={errorState.msg as string}
+				isOpen={errorState.error}
 			/>
 			<Disclosure as="nav" className="bg-blackCustom" key={"1"}>
 				{({ open }: any) => (
@@ -304,18 +324,6 @@ export default function HeaderUI() {
 									) : (
 										<></>
 									)}
-									<button
-										type="button"
-										className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white mx-4"
-									>
-										<span className="sr-only">
-											View notifications
-										</span>
-										<BellIcon
-											className="h-6 w-6"
-											aria-hidden="true"
-										/>
-									</button>
 
 									<button
 										type="button"

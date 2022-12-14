@@ -16,7 +16,7 @@ const REDUCER_API_PATH_NAME = "Projects";
 export const ProjectApi = createApi({
 	reducerPath: REDUCER_API_PATH_NAME,
 	tagTypes: ["Projects", "Teams", "DetailProject", "Leader", "ActivityUser"],
-	// keepUnusedDataFor: 0,
+	keepUnusedDataFor: 0,
 	baseQuery: fetchBaseQuery({
 		baseUrl: Environtment.Url_Api,
 		prepareHeaders: (headers, api) => {
@@ -70,6 +70,18 @@ export const ProjectApi = createApi({
 			},
 			providesTags: ["Projects"],
 		}),
+		GetAllRecentProject: builder.query<ISuccess<GetAllProjectReturn>, null>(
+			{
+				query: () => {
+					return {
+						url: "/project/recent",
+						credentials: "include",
+						method: "GET",
+					};
+				},
+				providesTags: ["Projects"],
+			}
+		),
 		GetOneProjectNoCalc: builder.query<
 			ISuccess<GetProjectSmall>,
 			number | string
@@ -134,8 +146,8 @@ export const ProjectApi = createApi({
 			invalidatesTags: ["Teams", "ActivityUser"],
 		}),
 		InviteUser: builder.mutation({
-			query: (data) => ({
-				url: `/invite`,
+			query: ({ ProjectId, ...data }) => ({
+				url: `/invite/` + ProjectId,
 				body: data,
 				method: "POST",
 				credentials: "include",
@@ -156,6 +168,7 @@ export const {
 	useCreateProjectMutation,
 	usePatchProjectMutation,
 	useGetAllProjectQuery,
+	useGetAllRecentProjectQuery,
 	useLazyGetOneProjectNoCalcQuery,
 	useGetUserTeamQuery,
 	useGetLeaderQuery,

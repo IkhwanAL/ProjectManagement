@@ -17,6 +17,7 @@ import { SetEmailParams } from "../../redux/user/userSlice";
 import classes from "../../Styles/Triangle.module.scss";
 import AnyModal from "../Modal/Any.Component";
 import { ButtonSmoll } from "../Smoll/Button";
+import { Typography } from "@mui/material";
 
 export const FormLogin = React.memo(() => {
 	const dispatch = useDispatch();
@@ -179,7 +180,16 @@ export const FormLogin = React.memo(() => {
 	};
 
 	return (
-		<div className="h-screen bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full">
+		<div className="h-screen bg-gradient-to-br flex justify-center items-center w-full ">
+			{/* <div className="my-5 ">
+				<Typography color={"#FFF"} variant={"h5"}>
+					Log In dan Menggunakan Webnya
+				</Typography>
+
+				<Typography variant={"subtitle1"} color={"#FFF"} marginX={-2}>
+					Website memiliki
+				</Typography>
+			</div> */}
 			<AnyModal
 				isOpen={errorState.error}
 				head={errorState?.head as string}
@@ -192,15 +202,17 @@ export const FormLogin = React.memo(() => {
 				head={successState.head as string}
 				msg={successState.msg as string}
 			/>
-			<form className=" w-fit shadow-lg z-40">
+
+			<form className=" shadow-lg z-40 w-fit">
 				<div className="bg-white px-10 py-8 rounded-xl w-screen shadow-md max-w-sm">
 					<div className="space-y-4">
 						<h1 className="text-center text-2xl font-semibold text-gray-600">
 							Login
 						</h1>
+
 						<div>
 							<label className="block mb-1 text-gray-600 font-semibold">
-								Username
+								Email
 							</label>
 							<input
 								onChange={onChangeInput}
@@ -232,7 +244,7 @@ export const FormLogin = React.memo(() => {
 						</div>
 					) : (
 						<ButtonSmoll
-							textButton="Sign In"
+							textButton="SIGN IN"
 							fill="#FFF"
 							isLoading={isLoading}
 							onClick={onSubmit}
@@ -240,7 +252,7 @@ export const FormLogin = React.memo(() => {
 					)}
 
 					<p className="items-center mt-4 mb-4 text-center">
-						Don't Have An Account
+						Tidak Punya Akun?
 					</p>
 					<div className="flex justify-center items-center ml-6">
 						<Link

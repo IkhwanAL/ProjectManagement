@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Dialog, Transition } from "@headlessui/react";
 import { Backdrop } from "@mui/material";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef } from "react";
 import { ModalPropsUI } from "../../Props/Modal.property";
 import FormUserUI from "../Form/FormUserUI.Component";
 
@@ -9,8 +9,6 @@ export default function InfoUserUI({
 	setModal,
 	modal,
 }: ModalPropsUI): JSX.Element {
-	// const [_, setOpen] = useState(false);
-
 	const cancelButtonRef = useRef(null);
 
 	return (

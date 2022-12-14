@@ -1,7 +1,3 @@
-import { projectactivity } from "../types/database.types";
-
-interface GoolgeChartsFormatRows {}
-
 export const ReformatDataForGoogleCharts = (data: any) => {
 	const FormatArray: Array<Array<string | number>> = [];
 
@@ -9,7 +5,7 @@ export const ReformatDataForGoogleCharts = (data: any) => {
 		return days * 24 * 60 * 60 * 1000;
 	}
 	const Activity = data.data;
-	// console.log(Activity);
+	//  (Activity);
 	for (const iterator of Activity) {
 		const TaskId = iterator["projectActivityId"] + "";
 		const TaskName = iterator["name"];

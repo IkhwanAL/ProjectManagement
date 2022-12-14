@@ -9,14 +9,12 @@ import { ResetUser } from "../redux/user/userSlice";
 import InfoUserUI from "./Modal/InfoUserUI.Component";
 import AddIcon from "@mui/icons-material/Add";
 import ChangePassword from "./Modal/Password.Component";
-import { useError } from "../hooks/useError";
 import InfoModal from "./Modal/Info.Component";
 import { useConfirm } from "../hooks/useConfirm";
 import {
 	useLazyDeleteUserQuery,
 	useLazyLogoutQuery,
 } from "../redux/user/userApi";
-import { AirlineSeatLegroomExtraRounded } from "@mui/icons-material";
 import ProyekModal from "./Modal/ProyekModal.Component";
 
 const navigation = [

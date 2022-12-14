@@ -9,34 +9,36 @@ import { projectactivity_position } from "../types/database.types";
 import { ProjectActicityForState } from "../types/project.types";
 import { GridPosition } from "../Components/PositionGrid.Component";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { useSuccess } from "../hooks/useSuccess";
 import { useError } from "../hooks/useError";
 import { MoveStateReturn } from "../interface/proyek.interface";
 import { FormKegiatan } from "../Components/Form/KegiatanForm.Component";
-import { proyekActSelector } from "../redux/projectActivity/projectActivitySlice";
-import { useSelector } from "react-redux";
+import { Box, Chip, LinearProgress, Stack, Typography } from "@mui/material";
 export interface StateActivityProject {
 	[key: string]: Array<ProjectActicityForState>;
 }
 
 export const OneProject = () => {
 	const { idProject } = useParams();
-	const proyekactivity = useSelector(proyekActSelector);
 	const navigate = useNavigate();
-	const { data, isFetching, isSuccess, isError, error, refetch } =
-		useGetOneProjectActQuery(
-			{ idProject: parseInt(idProject as string) },
-			{
-				refetchOnMountOrArgChange: true,
-				refetchOnFocus: true,
-			}
-		);
+	const {
+		data,
+		isFetching,
+		isSuccess,
+		isError,
+		error,
+		refetch,
+		currentData,
+	} = useGetOneProjectActQuery(
+		{ idProject: parseInt(idProject as string) },
+		{
+			refetchOnMountOrArgChange: true,
+		}
+	);
 
 	const [triggerRefresh] = useLazyRefreshTokenQuery();
-	const [Move, MoveHooks] = useMoveActivityPositionMutation();
+	const [Move] = useMoveActivityPositionMutation();
 	const [open, setOpen] = useState(false);
 	const { errorState, setErrorState } = useError({ error: false });
-	const { successState, setSuccessState } = useSuccess({ error: true });
 	const ActivityName = React.useRef("");
 	const [IdProjectAct, setIdProjectAct] = React.useState<
 		number | undefined
@@ -63,7 +65,9 @@ export const OneProject = () => {
 
 	React.useEffect(() => {
 		if (isSuccess || !isFetching) {
-			const d = data?.data?.projectactivity;
+			const d =
+				currentData?.data?.projectactivity ||
+				data?.data?.projectactivity;
 
 			let payload: StateActivityProject = {
 				To_Do: [],
@@ -124,8 +128,12 @@ export const OneProject = () => {
 			return;
 		}
 
+		if (!source) {
+			return;
+		}
+
 		if (
-			destination.droppableId === source.droppableId &&
+			destination.droppableId === source.droppableId ||
 			destination.index === source.index
 		) {
 			return;
@@ -144,8 +152,8 @@ export const OneProject = () => {
 		setPositionData((prev) => ({
 			...prev,
 			[destination.droppableId]: [
-				...prev[destination.droppableId],
 				sourceData,
+				...prev[destination.droppableId],
 			],
 		}));
 
@@ -156,25 +164,27 @@ export const OneProject = () => {
 			),
 		}));
 
-		Move(payload)
-			.unwrap()
-			.then(() => {})
-			.catch(() => {
-				setPositionData((prev) => ({
-					...prev,
-					[source.droppableId]: [
-						...prev[source.droppableId],
-						sourceData,
-					],
-				}));
+		if (destination.droppableId !== source.droppableId) {
+			Move(payload)
+				.unwrap()
+				.then(() => {})
+				.catch((err) => {
+					setPositionData((prev) => ({
+						...prev,
+						[source.droppableId]: [
+							...prev[source.droppableId],
+							sourceData,
+						],
+					}));
 
-				setPositionData((prev) => ({
-					...prev,
-					[destination.droppableId]: prev[
-						destination.droppableId
-					].filter((x) => x.projectActivityId !== destination.index),
-				}));
-			});
+					setPositionData((prev) => ({
+						...prev,
+						[destination.droppableId]: prev[
+							destination.droppableId
+						].filter((x) => x.projectActivityId !== source.index),
+					}));
+				});
+		}
 	};
 
 	return (
@@ -186,15 +196,49 @@ export const OneProject = () => {
 				isOpen={open}
 			/>
 			<DragDropContext onDragEnd={onDragEnd}>
-				<div className="w-full h-screen max-w-7xl mx-auto">
-					<div className="grid grid-cols-4">
+				{isFetching ? (
+					<Box
+						sx={{
+							marginTop: -2,
+						}}
+					>
+						<LinearProgress />
+					</Box>
+				) : (
+					<></>
+				)}
+				<div className="w-full h-screen mx-auto">
+					<Box
+						sx={{
+							marginX: 2,
+						}}
+					>
+						<Stack direction={"row"} alignItems={"baseline"}>
+							<Typography component={"p"} fontSize={16}>
+								Label:
+							</Typography>
+							<Chip
+								variant="outlined"
+								label="Aktifitas Kritikal"
+								color="error"
+								sx={{
+									marginX: 1,
+									backgroundColor: "#FFF",
+									color: "#000",
+									// borderWidth: 1,
+									// borderColor: "red",
+								}}
+							/>
+						</Stack>
+					</Box>
+					<div className="lg:grid lg:grid-cols-4 md:flex md:flex-col sm:flex sm:flex-col">
 						{/* Start To Do */}
 						<GridPosition
 							handleShow={handleShow}
 							positionName={projectactivity_position.To_Do}
 							positionDesc="To Do"
 							positionData={positionData.To_Do}
-							key={"" + "A"}
+							key={"A"}
 						/>
 						{/* End Todo */}
 						{/* Start Doing */}
@@ -203,7 +247,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Doing}
 							positionDesc={"Doing"}
 							positionData={positionData.Doing}
-							key={"" + "B"}
+							key={"B"}
 						/>
 						{/* End Doing */}
 						{/* Start Review */}
@@ -212,7 +256,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Review}
 							positionDesc={"Review"}
 							positionData={positionData.Review}
-							key={"" + "C"}
+							key={"C"}
 						/>
 						{/* End Review */}
 						{/* Start Done */}
@@ -221,7 +265,7 @@ export const OneProject = () => {
 							positionName={projectactivity_position.Done}
 							positionDesc={"Done	"}
 							positionData={positionData.Done}
-							key={"" + "D"}
+							key={"D"}
 						/>
 						{/* End Done */}
 					</div>

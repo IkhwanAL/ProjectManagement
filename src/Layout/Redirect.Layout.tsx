@@ -8,9 +8,8 @@ import { useError } from "../hooks/useError";
 import AnyModal from "../Components/Modal/Any.Component";
 
 export const RedirectToVerify = () => {
-	const [Verify, { isSuccess, isLoading, data, isError, error }] =
-		useVerifyMutation();
-	const [verify, _setVerify] = useSearchParams();
+	const [Verify, { isSuccess, isLoading, isError }] = useVerifyMutation();
+	const [verify] = useSearchParams();
 	const navigation = useNavigate();
 	const { errorState, setErrorState } = useError({ error: false });
 

@@ -20,6 +20,9 @@ export interface GetProjectReturn {
 	startDate: Date | null;
 	projectDescription: string;
 	deadlineInString: string;
+	projectactivity: {
+		progress: number;
+	}[];
 	userteam: {
 		user: {
 			username: string;

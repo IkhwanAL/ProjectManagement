@@ -1,9 +1,9 @@
 import React from "react";
 import {
 	Box,
-	Button,
 	Drawer,
 	IconButton,
+	LinearProgress,
 	Stack,
 	Typography,
 	useTheme,
@@ -25,15 +25,17 @@ export default function DrawerActivity({
 }: DrawerProps) {
 	const theme = useTheme();
 
-	const { data, refetch } = useGetActivityPerProjectQuery(idProject, {
-		refetchOnMountOrArgChange: true,
-		refetchOnFocus: true,
-		pollingInterval: 1000 * 60 * 10,
-	});
+	const { data, refetch, isFetching } = useGetActivityPerProjectQuery(
+		idProject,
+		{
+			refetchOnMountOrArgChange: true,
+			refetchOnFocus: true,
+			pollingInterval: 1000 * 60 * 10,
+		}
+	);
 
 	React.useEffect(() => {
 		refetch();
-		console.log("called");
 
 		return () => {};
 	}, [refetch]);
@@ -70,7 +72,17 @@ export default function DrawerActivity({
 				{/* <Button variant="contained" color="secondary">
 					ASD
 				</Button> */}
-
+				{isFetching ? (
+					<Box
+						sx={{
+							width: "100%",
+						}}
+					>
+						<LinearProgress />
+					</Box>
+				) : (
+					<></>
+				)}
 				{data?.data && data.data.length !== 0 ? (
 					<ListActivity Activity={data.data} />
 				) : (

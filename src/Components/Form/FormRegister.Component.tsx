@@ -183,7 +183,7 @@ export const FormRegister = () => {
 						Sign Up
 					</button> */}
 					<p className="items-center mt-4 mb-4 text-center">
-						Already Have An Account
+						Sudah Punya Akun?
 					</p>
 					<div className="flex justify-center items-center ml-6">
 						<Link

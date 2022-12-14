@@ -15,22 +15,24 @@ const style = {
 	pb: 3,
 };
 
-export interface ErrorProps {
+export interface ConfirmProps {
 	isOpen: boolean;
-	closeModal: (...arg: any) => void;
+	confirmAction?: (...arg: any) => void;
+	cancelAction?: (...arg: any) => void;
 	head?: string;
 	msg?: string;
 }
 
-export default function ModalInfo({
+export default function ConfirmModal({
 	isOpen,
-	closeModal,
+	confirmAction,
+	cancelAction,
 	head,
 	msg,
-}: ErrorProps) {
+}: ConfirmProps) {
 	return (
 		<React.Fragment>
-			<Modal open={isOpen} onClose={closeModal}>
+			<Modal open={isOpen} onClose={cancelAction}>
 				<Box sx={{ ...style, width: 400 }}>
 					<Stack
 						direction={"row"}
@@ -42,7 +44,7 @@ export default function ModalInfo({
 						</Typography>
 					</Stack>
 					<Typography
-						component={"h4"}
+						variant="subtitle1"
 						padding={2}
 						textAlign="center"
 						sx={{
@@ -51,9 +53,20 @@ export default function ModalInfo({
 					>
 						{msg}
 					</Typography>
-					<Stack direction={"row"} justifyContent="center" p={1}>
-						<Button color="primary" onClick={closeModal}>
-							Tutup
+					<Stack direction={"row"} justifyContent="space-between">
+						<Button
+							color="primary"
+							onClick={cancelAction}
+							variant="contained"
+						>
+							Tidak
+						</Button>
+						<Button
+							color="error"
+							onClick={confirmAction}
+							variant="contained"
+						>
+							Ok
 						</Button>
 					</Stack>
 				</Box>
